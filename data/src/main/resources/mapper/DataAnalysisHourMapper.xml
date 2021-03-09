@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.styx.data.mapper.DataAnalysisHourMapper">
+
+
+    <insert id="analyzeAndInsert">
+        INSERT INTO data_analysis_hour
+        SELECT a.day, a.hour,a.terminal_id, b.var_id, max(b.value) AS max_value, min(b.value) AS min_value , avg(b.value) AS avg_value, 0
+        FROM terminal_data a INNER JOIN terminal_data_detail b ON a.id = b.data_id
+        WHERE a.day = #{date} AND a.hour = #{hour} AND a.is_online = 1 AND is_self = 1 AND a.is_test = 0 AND a.work_status = 2 AND b.var_id != 35
+        GROUP BY a.terminal_id, b.var_id
+        UNION ALL
+        SELECT a.day, a.hour,a.terminal_id, b.var_id, max(b.value) - min(b.value) AS max_value, max(b.value) - min(b.value) AS min_value , max(b.value) - min(b.value) AS avg_value, 0
+        FROM terminal_data a INNER JOIN terminal_data_detail b ON a.id = b.data_id
+        WHERE a.day = #{date} AND a.hour = #{hour} AND a.is_online = 1 AND is_self = 1 AND a.is_test = 0 AND a.work_status = 2 AND b.var_id = 35
+        GROUP BY a.terminal_id, b.var_id
+    </insert>
+
+    <select id="findDataForUpload" resultType="com.styx.data.model.DataAnalysisHour">
+        SELECT `day`,`hour`,terminal_id AS terminalId,var_id AS varId,max_value AS `maxValue`,min_value AS `minValue`, avg_value AS `avgValue`
+        FROM data_analysis_hour WHERE uploaded = 0 ORDER BY `day` ASC, `hour` ASC, `terminal_id` ASC, `var_id` ASC LIMIT ${limit}
+    </select>
+
+    <update id="updateUploaded">
+       UPDATE data_analysis_hour SET uploaded = 1 WHERE uploaded = 0 ORDER BY `day` ASC, `hour` ASC, `terminal_id` ASC, `var_id` ASC LIMIT ${limit}
+    </update>
+
+</mapper>

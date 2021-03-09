@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.styx.data.mapper.TerminalDataMapper">
+
+    <select id="findTerminalData" resultType="com.styx.data.service.dto.DataRecord">
+        SELECT t.terminal_id AS terminalId, t.is_online AS isOnline, t.work_status AS workStatus, t.create_time AS
+        createTime, GROUP_CONCAT(t.vals) AS `values`
+        FROM (
+        SELECT a.*, CONCAT(b.var_id,':', b.value) AS vals FROM terminal_data a
+        LEFT JOIN terminal_data_detail b ON a.id = b.data_id
+        WHERE a.day &lt;= #{endDay} AND a.day &gt;= #{startDay} AND a.terminal_id = #{terminalId} AND b.var_id IN
+        <foreach collection="vids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>) t GROUP BY t.id
+    </select>
+
+
+    <delete id="deleteTestData">
+        DELETE t1,t2 FROM terminal_data t1 LEFT JOIN terminal_data_detail t2 ON t2.data_id = t1.id
+        WHERE t1.is_test = TRUE AND t1.terminal_id IN
+        <foreach collection="terminalIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+
+    <select id="findTerminalData4Upload" resultType="com.styx.data.service.dto.Data4Upload">
+        SELECT t3.id, t3.terminal_id AS terminalId, t3.is_online AS isOnline, t3.work_status AS workStatus, t3.create_time AS createTime, t3.day, t3.hour, GROUP_CONCAT(t3.vals) AS `values` FROM(
+        SELECT t1.*, CONCAT(t2.var_id, ':', t2.value) AS vals FROM(
+        SELECT * FROM terminal_data a WHERE a.id > #{index} AND a.is_test = 0 ORDER BY a.id ASC LIMIT ${limit}) t1 LEFT JOIN terminal_data_detail t2 ON t1.id = t2.data_id) t3
+        GROUP BY t3.id
+    </select>
+
+    <insert id="insertUploadDataBatch" parameterType="java.util.List">
+        INSERT INTO terminal_data VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (null,#{item.terminalId},#{item.isOnline},#{item.workStatus},#{item.createTime},#{item.day},#{item.hour},0,0)
+        </foreach>
+    </insert>
+</mapper>

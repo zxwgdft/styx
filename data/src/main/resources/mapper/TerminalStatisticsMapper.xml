@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.styx.data.mapper.TerminalStatisticsMapper">
+
+    <select id="getVariablePassNum" resultType="com.styx.data.service.vo.VariablePassStatus">
+        SELECT COUNT(1) AS totalNum, SUM(CASE WHEN c.value &lt;= #{max} AND c.value &gt;= #{min} THEN 1 ELSE 0 END) AS passNum
+        FROM (SELECT * FROM terminal_data a WHERE a.terminal_id = #{terminalId} AND a.is_online = 1 AND a.day &gt;= #{startDay} AND a.day &lt;= #{endDay}) b
+        INNER JOIN terminal_data_detail c ON c.data_id = b.id AND c.var_id = #{variableId}
+    </select>
+
+</mapper>

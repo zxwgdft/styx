@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>styx</groupId>
+    <artifactId>styx</artifactId>
+    <version>1.0</version>
+    <modules>
+        <module>common</module>
+        <module>gateway</module>
+        <module>support</module>
+        <module>terminal</module>
+        <module>data</module>
+    </modules>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.3.9.RELEASE</version>
+        <relativePath/>
+    </parent>
+
+    <dependencyManagement>
+        <!-- Add typical dependencies for a web application -->
+        <dependencies>
+
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Hoxton.SR10</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+                <version>2.2.5.RELEASE</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.18.18</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-boot-starter</artifactId>
+                <version>3.0.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>swagger-bootstrap-ui</artifactId>
+                <version>1.9.6</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus</artifactId>
+                <version>3.4.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>3.5.6</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>4.1.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>4.1.2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.zxing</groupId>
+                <artifactId>core</artifactId>
+                <version>3.4.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.zxing</groupId>
+                <artifactId>javase</artifactId>
+                <version>3.4.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.belerweb</groupId>
+                <artifactId>pinyin4j</artifactId>
+                <version>2.5.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>3.4.1</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.23</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>4.0.1</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.auth0</groupId>
+                <artifactId>java-jwt</artifactId>
+                <version>3.10.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>0.9.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.coobird</groupId>
+                <artifactId>thumbnailator</artifactId>
+                <version>0.4.13</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-net</groupId>
+                <artifactId>commons-net</artifactId>
+                <version>3.7.2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>4.9.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-all</artifactId>
+                <version>4.1.59.Final</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.googlecode.aviator</groupId>
+                <artifactId>aviator</artifactId>
+                <version>5.1.4</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <spring.profiles.active>test</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>pro</id>
+            <properties>
+                <spring.profiles.active>pro</spring.profiles.active>
+            </properties>
+        </profile>
+    </profiles>
+
+    <!-- Package as an executable jar -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.7</version>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+        </repository>
+    </repositories>
+
+</project>
