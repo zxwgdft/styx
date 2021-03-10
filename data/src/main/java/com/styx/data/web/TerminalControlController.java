@@ -1,10 +1,10 @@
 package com.styx.data.web;
 
+import com.styx.common.api.R;
+import com.styx.common.utils.StringUtil;
 import com.styx.data.core.terminal.TerminalManager;
 import com.styx.data.service.TerminalDataService;
 import com.styx.data.service.dto.MoveTerminalInfo;
-import com.paladin.framework.common.R;
-import com.paladin.framework.utils.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

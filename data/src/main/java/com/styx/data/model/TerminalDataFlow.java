@@ -1,5 +1,6 @@
 package com.styx.data.model;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import lombok.Setter;
 @Setter
 public class TerminalDataFlow {
 
+    @TableId
     private Integer terminalId;
     private Float flowValue;
 

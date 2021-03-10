@@ -1,11 +1,11 @@
 package com.styx.data.model;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.Id;
+import org.springframework.data.annotation.Id;
 
 /**
  * @author TontoZhou

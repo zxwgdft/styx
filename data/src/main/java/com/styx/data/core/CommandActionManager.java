@@ -1,10 +1,11 @@
 package com.styx.data.core;
 
+import com.styx.common.spring.SpringBeanHelper;
 import com.styx.data.core.terminal.Terminal;
-import com.paladin.framework.spring.SpringBeanHelper;
-import com.paladin.framework.spring.SpringContainer;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -17,14 +18,15 @@ import java.util.Map;
  */
 @Slf4j
 @Component
-public class CommandActionManager implements SpringContainer {
+public class CommandActionManager implements ApplicationRunner {
 
     private Map<Integer, CommandAction> commandActionMap = new HashMap<>();
 
-    public boolean initialize() {
+
+    @Override
+    public void run(ApplicationArguments args) {
         // Spring 方式读取所有注入的CommandAction
         Map<String, CommandAction> classMap = SpringBeanHelper.getBeansByType(CommandAction.class);
-
         Map<Integer, CommandAction> commandActionMap = new HashMap<>();
 
         for (Map.Entry<String, CommandAction> entry : classMap.entrySet()) {
@@ -33,7 +35,6 @@ public class CommandActionManager implements SpringContainer {
         }
 
         this.commandActionMap = Collections.unmodifiableMap(commandActionMap);
-        return true;
     }
 
 
@@ -53,5 +54,6 @@ public class CommandActionManager implements SpringContainer {
         }
         return null;
     }
+
 
 }

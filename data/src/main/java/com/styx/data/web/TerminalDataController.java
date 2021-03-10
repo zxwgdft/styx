@@ -1,5 +1,6 @@
 package com.styx.data.web;
 
+import com.styx.common.api.R;
 import com.styx.data.core.terminal.Terminal;
 import com.styx.data.core.terminal.TerminalManager;
 import com.styx.data.service.TerminalDataService;
@@ -9,7 +10,6 @@ import com.styx.data.web.dto.TerminalDataQuery;
 import com.styx.data.web.vo.TerminalAlarms;
 import com.styx.data.web.vo.TerminalRealtime;
 import com.styx.data.web.vo.TerminalSimpleRealtime;
-import com.paladin.framework.common.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,9 +1,6 @@
 package com.styx.data.config;
 
-import com.paladin.framework.service.DataContainerManager;
-import com.paladin.framework.service.ServiceSupportManager;
-import com.paladin.framework.spring.SpringBeanHelper;
-import com.paladin.framework.spring.SpringContainerManager;
+import com.styx.common.spring.SpringBeanHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -41,30 +38,6 @@ public class DataConfiguration {
     @Bean
     public SpringBeanHelper springBeanHolder() {
         return new SpringBeanHelper();
-    }
-
-    /**
-     * spring container 管理器（用于spring加载完毕后运行的对象）
-     */
-    @Bean
-    public SpringContainerManager springContainerManager() {
-        return new SpringContainerManager();
-    }
-
-    /**
-     * 数据容器管理器
-     */
-    @Bean
-    public DataContainerManager getDataContainerManager() {
-        return new DataContainerManager();
-    }
-
-    /**
-     * service支持管理器
-     */
-    @Bean
-    public ServiceSupportManager getServiceSupportContainer() {
-        return new ServiceSupportManager();
     }
 
 }

@@ -7,7 +7,7 @@ server:
 
 spring:
   application:
-    name: msms-data-default
+    name: styx-data-default
   servlet:
     multipart:
       max-file-size: 10MB
@@ -41,7 +41,7 @@ spring:
 
 ribbon:
   ReadTimeout: 10000
-  ConnectTimeout: 3000
+  ConnectTimeout: 5000
 
 
 netty:
@@ -51,8 +51,6 @@ netty:
 
 
 data:
-  # 节点名称应该与application.name一致，从而让monitor服务能够正确找到对应节点服务
-  node-name: default
   config:
     # 终端定时更新配置间隔（秒）
     sync-interval: 5
@@ -61,13 +59,13 @@ data:
   analysis:
     day:
       # 月报每日统计数据每次上传最大记录数
-      upload-max: 2000
+      upload-max: 5000
     hour:
       # 日报每小时统计数据每次上传最大记录数
-      upload-max: 2000
+      upload-max: 5000
   upload:
     # 上传父节点数据量每小时最多
-    per-max: 2000
+    per-max: 5000
     # 上传父节点数据间隔
     interval: 10
   protocol:

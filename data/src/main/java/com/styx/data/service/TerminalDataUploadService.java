@@ -1,12 +1,13 @@
 package com.styx.data.service;
 
+import com.styx.common.api.R;
+import com.styx.common.config.GlobalUtils;
 import com.styx.data.core.terminal.TerminalManager;
 import com.styx.data.mapper.SysMapMapper;
 import com.styx.data.mapper.TerminalAlarmHistoryMapper;
 import com.styx.data.mapper.TerminalDataMapper;
 import com.styx.data.model.TerminalAlarmHistory;
 import com.styx.data.service.dto.Data4Upload;
-import com.paladin.framework.common.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -86,7 +87,7 @@ public class TerminalDataUploadService implements ApplicationRunner, Runnable {
                     int size = dataList.size();
                     if (size > 0) {
                         try {
-                            String url = "http://msms-data-" + parentNodeCode + "/terminal/data/upload";
+                            String url = GlobalUtils.getDataServiceURI(parentNodeCode, "/terminal/data/upload");
                             HttpHeaders headers = new HttpHeaders();
                             headers.setContentType(MediaType.APPLICATION_JSON);
                             HttpEntity<List<Data4Upload>> entity = new HttpEntity<>(dataList, headers);

@@ -2,6 +2,7 @@ package com.styx.data;
 
 import com.styx.data.core.NettyMessageServer;
 import lombok.extern.slf4j.Slf4j;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
@@ -17,6 +18,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableDiscoveryClient
 @EnableFeignClients
 @EnableScheduling
+@MapperScan("com.styx.data.mapper")
 public class DataApplication implements CommandLineRunner {
 
     public static void main(String[] args) {

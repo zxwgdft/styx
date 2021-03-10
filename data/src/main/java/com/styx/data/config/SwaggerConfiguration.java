@@ -1,8 +1,7 @@
 package com.styx.data.config;
 
-import com.paladin.framework.spring.DevelopCondition;
-import com.paladin.framework.spring.NotProduceCondition;
-import com.paladin.framework.swagger.CommonDocketFactory;
+import com.styx.common.spring.NotProduceCondition;
+import com.styx.common.swagger.CommonDocketFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;

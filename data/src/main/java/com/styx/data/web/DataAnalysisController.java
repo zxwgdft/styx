@@ -1,5 +1,6 @@
 package com.styx.data.web;
 
+import com.styx.common.exception.BusinessException;
 import com.styx.data.core.terminal.Terminal;
 import com.styx.data.core.terminal.TerminalManager;
 import com.styx.data.service.DataAnalysisService;
@@ -8,7 +9,6 @@ import com.styx.data.web.dto.VariablePassStatusQuery;
 import com.styx.data.web.vo.PackageData4Manager;
 import com.styx.data.web.vo.PackageData4Terminal;
 import com.styx.data.web.vo.TerminalAlarms;
-import com.paladin.framework.exception.BusinessException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

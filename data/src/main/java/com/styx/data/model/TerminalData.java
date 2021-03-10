@@ -1,11 +1,10 @@
 package com.styx.data.model;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.util.Date;
 
 /**
@@ -16,8 +15,7 @@ import java.util.Date;
 @Setter
 public class TerminalData {
 
-    @Id
-    @GeneratedValue(generator = "JDBC", strategy = GenerationType.IDENTITY)
+    @TableId(type = IdType.AUTO)
     private Long id;
     // 终端ID
     private Integer terminalId;

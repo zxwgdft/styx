@@ -1,10 +1,10 @@
 package com.styx.data.core.terminal;
 
+import com.styx.common.config.GlobalConstants;
+import com.styx.common.exception.SystemException;
+import com.styx.common.exception.SystemExceptionCode;
 import com.styx.data.service.InternalMonitorService;
 import com.styx.data.service.TerminalDataService;
-import com.paladin.data.service.dto.*;
-import com.paladin.framework.exception.SystemException;
-import com.paladin.framework.exception.SystemExceptionCode;
 import com.styx.data.service.dto.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -299,10 +299,10 @@ public class TerminalManager implements ApplicationRunner, Runnable {
     public void run(ApplicationArguments args) throws Exception {
         // 读取节点名称
         String appName = environment.getProperty("spring.application.name");
-        if (!appName.startsWith("msms-data-")) {
-            throw new SystemException(SystemExceptionCode.CODE_ERROR_CONFIG, "spring.application.name必须以msms-data-开头");
+        if (!appName.startsWith(GlobalConstants.DATA_SERVICE_PREFIX)) {
+            throw new SystemException(SystemExceptionCode.CODE_ERROR_CONFIG, String.format("#spring.application.name must start with %s", GlobalConstants.DATA_SERVICE_PREFIX));
         }
-        this.nodeName = appName.substring(10);
+        this.nodeName = appName.substring(GlobalConstants.DATA_SERVICE_PREFIX.length());
 
         loadConfig();
 

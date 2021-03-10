@@ -1,10 +1,9 @@
 package com.styx.data.service;
 
-import com.paladin.data.mapper.*;
-import com.paladin.data.model.*;
-import com.paladin.framework.utils.StringUtil;
 import com.styx.common.api.R;
+import com.styx.common.config.GlobalUtils;
 import com.styx.common.exception.BusinessException;
+import com.styx.common.utils.StringUtil;
 import com.styx.common.utils.TimeUtil;
 import com.styx.data.core.Constants;
 import com.styx.data.core.terminal.Terminal;
@@ -215,7 +214,7 @@ public class TerminalDataService implements TerminalAlarmHandler, TerminalDataIn
 
     @Override
     public TerminalInfo getTerminalInfo(int id) {
-        return terminalInfoMapper.selectByPrimaryKey(id);
+        return terminalInfoMapper.selectById(id);
     }
 
     /**
@@ -295,7 +294,7 @@ public class TerminalDataService implements TerminalAlarmHandler, TerminalDataIn
 
         for (int terminalId : terminalIds) {
             List<TerminalAlarm> alarms = terminalAlarmMapper.getAlarmIdOfTerminal(terminalId);
-            TerminalInfo info = terminalInfoMapper.selectByPrimaryKey(terminalId);
+            TerminalInfo info = terminalInfoMapper.selectById(terminalId);
 
             if ((alarms == null || alarms.size() == 0) && info == null) {
                 continue;
@@ -307,7 +306,7 @@ public class TerminalDataService implements TerminalAlarmHandler, TerminalDataIn
         if (data.size() == 0) return;
 
         try {
-            String url = "http://msms-data-" + targetNode + "/terminal/control/come";
+            String url = GlobalUtils.getDataServiceURI(targetNode, "/terminal/control/come");
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<List<MoveTerminalInfo>> entity = new HttpEntity<>(data, headers);
@@ -324,7 +323,7 @@ public class TerminalDataService implements TerminalAlarmHandler, TerminalDataIn
             int terminalId = item.getTerminalId();
             // 删除终端所有报警和信息
             terminalAlarmMapper.deleteAlarmByTerminal(terminalId);
-            terminalInfoMapper.deleteByPrimaryKey(terminalId);
+            terminalInfoMapper.selectById(terminalId);
 
             List<TerminalAlarm> terminalAlarms = item.getTerminalAlarms();
             if (terminalAlarms != null) {
