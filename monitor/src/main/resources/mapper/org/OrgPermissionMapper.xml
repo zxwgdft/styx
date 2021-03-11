@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paladin.monitor.mapper.org.OrgPermissionMapper">
+    <select id="getOrgPermission" resultType="com.paladin.monitor.web.org.vo.OrgPermissionVO">
+        select op.id,
+               op.name,
+               op.url,
+               op.code,
+               op.is_menu    as isMenu,
+               op.menu_icon  as menuIcon,
+               op.description,
+               op.parent_id  as parentId,
+               op2.name      as parentName,
+               op.list_order as listOrder,
+               op.is_admin   as isAdmin,
+               op.grantable
+        from org_permission op
+        left join org_permission op2 on op2.id = op.parent_id
+        where op.deleted = 0
+        order by op.create_time desc
+    </select>
+</mapper>

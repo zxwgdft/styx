@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paladin.monitor.mapper.data.DataAnalysisHourMapper">
+
+    <insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO data_analysis_hour VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.day},#{item.hour},#{item.terminalId},#{item.varId},#{item.maxValue},#{item.minValue},#{item.avgValue})
+        </foreach>
+    </insert>
+
+
+    <insert id="insert" parameterType="com.paladin.monitor.model.data.DataAnalysisHour">
+        INSERT INTO data_analysis_hour VALUES (#{day},#{hour},#{terminalId},#{varId},#{maxValue},#{minValue},#{avgValue})
+    </insert>
+
+    <select id="analyze4city" resultType="com.paladin.monitor.service.data.vo.DataHour">
+        SELECT a.district_code AS `code`, c.hour, MAX(c.max_value) AS `maxValue`, MIN(c.min_value) AS `minValue`
+        FROM station a
+        LEFT JOIN station_device b ON a.id = b.station_id
+        LEFT JOIN data_analysis_hour c ON c.terminal_id = b.id
+        WHERE a.deleted = 0 AND a.city_code = #{cityCode}
+        AND b.deleted = 0 AND c.var_id = #{variableId} AND c.day = #{day}
+        GROUP BY a.district_code, c.hour ORDER BY `code` ASC, `hour` ASC
+    </select>
+
+    <select id="analyze4district" resultType="com.paladin.monitor.service.data.vo.DataHour">
+        SELECT b.id  AS `code`, c.hour, MAX(c.max_value) AS `maxValue`, MIN(c.min_value) AS `minValue`
+        FROM station a
+        LEFT JOIN station_device b ON a.id = b.station_id
+        LEFT JOIN data_analysis_hour c ON c.terminal_id = b.id
+        WHERE a.deleted = 0 AND a.district_code = #{districtCode}
+        AND b.deleted = 0 AND c.var_id = #{variableId} AND c.day = #{day}
+        GROUP BY b.id, c.hour ORDER BY `code` ASC, `hour` ASC
+    </select>
+
+
+    <select id="analyze4station" resultType="com.paladin.monitor.service.data.vo.DataHour">
+        SELECT b.id  AS `code`, c.hour, MAX(c.max_value) AS `maxValue`, MIN(c.min_value) AS `minValue`
+        FROM station a
+        LEFT JOIN station_device b ON a.id = b.station_id
+        LEFT JOIN data_analysis_hour c ON c.terminal_id = b.id
+        WHERE a.deleted = 0 AND a.id = #{stationId}
+        AND b.deleted = 0 AND c.var_id = #{variableId} AND c.day = #{day}
+        GROUP BY b.id, c.hour ORDER BY `code` ASC, `hour` ASC
+    </select>
+
+
+    <select id="analyze4terminal" resultType="com.paladin.monitor.service.data.vo.DataHour">
+        SELECT var_id  AS `code`, `hour`, max_value AS `maxValue`, min_value AS `minValue`, avg_value AS avgValue
+        FROM data_analysis_hour a
+        WHERE terminal_id = #{terminalId} AND `day` = #{day} AND var_id IN
+        <foreach collection="varIds" item="item" index="index" open="(" separator="," close=")">#{item}</foreach>
+        GROUP BY var_id, `hour` ORDER BY `code` ASC, `hour` ASC
+    </select>
+
+</mapper>

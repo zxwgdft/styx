@@ -12,4 +12,6 @@ public interface GlobalConstants {
 
     String DATA_SERVICE_PREFIX = "styx-data-";
 
+    String WEB_SESSION_PREFIX = "SESSION_ID_";
+
 }

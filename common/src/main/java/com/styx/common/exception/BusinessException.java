@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
  */
 public class BusinessException extends RuntimeException {
 
-    private HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+    private HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
     private Object data;
 
     public BusinessException(String message) {

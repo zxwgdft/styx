@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paladin.monitor.mapper.sys.SysConstantMapper">
+
+    <select id="queryEntityByTypeAndCode" resultType="com.paladin.monitor.model.sys.SysConstant">
+        SELECT t.type,t.code,t.name,t.description,
+            t.order_no orderNo
+        FROM sys_constant t
+        where t.type = #{type,jdbcType=VARCHAR}
+        and t.code = #{code, jdbcType=VARCHAR}
+    </select>
+
+
+    <select id="findByTypeArr" resultType="com.paladin.monitor.model.sys.SysConstant">
+        SELECT t.type,t.code,t.name,t.description,
+            t.order_no orderNo
+        FROM sys_constant t
+        where t.type in
+        <foreach collection="typeList" item="type" index="index" open="(" close=")" separator=",">
+            #{type}
+        </foreach>
+        ORDER BY t.type,t.order_no
+    </select>
+
+
+</mapper>

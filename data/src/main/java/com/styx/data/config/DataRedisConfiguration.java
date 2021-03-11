@@ -18,7 +18,6 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
  * @since 2018年3月15日
  */
 @Slf4j
-
 @Configuration
 @EnableConfigurationProperties(RedisProperties.class)
 public class DataRedisConfiguration extends CachingConfigurerSupport {

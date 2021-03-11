@@ -1,0 +1,114 @@
+logging:
+  file:
+    path: logs
+    max-history: 30
+
+server:
+  port: 19021
+
+spring:
+  application:
+    name: msms-monitor
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
+  cloud:
+    nacos:
+      server-addr: 172.16.100.224:8848
+  datasource:
+    name: msms
+    url: jdbc:mysql://172.16.100.126:3306/msms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+    username: monitor
+    password: Oo9pgr?2019monitor
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      auto-commit: true
+      connection-test-query: SELECT 1
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      maximum-pool-size: 15
+      minimum-idle: 15
+  redis:
+    host: 172.16.100.224
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: 5000
+        min-idle: 0
+    password: ''
+    port: 6379
+    timeout: 1000
+
+
+ribbon:
+  ReadTimeout: 5000
+  ConnectTimeout: 5000
+
+
+paladin:
+
+  data:
+    version:
+      # 开启分布式下数据容器版本功能
+      enable: true
+      # 版本检测间隔（秒）
+      interval: 3
+
+
+monitor:
+  verify:
+    enabled: true
+  shiro:
+    login-url: /monitor/login
+    session-time: 60
+    update-session-interval: 10
+  # 默认固定密码
+  default-password: 1
+  # 启用随机默认密码生成（优先级高于默认固定密码）
+  default-password-random: true
+  config:
+    # 配置检查间隔，生产中应该尽量短
+    check-version-interval: 2
+    # 维护最大时长（小时）
+    max-maintain-hours: 48
+    # 认证重定向url
+    auth-redirect-url: http://180.100.215.133:19020/static/app/index.html#/loading
+    # 固定token免密登录用
+    no-secret-tokens:
+      - token: oY7RxQCd84AuJI_NhJImjQ
+        account: szswjs
+        password: szswjs
+      - token: G3rDx1p-sLTRNibPiJQNbQ
+        account: szgxqwjs
+        password: szgxqwjs
+      - token: PfZHVqhduISoeOq1RrM7gQ
+        account: njjnqwjs
+        password: njjnqwjs
+  template:
+    alarm-trigger: 【江苏菲捷斯】时间：{time}，位置：{station}，报警信息：{alarm}
+    alarm-closed: 【江苏菲捷斯】{station}在时间{time}{alarm}已经处理完毕
+  terminal:
+    analysis:
+      # 大屏排行榜大小
+      ranking-size: 5
+      # 大屏历史趋势图表展示天数
+      show-day-size: 7
+      # 导出站点月报数据的变量
+      day-report-variable:
+        - id: 30
+          name: PH日均值
+        - id: 31
+          name: 氯日均值（mg/L）
+        - id: 35
+          name: 日累计流量（m³）
+          # 是否累计流量，累计流量特殊处理
+          flow: true
+    data:
+      history:
+        # 终端历史数据默认查询时间跨度（多少天内数据）
+        default-time-span: 10
+        # 终端历史数据最大查询时间跨度（最多多少天的数据）
+        max-time-span: 31

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paladin.monitor.mapper.sys.DepartmentMapper">
+
+    <select id="getDepartment" resultType="com.paladin.monitor.service.sys.vo.DepartmentVO">
+        SELECT d.id,d.name,d.sort,d.pid,d2.name AS parentName,d.state
+        FROM operation_department d
+        LEFT JOIN operation_department d2 ON d.pid = d2.id
+        <where>
+            <if test="name != null and name != ''">
+                d.name = #{name}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateDepartment">
+        UPDATE operation_department SET
+        update_time = #{department.updateTime},
+        update_by = #{department.updateBy},
+        deleted = #{department.deleted},
+        name = #{department.name},
+        sort = #{department.sort},
+        pid = #{department.pid},
+        state = #{department.state}
+        WHERE id = #{department.id}
+    </update>
+</mapper>

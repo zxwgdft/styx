@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paladin.monitor.mapper.config.AlarmHistoryMapper">
+    <select id="getAlarmHistory" resultType="com.paladin.monitor.service.config.vo.AlarmHistoryVO">
+        SELECT ah.id,
+        ah.start_time AS startTime,
+        ah.end_time AS endTime,
+        ah.closed,
+        ah.processing_method AS processingMethod,
+        ah.description,
+        ah.solved,
+        ah.photo,
+        ah.handle_name AS handleName,
+        ah.is_examine AS isExamine,
+        ah.rejection,
+        sd.name AS terminalName,
+        st.name AS stationName,
+        a.`type` AS alarmIdType
+        FROM alarm_history ah
+        LEFT JOIN station_device sd ON ah.terminal_id = sd.id
+        LEFT JOIN station st ON st.id = sd.station_id
+        LEFT JOIN alarm a ON ah.alarm_id = a.id
+        <where>
+            <if test="stationId != null and stationId != ''">
+                sd.station_id = #{stationId}
+            </if>
+            <if test="stationDeviceId != null and stationDeviceId != ''">
+                AND sd.id = #{stationDeviceId}
+            </if>
+            <if test="isSolved == true">
+                 AND ah.solved = true
+            </if>
+            <if test="isSolved == false">
+                 AND ah.solved = false or ah.solved is null
+            </if>
+
+            AND st.is_test = 0
+            <if test="permission!=null">
+                AND
+                <trim prefix="(" suffix=")" prefixOverrides="OR">
+                    <if test="permission.provinceCode!=null">
+                        OR st.province_code = #{permission.provinceCode}
+                    </if>
+                    <if test="permission.provinceCodes!=null">
+                        OR st.province_code in
+                        <foreach collection="permission.provinceCodes" index="index" item="item" open="(" separator=","
+                                 close=")">
+                            #{item}
+                        </foreach>
+                    </if>
+                    <if test="permission.cityCode!=null">
+                        OR st.city_code = #{permission.cityCode}
+                    </if>
+                    <if test="permission.cityCodes!=null">
+                        OR st.city_code in
+                        <foreach collection="permission.cityCodes" index="index" item="item" open="(" separator=","
+                                 close=")">
+                            #{item}
+                        </foreach>
+                    </if>
+                    <if test="permission.districtCode!=null">
+                        OR st.district_code = #{permission.districtCode}
+                    </if>
+                    <if test="permission.districtCodes!=null">
+                        OR st.district_code in
+                        <foreach collection="permission.districtCodes" index="index" item="item" open="(" separator=","
+                                 close=")">
+                            #{item}
+                        </foreach>
+                    </if>
+                    <if test="permission.stationId!=null">
+                        OR st.id = #{permission.stationId}
+                    </if>
+                    <if test="permission.stationIds!=null">
+                        OR st.id in
+                        <foreach collection="permission.stationIds" index="index" item="item" open="(" separator=","
+                                 close=")">
+                            #{item}
+                        </foreach>
+                    </if>
+                </trim>
+            </if>
+        </where>
+        order by ah.create_time desc
+    </select>
+
+    <select id="getNoticeCellphone" resultType="string">
+        SELECT DISTINCT(a.cellphone) FROM org_user a WHERE a.cellphone IS NOT NULL AND a.agency IN
+        <foreach collection="agency" item="item" index="index" open="(" separator="," close=")">#{item}</foreach>
+        AND (a.`type` &gt; 3
+        <if test="station != null and station != ''">
+            OR (a.`type` = 2 AND FIND_IN_SET(#{station}, a.station_id))
+        </if>
+        <if test="district != null and district != ''">
+            OR (a.`type` = 3 AND (FIND_IN_SET(#{district}, a.district_code) OR FIND_IN_SET(#{city}, a.district_code) OR
+            FIND_IN_SET(#{province}, a.district_code)))
+        </if>
+        )
+    </select>
+
+    <!--报警统计：站点下各个类型次数-->
+    <resultMap id="stationAlarm" type="com.paladin.monitor.service.operation.vo.StatisticVO">
+        <result column="name" property="name"/>
+        <collection property="alarmTypes" javaType="list"
+                    ofType="com.paladin.monitor.service.operation.vo.StatisticVO$Detail">
+            <result column="alarmTypeName" property="alarmTypeName" javaType="string"/>
+            <result column="value" property="value"/>
+        </collection>
+    </resultMap>
+    <select id="getAlarmByType" resultMap="stationAlarm">
+        select s.name as name,a.`type` as alarmTypeName, count(ah.id) as value
+        from alarm_history ah
+        left join alarm a on ah.alarm_id = a.id
+        left join station_device sd on sd.id = ah.terminal_id
+        left join station s on s.id = sd.station_id
+        <where>
+            <if test="list != null and list.size > 0">
+                s.id in
+                <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="startTime != null and startTime != ''">
+                and ah.create_time &gt;= #{startTime,jdbcType=DATE}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and ah.create_time &lt; #{endTime,jdbcType=DATE}
+            </if>
+        </where>
+        group by ah.terminal_id,ah.alarm_id
+    </select>
+
+    <!-- 移动端-终端报警次数统计-->
+    <select id="getStationDevice" resultMap="stationAlarm">
+        select sd.name as name,a.`type` as alarmTypeName, count(ah.id) as value
+        from alarm_history ah
+        left join alarm a on ah.alarm_id = a.id
+        left join station_device sd on sd.id = ah.terminal_id
+        <where>
+            <if test="stationDeviceId != null and stationDeviceId != ''">
+                ah.terminal_id = #{stationDeviceId}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                and ah.create_time &gt;= #{startTime,jdbcType=DATE}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and ah.create_time &lt; #{endTime,jdbcType=DATE}
+            </if>
+        </where>
+        group by ah.terminal_id,ah.alarm_id
+    </select>
+</mapper>
