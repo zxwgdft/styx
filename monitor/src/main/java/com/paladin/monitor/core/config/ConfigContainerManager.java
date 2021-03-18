@@ -3,9 +3,12 @@ package com.paladin.monitor.core.config;
 import com.paladin.framework.spring.SpringBeanHelper;
 import com.paladin.framework.spring.SpringContainer;
 import com.paladin.monitor.mapper.sys.SysVersionMapper;
+import com.styx.common.spring.SpringBeanHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -22,7 +25,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Component
-public class ConfigContainerManager implements SpringContainer, Runnable {
+public class ConfigContainerManager implements ApplicationRunner, Runnable {
 
     @Value("${monitor.config.check-version-interval:2}")
     private int checkVersionInterval;
@@ -32,7 +35,7 @@ public class ConfigContainerManager implements SpringContainer, Runnable {
 
     private Map<String, ConfigContainer> containerMap;
 
-    public boolean afterInitialize() {
+    public void run(ApplicationArguments args) throws Exception {
         Map<String, ConfigContainer> configContainerMap = SpringBeanHelper.getBeansByType(ConfigContainer.class);
 
         Map<String, ConfigContainer> containerMap = new HashMap<>();
@@ -62,7 +65,6 @@ public class ConfigContainerManager implements SpringContainer, Runnable {
 
         log.debug("开启配置容器版本检测线程");
 
-        return true;
     }
 
 

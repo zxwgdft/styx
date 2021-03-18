@@ -1,14 +1,14 @@
 package com.paladin.monitor.web.org;
 
-import com.paladin.framework.common.R;
-import com.paladin.framework.service.PageResult;
-import com.paladin.framework.spring.web.ControllerSupport;
 import com.paladin.monitor.core.log.OperationLog;
 import com.paladin.monitor.core.security.NeedPermission;
+import com.paladin.monitor.model.org.OrgUser;
 import com.paladin.monitor.service.org.OrgUserService;
 import com.paladin.monitor.service.org.dto.OrgUserDTO;
 import com.paladin.monitor.service.org.dto.OrgUserQuery;
-import com.paladin.monitor.service.org.vo.OrgUserVO;
+import com.styx.common.api.R;
+import com.styx.common.service.PageResult;
+import com.styx.common.spring.web.ControllerSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +28,14 @@ public class OrgUserController extends ControllerSupport {
 
     @ApiOperation("用户列表查询")
     @PostMapping("/find/page")
-    public PageResult<OrgUserVO> findPage(@RequestBody OrgUserQuery query) {
-        return orgUserService.searchPage(query, OrgUserVO.class);
+    public PageResult<OrgUser> findPage(@RequestBody OrgUserQuery query) {
+        return orgUserService.findPage(query);
     }
 
     @ApiOperation("用户详情")
     @GetMapping("/get")
-    public OrgUserVO getDetail(@RequestParam String userId) {
-        return orgUserService.get(userId, OrgUserVO.class);
+    public OrgUser getDetail(@RequestParam String userId) {
+        return orgUserService.get(userId);
     }
 
     @ApiOperation("添加用户")
@@ -43,9 +43,7 @@ public class OrgUserController extends ControllerSupport {
     @NeedPermission("sys:user:add")
     @OperationLog(model = "用户管理", operate = "新增用户")
     public String save(@Valid @RequestBody OrgUserDTO save, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            validErrorHandler(bindingResult);
-        }
+        validErrorHandler(bindingResult);
         String password = orgUserService.saveUser(save);
         return password;
     }
@@ -55,9 +53,7 @@ public class OrgUserController extends ControllerSupport {
     @NeedPermission("sys:user:edit")
     @OperationLog(model = "用户管理", operate = "更新用户")
     public R update(@Valid @RequestBody OrgUserDTO update, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return validErrorHandler(bindingResult);
-        }
+        validErrorHandler(bindingResult);
         orgUserService.updateUser(update);
         return R.success();
     }
@@ -75,7 +71,7 @@ public class OrgUserController extends ControllerSupport {
     @GetMapping("/reset")
     @NeedPermission("sys:user:password")
     public String resetPassword(@RequestParam String userId) {
-        String password =  orgUserService.reset(userId);
+        String password = orgUserService.reset(userId);
         return password;
     }
 

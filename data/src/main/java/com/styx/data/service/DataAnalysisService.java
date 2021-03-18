@@ -5,7 +5,6 @@ import com.styx.data.core.terminal.TerminalListener;
 import com.styx.data.core.terminal.TerminalManager;
 import com.styx.data.mapper.TerminalDataFlowMapper;
 import com.styx.data.mapper.TerminalDataMapper;
-import com.styx.data.mapper.TerminalStatisticsMapper;
 import com.styx.data.model.TerminalDataFlow;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class DataAnalysisService implements TerminalListener {
 
-
-    @Autowired
-    private TerminalStatisticsMapper terminalStatisticsMapper;
 
     @Autowired
     private TerminalDataFlowMapper terminalDataFlowMapper;

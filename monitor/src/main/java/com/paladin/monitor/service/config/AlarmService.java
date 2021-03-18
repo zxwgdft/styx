@@ -6,7 +6,7 @@ import com.paladin.monitor.core.config.ConfigContainerManager;
 import com.paladin.monitor.mapper.config.ConfigAlarmMapper;
 import com.paladin.monitor.model.config.ConfigAlarm;
 import com.paladin.monitor.service.config.dto.AlarmDTO;
-import com.paladin.monitor.service.variable.vo.VariableVO;
+import com.paladin.monitor.service.config.vo.VariableVO;
 import com.styx.common.exception.BusinessException;
 import com.styx.common.service.ServiceSupport;
 import com.styx.common.utils.convert.SimpleBeanCopyUtil;

@@ -3,7 +3,6 @@ package com.paladin.monitor.mapper.config;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.paladin.monitor.core.DataPermissionParam;
 import com.paladin.monitor.model.config.ConfigStation;
-import com.paladin.monitor.service.config.dto.StationPageQuery;
 import com.paladin.monitor.service.config.dto.StationQuery;
 import com.paladin.monitor.service.config.vo.SimpleStationVO;
 import com.paladin.monitor.service.config.vo.StationVO;
@@ -17,7 +16,7 @@ public interface ConfigStationMapper extends BaseMapper<ConfigStation> {
     @Update("UPDATE station SET enabled = #{enabled} WHERE id = #{id}")
     int updateStationEnabled(@Param("id") int id, @Param("enabled") boolean enabled);
 
-    List<StationVO> findStation(@Param("query") StationPageQuery query, @Param("permission") DataPermissionParam permission);
+    List<StationVO> findStation(@Param("query") StationQuery query, @Param("permission") DataPermissionParam permission);
 
     List<SimpleStationVO> findSimpleStation(@Param("query") StationQuery query, @Param("permission") DataPermissionParam permission);
 

@@ -3,6 +3,9 @@ package com.paladin.monitor.service.config.dto;
 import com.paladin.framework.service.OffsetPage;
 import com.paladin.framework.service.QueryCondition;
 import com.paladin.framework.service.QueryType;
+import com.styx.common.service.PageParam;
+import com.styx.common.service.QueryType;
+import com.styx.common.service.annotation.QueryCondition;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -11,7 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @ApiModel("站点终端设备查询")
-public class StationDeviceQuery extends OffsetPage {
+public class StationDeviceQuery extends PageParam {
 
     @ApiModelProperty("站点名称")
     @QueryCondition(type = QueryType.LIKE)

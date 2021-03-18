@@ -2,6 +2,7 @@ package com.paladin.monitor.model.org;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.styx.common.api.BaseModel;
+import com.styx.common.api.DeletedBaseModel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -11,10 +12,6 @@ import lombok.Setter;
 @Setter
 @ApiModel(description = "角色")
 public class OrgRole extends BaseModel {
-
-    public static final String COLUMN_FIELD_ROLE_LEVEL = "roleLevel";
-
-    public static final String COLUMN_FIELD_ENABLE = "enable";
 
     @TableId
     private String id;

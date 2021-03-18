@@ -3,6 +3,7 @@ package com.paladin.monitor.model.config;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.styx.common.api.BaseModel;
+import com.styx.common.api.DeletedBaseModel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @ApiModel(description = "站点信息")
-public class ConfigStation extends BaseModel {
+public class ConfigStation extends DeletedBaseModel {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
@@ -27,12 +28,6 @@ public class ConfigStation extends BaseModel {
     @ApiModelProperty("站点地址")
     private String address;
 
-    @ApiModelProperty("经度")
-    private String longitude;
-
-    @ApiModelProperty("纬度")
-    private String latitude;
-
     @ApiModelProperty("省")
     private Integer provinceCode;
 
@@ -45,17 +40,8 @@ public class ConfigStation extends BaseModel {
     @ApiModelProperty("节点服务器所属")
     private String serverNode;
 
-    @ApiModelProperty("机构等级")
-    private Integer agencyLevel;
-
     @ApiModelProperty("使用状态")
     private Boolean enabled;
-
-    @ApiModelProperty("是否第三方运维")
-    private Boolean isThird;
-
-    @ApiModelProperty("是否测试站点")
-    private Boolean isTest;
 
     @ApiModelProperty("排序号")
     private Integer orderNo;

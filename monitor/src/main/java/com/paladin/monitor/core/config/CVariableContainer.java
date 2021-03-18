@@ -1,7 +1,7 @@
 package com.paladin.monitor.core.config;
 
-import com.paladin.monitor.service.variable.VariableService;
-import com.paladin.monitor.service.variable.vo.VariableVO;
+import com.paladin.monitor.service.config.VariableService;
+import com.paladin.monitor.service.config.vo.VariableVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

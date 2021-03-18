@@ -2,21 +2,17 @@ package com.paladin.monitor.model.org;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.styx.common.api.BaseModel;
+import com.styx.common.api.DeletedBaseModel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * <p>功能描述</p>：
- *
- * @author Huangguochen
- * @create 2020/4/24 14:17
- */
+
 @Getter
 @Setter
 @ApiModel(description = "用户信息")
-public class OrgUser extends BaseModel {
+public class OrgUser extends DeletedBaseModel {
 
     public static final int USER_TYPE_APP_ADMIN = 9;
     public static final int USER_TYPE_DISTRICT = 3;

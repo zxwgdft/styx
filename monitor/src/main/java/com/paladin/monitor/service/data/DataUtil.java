@@ -1,6 +1,6 @@
 package com.paladin.monitor.service.data;
 
-import com.paladin.monitor.service.variable.vo.VariableVO;
+import com.paladin.monitor.service.config.vo.VariableVO;
 
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -1,6 +1,6 @@
 package com.paladin.monitor.service.data.dto;
 
-import com.paladin.monitor.service.variable.vo.VariableVO;
+import com.paladin.monitor.service.config.vo.VariableVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;

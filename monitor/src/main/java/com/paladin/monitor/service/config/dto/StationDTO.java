@@ -19,13 +19,13 @@ public class StationDTO {
     // 站点名称
     @ApiModelProperty("站点名称")
     @NotBlank(message = "站点名称不能为空")
-    @Length(max = 50, message = "站点名称长度不能大于50")
+    @Size(max = 50, message = "站点名称长度不能大于50")
     private String name;
 
     //站点地址
     @ApiModelProperty("站点地址")
     @NotBlank(message = "站点地址不能为空")
-    @Length(max = 100, message = "站点地址长度不能大于100")
+    @Size(max = 100, message = "站点地址长度不能大于100")
     private String address;
 
     //经度

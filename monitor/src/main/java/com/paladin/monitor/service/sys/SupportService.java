@@ -1,10 +1,9 @@
 package com.paladin.monitor.service.sys;
 
-import com.paladin.framework.common.R;
 import com.paladin.monitor.service.sys.dto.CommitOperate;
 import com.paladin.monitor.service.sys.dto.SendMessage;
 import com.paladin.monitor.service.sys.vo.FileResource;
-import jdk.nashorn.internal.objects.annotations.Getter;
+import com.styx.common.api.R;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

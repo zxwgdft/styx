@@ -2,6 +2,7 @@ package com.paladin.monitor.model.org;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.styx.common.api.BaseModel;
+import com.styx.common.api.DeletedBaseModel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -12,7 +13,9 @@ import lombok.Setter;
 @ApiModel(description = "权限")
 public class OrgPermission extends BaseModel {
 
-    public static final String FIELD_GRANTABLE = "grantable";
+    public final static int TYPE_MENU = 1;
+    public final static int TYPE_FUNCTION = 2;
+    public final static int TYPE_DATA = 3;
 
     @TableId
     private String id;

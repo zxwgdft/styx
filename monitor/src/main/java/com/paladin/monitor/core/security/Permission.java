@@ -1,7 +1,6 @@
 package com.paladin.monitor.core.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.paladin.framework.common.BaseModel;
 import com.paladin.monitor.model.org.OrgPermission;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -59,7 +58,7 @@ public class Permission extends WildcardPermission {
 
         this.id = source.getId();
         this.source = source;
-        this.isMenu = source.getIsMenu();
+        this.isMenu = source.getType() == OrgPermission.TYPE_MENU;
         this.isAdmin = source.getIsAdmin();
         this.grantable = source.getGrantable();
         this.children = new ArrayList<>();
@@ -71,7 +70,7 @@ public class Permission extends WildcardPermission {
     protected void init() {
 
         Collections.sort(children, (p1, p2) -> {
-            return p1.source.getListOrder() - p2.source.getListOrder();
+            return p1.source.getOrderNo() - p2.source.getOrderNo();
         });
 
         children = Collections.unmodifiableList(children);

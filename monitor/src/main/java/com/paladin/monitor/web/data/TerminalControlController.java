@@ -1,7 +1,7 @@
 package com.paladin.monitor.web.data;
 
-import com.paladin.framework.common.R;
 import com.paladin.monitor.service.data.TerminalControlService;
+import com.styx.common.api.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

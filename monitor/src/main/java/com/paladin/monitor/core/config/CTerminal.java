@@ -20,7 +20,6 @@ public class CTerminal {
     private int type;
     private String varIds;
     private String noAlarmIds;
-    private boolean isTest;
     private boolean enabled;
 
     // 方便搜索
@@ -32,9 +31,5 @@ public class CTerminal {
     private int cityCode;
     @JsonIgnore
     private int districtCode;
-    @JsonIgnore
-    private String longitude;
-    @JsonIgnore
-    private String latitude;
 
 }

@@ -2,10 +2,6 @@ package com.paladin.monitor.service.config;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.paladin.framework.common.R;
-import com.paladin.framework.exception.BusinessException;
-import com.paladin.framework.service.PageResult;
-import com.paladin.framework.utils.others.PinyinUtil;
 import com.paladin.monitor.core.DataPermissionParam;
 import com.paladin.monitor.core.DataPermissionUtil;
 import com.paladin.monitor.core.MonitorUserSession;
@@ -19,11 +15,12 @@ import com.paladin.monitor.model.config.ConfigStation;
 import com.paladin.monitor.model.config.ConfigTerminal;
 import com.paladin.monitor.service.config.dto.StationDTO;
 import com.paladin.monitor.service.config.dto.StationEditDTO;
-import com.paladin.monitor.service.config.dto.StationPageQuery;
 import com.paladin.monitor.service.config.dto.StationQuery;
 import com.paladin.monitor.service.config.vo.SimpleStationVO;
 import com.paladin.monitor.service.config.vo.StationVO;
+import com.styx.common.api.R;
 import com.styx.common.exception.BusinessException;
+import com.styx.common.service.PageResult;
 import com.styx.common.service.ServiceSupport;
 import com.styx.common.utils.convert.SimpleBeanCopyUtil;
 import com.styx.common.utils.others.PinyinUtil;
@@ -55,24 +52,12 @@ public class StationService extends ServiceSupport<ConfigStation> {
     @Autowired
     private ConfigContainerManager configContainerManager;
 
-    @Transactional
-    public void saveTestStation(StationDTO stationDTO) {
-        ConfigStation model = new ConfigStation();
-        SimpleBeanCopyUtil.simpleCopy(stationDTO, model);
-        model.setId(null);
-        model.setIsTest(true);
-        checkStation(model);
-
-        save(model);
-        configContainerManager.reloadContainer(ConfigContainer.CONTAINER_TERMINAL);
-    }
 
     @Transactional
     public void saveStation(StationDTO stationDTO) {
         ConfigStation model = new ConfigStation();
         SimpleBeanCopyUtil.simpleCopy(stationDTO, model);
         model.setId(null);
-        model.setIsTest(false);
         checkStation(model);
 
         save(model);
@@ -90,8 +75,6 @@ public class StationService extends ServiceSupport<ConfigStation> {
         if (
                 !model.getDistrictCode().equals(stationDTO.getDistrictCode())
                         || !model.getName().equals(stationDTO.getName())
-                        || !model.getLongitude().equals(stationDTO.getLongitude())
-                        || !model.getLatitude().equals(stationDTO.getLatitude())
                         || !model.getEnabled().equals(stationDTO.getEnabled())
         ) {
             // 判断是否关键字段修改，如果修改需要更新配置，不重要的字段修改不需要重新读取配置
@@ -149,7 +132,7 @@ public class StationService extends ServiceSupport<ConfigStation> {
         return terminalContainer.getEffectDistricts();
     }
 
-    public PageResult<StationVO> findStationPage(StationPageQuery query) {
+    public PageResult<StationVO> findStationPage(StationQuery query) {
         // 增加权限查询条件
         DataPermissionParam permissionParam = DataPermissionUtil.getUserDataPermission();
         if (permissionParam.isHasPermission()) {
@@ -161,7 +144,7 @@ public class StationService extends ServiceSupport<ConfigStation> {
             }
             return new PageResult<>(page, result);
         }
-        return getEmptyPageResult(query);
+        return PageResult.getEmptyPageResult(query.getLimit());
     }
 
 
@@ -256,20 +239,5 @@ public class StationService extends ServiceSupport<ConfigStation> {
         stationMapper.updateStationOrderNo(stationId, orderNo);
     }
 
-    public void updatePinyinName() {
-
-        List<ConfigStation> stations = stationMapper.selectAll();
-
-        for (ConfigStation station : stations) {
-            String stationName = station.getName();
-            String pinyinName = PinyinUtil.toHanyuPinyinFirstArray(stationName);
-
-            ConfigStation model = new ConfigStation();
-            model.setId(station.getId());
-            model.setPinyinName(pinyinName);
-
-            stationMapper.updateByPrimaryKeySelective(model);
-        }
-    }
 
 }

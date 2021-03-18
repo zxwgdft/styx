@@ -3,14 +3,14 @@ package com.paladin.monitor.model.sys;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
 
-@Getter
-@Setter
+@Data
 @ApiModel(description = "账号")
 public class SysUser implements Serializable {
 

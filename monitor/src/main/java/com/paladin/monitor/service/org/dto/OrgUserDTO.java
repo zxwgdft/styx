@@ -8,12 +8,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-/**
- * <>
- *
- * @author Huangguochen
- * @create 2020/4/24 15:41
- */
+
 @Getter
 @Setter
 @ApiModel(description = "用户信息")

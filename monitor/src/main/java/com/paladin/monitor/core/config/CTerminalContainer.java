@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.paladin.monitor.core.distrcit.District;
 import com.paladin.monitor.core.distrcit.DistrictContainer;
+import com.paladin.monitor.model.config.ConfigNode;
 import com.paladin.monitor.model.config.ConfigStation;
 import com.paladin.monitor.model.config.ConfigTerminal;
-import com.paladin.monitor.model.sys.SysNode;
-import com.paladin.monitor.service.config.TerminalService;
+import com.paladin.monitor.service.config.NodeService;
 import com.paladin.monitor.service.config.StationService;
-import com.paladin.monitor.service.sys.SysNodeService;
+import com.paladin.monitor.service.config.TerminalService;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -39,7 +39,7 @@ public class CTerminalContainer extends ConfigContainer {
     private TerminalService stationDeviceService;
 
     @Autowired
-    private SysNodeService sysNodeService;
+    private NodeService nodeService;
 
     private List<SimpleDistrict> effectRootDistricts;
     private Map<Integer, SimpleDistrict> effectDistrictMap;
@@ -55,16 +55,16 @@ public class CTerminalContainer extends ConfigContainer {
 
     @Override
     public void load() {
-        List<ConfigStation> stationList = stationService.findAll();
-        List<SysNode> nodeList = sysNodeService.findAll();
+        List<ConfigStation> stationList = stationService.findList();
+        List<ConfigNode> nodeList = nodeService.findList();
 
         Map<String, List<CTerminal>> node2terminalMap = new HashMap<>();
         List<SimpleServerNode> serverNodes = new ArrayList<>(nodeList.size());
 
-        for (SysNode item : nodeList) {
+        for (ConfigNode item : nodeList) {
             String code = item.getCode();
             String name = item.getName();
-            serverNodes.add(new SimpleServerNode(code, name, item.getParentCode(), null));
+            serverNodes.add(new SimpleServerNode(code, name, null, null));
             node2terminalMap.put(code, new ArrayList<>());
         }
 
@@ -109,7 +109,7 @@ public class CTerminalContainer extends ConfigContainer {
 
         Map<Integer, CTerminal> terminalMap = new HashMap<>();
 
-        List<ConfigTerminal> deviceList = stationDeviceService.findAll();
+        List<ConfigTerminal> deviceList = stationDeviceService.findList();
         for (ConfigTerminal item : deviceList) {
             boolean enabled = item.getEnabled();
             Integer stationId = item.getStationId();
@@ -142,13 +142,11 @@ public class CTerminalContainer extends ConfigContainer {
             terminal.setType(item.getType());
             terminal.setVarIds(item.getVariableIds());
             terminal.setNoAlarmIds(item.getAlarmIds());
-            terminal.setTest(simpleStation.isTest);
             terminal.setNodeCode(nodeCode);
             terminal.setProvinceCode(simpleStation.getProvinceCode());
             terminal.setCityCode(simpleStation.getCityCode());
             terminal.setDistrictCode(simpleStation.getDistrictCode());
-            terminal.setLatitude(simpleStation.getLatitude());
-            terminal.setLongitude(simpleStation.getLongitude());
+
 
             if (enabled) {
                 // 服务节点列表只放置启用有效的终端
@@ -324,12 +322,6 @@ public class CTerminalContainer extends ConfigContainer {
         private String nodeCode;
         @ApiModelProperty("是否可用")
         private boolean enabled;
-        @ApiModelProperty("是否测试")
-        private boolean isTest;
-        @ApiModelProperty("经度")
-        private String longitude;
-        @ApiModelProperty("纬度")
-        private String latitude;
 
         public SimpleStation(ConfigStation item) {
             id = item.getId();
@@ -339,9 +331,6 @@ public class CTerminalContainer extends ConfigContainer {
             districtCode = item.getDistrictCode();
             nodeCode = item.getServerNode();
             enabled = item.getEnabled();
-            isTest = item.getIsTest();
-            longitude = item.getLongitude();
-            latitude = item.getLatitude();
         }
 
     }

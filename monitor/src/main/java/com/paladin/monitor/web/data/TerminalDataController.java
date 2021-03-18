@@ -1,13 +1,16 @@
 package com.paladin.monitor.web.data;
 
-import com.paladin.framework.service.PageResult;
 import com.paladin.monitor.service.data.TerminalDataService;
-import com.paladin.monitor.service.data.dto.*;
-import com.paladin.monitor.service.config.dto.StationDeviceQuery;
+import com.paladin.monitor.service.data.dto.TerminalAlarms;
+import com.paladin.monitor.service.data.dto.TerminalDetailRealtime;
+import com.paladin.monitor.service.data.dto.TerminalRealtime;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -44,17 +47,6 @@ public class TerminalDataController {
         return terminalDataService.getTerminalAlarms(terminalId);
     }
 
-    @ApiOperation(value = "获取终端列表及其实时数据")
-    @PostMapping("/realtime/terminal/detail")
-    public TerminalListRealtime findTerminalListRealTime(@RequestBody StationDeviceQuery query) {
-        return terminalDataService.findTerminalListRealTime(query);
-    }
-
-    @ApiOperation(value = "获取终端列表及其实时数据")
-    @PostMapping("/realtime/terminal/simple")
-    public PageResult<TerminalSimpleRealtime> findTerminalListRealTimeSimple(@RequestBody StationDeviceQuery query) {
-        return terminalDataService.findSimpleTerminalListRealTime(query);
-    }
 
     @ApiOperation(value = "获取终端设备详情与实时数据")
     @GetMapping("/realtime/single/detail")
@@ -62,10 +54,5 @@ public class TerminalDataController {
         return terminalDataService.findTerminalDetailRealtime(terminalId);
     }
 
-    @ApiOperation(value = "获取终端设备历史数据")
-    @PostMapping("/history")
-    public String getTerminalDetailOfStation(@RequestBody TerminalDataQuery query) {
-        return terminalDataService.getTerminalHistoryData(query);
-    }
 
 }

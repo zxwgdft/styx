@@ -7,17 +7,17 @@ server:
 
 spring:
   application:
-    name: ${USERNAME}-msms-monitor
+    name: styx-monitor
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 50MB
   cloud:
     nacos:
-      server-addr: 172.16.16.120:8848
+      server-addr: localhost:8848
   datasource:
     name: msms
-    url: jdbc:mysql://172.16.16.120:3306/msms2?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+    url: jdbc:mysql://172.16.17.120:3306/styx_monitor?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
     username: netin
     password: 123456
     type: com.zaxxer.hikari.HikariDataSource
@@ -25,7 +25,7 @@ spring:
       minimum-idle: 15
       maximum-pool-size: 15
   redis:
-    host: 172.16.16.120
+    host: 172.16.17.120
     lettuce:
       pool:
         max-active: 8
@@ -40,15 +40,6 @@ spring:
 ribbon:
   ReadTimeout: 5000
   ConnectTimeout: 5000
-
-
-paladin:
-  data:
-    version:
-      # 开启分布式下数据容器版本功能
-      enable: true
-      # 版本检测间隔（秒）
-      interval: 3
 
 
 monitor:

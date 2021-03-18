@@ -1,7 +1,7 @@
 package com.paladin.monitor.service.sys;
 
-import com.paladin.framework.service.ServiceSupport;
 import com.paladin.monitor.model.sys.SysLoggerOperate;
+import com.styx.common.service.ServiceSupport;
 import org.springframework.stereotype.Service;
 
 @Service

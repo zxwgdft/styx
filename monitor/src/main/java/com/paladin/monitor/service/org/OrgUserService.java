@@ -1,17 +1,17 @@
 package com.paladin.monitor.service.org;
 
 
-import com.paladin.framework.exception.BusinessException;
-import com.paladin.framework.service.ServiceSupport;
-import com.paladin.framework.utils.StringUtil;
-import com.paladin.framework.utils.UUIDUtil;
-import com.paladin.framework.utils.convert.SimpleBeanCopyUtil;
 import com.paladin.monitor.core.distrcit.District;
 import com.paladin.monitor.core.distrcit.DistrictContainer;
 import com.paladin.monitor.model.org.OrgUser;
 import com.paladin.monitor.model.sys.SysUser;
 import com.paladin.monitor.service.org.dto.OrgUserDTO;
 import com.paladin.monitor.service.sys.SysUserService;
+import com.styx.common.exception.BusinessException;
+import com.styx.common.service.ServiceSupport;
+import com.styx.common.utils.StringUtil;
+import com.styx.common.utils.UUIDUtil;
+import com.styx.common.utils.convert.SimpleBeanCopyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -127,14 +127,14 @@ public class OrgUserService extends ServiceSupport<OrgUser> {
     public void removeUser(String userId) {
         OrgUser user = get(userId);
         if (user != null) {
-            if (removeByPrimaryKey(userId)) {
+            if (removeById(userId)) {
                 sysUserService.removeUserAccount(user.getId());
             }
         }
     }
 
     @Transactional
-    public String reset(String userId){
+    public String reset(String userId) {
         OrgUser user = get(userId);
         if (user != null) {
             return sysUserService.reset(userId);

@@ -3,6 +3,7 @@ package com.paladin.monitor.model.config;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.styx.common.api.BaseModel;
+import com.styx.common.api.DeletedBaseModel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -13,10 +14,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @ApiModel(description = "终端信息")
-public class ConfigTerminal extends BaseModel {
-
-    public static final String FIELD_STATION_ID = "stationId";
-    public static final String FIELD_ENABLED = "enabled";
+public class ConfigTerminal extends DeletedBaseModel {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
