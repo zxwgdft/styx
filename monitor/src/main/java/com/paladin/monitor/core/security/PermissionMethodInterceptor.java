@@ -1,7 +1,7 @@
 package com.paladin.monitor.core.security;
 
-import com.paladin.framework.exception.BusinessException;
 import com.paladin.monitor.core.MonitorUserSession;
+import com.styx.common.exception.BusinessException;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;

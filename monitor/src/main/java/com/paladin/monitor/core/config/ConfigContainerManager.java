@@ -1,7 +1,5 @@
 package com.paladin.monitor.core.config;
 
-import com.paladin.framework.spring.SpringBeanHelper;
-import com.paladin.framework.spring.SpringContainer;
 import com.paladin.monitor.mapper.sys.SysVersionMapper;
 import com.styx.common.spring.SpringBeanHelper;
 import lombok.extern.slf4j.Slf4j;
