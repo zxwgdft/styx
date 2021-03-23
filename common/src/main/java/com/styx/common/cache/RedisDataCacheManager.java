@@ -26,21 +26,7 @@ public class RedisDataCacheManager extends AbstractDataCacheManager {
 
     @Override
     protected DataCacheWrapper getDataCacheWrapper(DataCache source) {
-        return null;
-    }
-
-
-    public long getDataVersion(String containerId) {
-        String version = redisTemplate.opsForValue().get(keyPrefix + containerId);
-        return version == null ? 0 : Long.valueOf(version);
-    }
-
-    public void incrementDataVersion(String cacheId) {
-        redisTemplate.opsForValue().increment(keyPrefix + cacheId);
-    }
-
-    public void setDataVersion(String containerId, long version) {
-        redisTemplate.opsForValue().set(keyPrefix + containerId, String.valueOf(version));
+        return new RedisDataCacheWrapper(source, redisTemplate, keyPrefix + source.getId());
     }
 
 

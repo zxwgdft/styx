@@ -1,33 +1,23 @@
 package com.styx.common.cache;
 
 /**
+ * 数据缓存包装类
+ * <p>
+ * 每个包装类对应一个DataCacheManager
+ *
  * @author TontoZhou
  * @since 2021/3/19
  */
-public class DataCacheWrapper<T> {
+public interface DataCacheWrapper<T> {
 
-    protected DataCache<T> source;
-    protected T data;
-    protected boolean loaded = false;
+    /**
+     * 当数据变化时应当触发该方法，告诉数据缓存需要重新加载了
+     */
+    void toLoad();
 
-    public DataCacheWrapper(DataCache<T> dataCache) {
-        source = dataCache;
-    }
-
-    public void toLoad() {
-        synchronized (source) {
-            loaded = false;
-        }
-    }
-
-    public T getData() {
-        synchronized (source) {
-            if (!loaded) {
-                data = source.loadData();
-                loaded = true;
-            }
-            return data;
-        }
-    }
+    /**
+     * 获取缓存的数据
+     */
+    T getData();
 
 }

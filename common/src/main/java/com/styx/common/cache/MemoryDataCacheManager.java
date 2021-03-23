@@ -13,7 +13,7 @@ public class MemoryDataCacheManager extends AbstractDataCacheManager {
 
     @Override
     protected DataCacheWrapper getDataCacheWrapper(DataCache source) {
-        return new DataCacheWrapper(source);
+        return new MemoryDataCacheWrapper(source);
     }
-    
+
 }
