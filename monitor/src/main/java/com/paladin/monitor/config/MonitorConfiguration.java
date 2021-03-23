@@ -1,18 +1,21 @@
 package com.paladin.monitor.config;
 
-import com.paladin.monitor.core.MonitorAuthenticationListener;
 import com.paladin.monitor.core.MonitorUserRealm;
 import com.paladin.monitor.core.log.OperationLogInterceptor;
 import com.paladin.monitor.core.security.PermissionMethodInterceptor;
+import com.styx.common.cache.DataCacheManager;
+import com.styx.common.cache.RedisDataCacheManager;
 import com.styx.common.spring.SpringBeanHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.realm.AuthorizingRealm;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -41,8 +44,8 @@ public class MonitorConfiguration {
      * @return
      */
     @Bean
-    public MonitorAuthenticationListener getCommonAuthenticationListener() {
-        return new MonitorAuthenticationListener();
+    public DataCacheManager getDataCacheManager(@Qualifier("stringRedisTemplate") RedisTemplate<String, String> redisTemplate) {
+        return new RedisDataCacheManager(redisTemplate);
     }
 
     /**

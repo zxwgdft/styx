@@ -1,8 +1,5 @@
 package com.paladin.monitor.service.config.dto;
 
-import com.paladin.framework.service.OffsetPage;
-import com.paladin.framework.service.QueryCondition;
-import com.paladin.framework.service.QueryType;
 import com.styx.common.service.PageParam;
 import com.styx.common.service.QueryType;
 import com.styx.common.service.annotation.QueryCondition;

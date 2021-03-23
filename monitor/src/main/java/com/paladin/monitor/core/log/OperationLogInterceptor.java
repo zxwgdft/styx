@@ -1,8 +1,8 @@
 package com.paladin.monitor.core.log;
 
-import com.paladin.framework.common.R;
-import com.paladin.framework.service.UserSession;
-import com.paladin.framework.utils.UUIDUtil;
+import com.styx.common.common.R;
+import com.styx.common.service.UserSession;
+import com.styx.common.utils.UUIDUtil;
 import com.paladin.monitor.model.sys.SysLoggerOperate;
 import com.paladin.monitor.service.sys.SysLoggerOperateService;
 import lombok.extern.slf4j.Slf4j;

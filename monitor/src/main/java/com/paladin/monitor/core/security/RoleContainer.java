@@ -1,7 +1,7 @@
 package com.paladin.monitor.core.security;
 
-import com.paladin.framework.common.BaseModel;
-import com.paladin.framework.service.DataContainer;
+import com.styx.common.common.BaseModel;
+import com.styx.common.service.DataContainer;
 import com.paladin.monitor.model.org.OrgRole;
 import com.paladin.monitor.model.org.OrgRolePermission;
 import com.paladin.monitor.service.org.OrgRolePermissionService;
