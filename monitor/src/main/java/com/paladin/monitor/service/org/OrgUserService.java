@@ -122,23 +122,5 @@ public class OrgUserService extends ServiceSupport<OrgUser> {
             return false;
         }
     }
-
-    @Transactional
-    public void removeUser(String userId) {
-        OrgUser user = get(userId);
-        if (user != null) {
-            if (removeById(userId)) {
-                sysUserService.removeUserAccount(user.getId());
-            }
-        }
-    }
-
-    @Transactional
-    public String reset(String userId) {
-        OrgUser user = get(userId);
-        if (user != null) {
-            return sysUserService.reset(userId);
-        }
-        throw new BusinessException("用户不存在");
-    }
+    
 }

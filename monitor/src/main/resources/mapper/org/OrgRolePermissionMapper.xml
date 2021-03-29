@@ -18,9 +18,7 @@
     </select>
 
     <delete id="removePermissionByRole">
-        delete
-        from org_role_permission
-        where role_id = #{id}
+        DELETE FROM org_role_permission WHERE role_id = #{id}
     </delete>
 
     <insert id="insertByBatch">

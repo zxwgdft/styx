@@ -176,7 +176,6 @@ public class ShiroRedisSessionDAO implements SessionDAO {
     public static class ControlledSession extends SimpleSession {
 
         private transient boolean needUpdate;
-
         private boolean rememberMe;
 
         public ControlledSession() {

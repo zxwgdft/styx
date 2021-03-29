@@ -1,4 +1,4 @@
-package com.paladin.monitor.web.internal.dto;
+package com.paladin.monitor.service.config.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -16,5 +16,4 @@ public class VersionUpdate {
     private long variableVersion;
     private long alarmVersion;
     private long terminalVersion;
-    private long othersVersion;
 }

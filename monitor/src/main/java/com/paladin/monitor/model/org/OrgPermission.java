@@ -10,12 +10,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@ApiModel(description = "权限")
-public class OrgPermission extends BaseModel {
+@ApiModel(description = "资源权限")
+public class OrgPermission {
 
-    public final static int TYPE_MENU = 1;
-    public final static int TYPE_FUNCTION = 2;
-    public final static int TYPE_DATA = 3;
 
     @TableId
     private String id;
@@ -23,17 +20,11 @@ public class OrgPermission extends BaseModel {
     @ApiModelProperty("权限名称")
     private String name;
 
-    @ApiModelProperty("权限对应URL")
-    private String url;
-
     @ApiModelProperty("权限code")
     private String code;
 
     @ApiModelProperty("权限类型")
     private Integer type;
-
-    @ApiModelProperty("菜单图标")
-    private String menuIcon;
 
     @ApiModelProperty("权限描述")
     private String description;

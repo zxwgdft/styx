@@ -1,9 +1,5 @@
-package com.paladin.monitor.web.internal.dto;
+package com.paladin.monitor.service.config.dto;
 
-import com.paladin.monitor.core.config.CAlarm;
-import com.paladin.monitor.core.config.COthers;
-import com.paladin.monitor.core.config.CTerminal;
-import com.paladin.monitor.core.config.CVariable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,9 +21,5 @@ public class VersionConfig {
     private long terminalVersion;
     private List<CTerminal> terminals;
 
-    private long othersVersion;
-    private COthers others;
-
     private String parentNodeCode;
-
 }

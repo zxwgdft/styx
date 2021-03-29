@@ -5,11 +5,10 @@ import com.paladin.monitor.core.config.CTerminal;
 import com.paladin.monitor.core.config.CTerminalContainer;
 import com.paladin.monitor.core.distrcit.District;
 import com.paladin.monitor.core.distrcit.DistrictContainer;
-import com.paladin.monitor.model.org.OrgUser;
 import com.paladin.monitor.model.config.ConfigStation;
+import com.paladin.monitor.model.org.OrgUser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class DataPermissionUtil {
@@ -27,18 +26,18 @@ public class DataPermissionUtil {
             } else if (userType == OrgUser.USER_TYPE_PERSONNEL) {
                 param.setHasPermission(false);
             } else if (userType == OrgUser.USER_TYPE_STATION) {
-                Integer[] stations = userSession.getStations();
+                int[] stations = userSession.getStations();
                 if (stations != null && stations.length > 0) {
                     if (stations.length == 1) {
                         param.setStationId(stations[0]);
                     } else {
-                        param.setStationIds(Arrays.asList(stations));
+                        param.setStationIds(toIntegerList(stations));
                     }
                 } else {
                     param.setHasPermission(false);
                 }
             } else if (userType == OrgUser.USER_TYPE_DISTRICT) {
-                Integer[] districtCodes = userSession.getDistricts();
+                int[] districtCodes = userSession.getDistricts();
                 if (districtCodes != null && districtCodes.length > 0) {
                     if (districtCodes.length == 1) {
                         int code = districtCodes[0];
@@ -142,7 +141,7 @@ public class DataPermissionUtil {
             return false;
         } else if (userType == OrgUser.USER_TYPE_STATION) {
             int stationId = terminal.getStationId();
-            Integer[] stations = userSession.getStations();
+            int[] stations = userSession.getStations();
             if (stations != null && stations.length > 0) {
                 for (int station : stations) {
                     if (station == stationId) {
@@ -152,15 +151,11 @@ public class DataPermissionUtil {
             }
             return false;
         } else if (userType == OrgUser.USER_TYPE_DISTRICT) {
-            if (terminal.isTest()) {
-                return false;
-            }
-
             int districtCode = terminal.getDistrictCode();
             int provinceCode = terminal.getProvinceCode();
             int cityCode = terminal.getCityCode();
 
-            Integer[] ownDistrictCodes = userSession.getDistricts();
+            int[] ownDistrictCodes = userSession.getDistricts();
             for (int ownCode : ownDistrictCodes) {
                 if (ownCode == provinceCode || ownCode == cityCode || ownCode == districtCode) {
                     return true;
@@ -185,7 +180,7 @@ public class DataPermissionUtil {
             return false;
         } else if (userType == OrgUser.USER_TYPE_STATION) {
             int stationId = station.getId();
-            Integer[] ids = userSession.getStations();
+            int[] ids = userSession.getStations();
             if (ids != null && ids.length > 0) {
                 for (int id : ids) {
                     if (id == stationId) {
@@ -195,15 +190,11 @@ public class DataPermissionUtil {
             }
             return false;
         } else if (userType == OrgUser.USER_TYPE_DISTRICT) {
-            if (station.isTest()) {
-                return false;
-            }
-
             int districtCode = station.getDistrictCode();
             int provinceCode = station.getProvinceCode();
             int cityCode = station.getCityCode();
 
-            Integer[] ownDistrictCodes = userSession.getDistricts();
+            int[] ownDistrictCodes = userSession.getDistricts();
             for (int ownCode : ownDistrictCodes) {
                 if (ownCode == provinceCode || ownCode == cityCode || ownCode == districtCode) {
                     return true;
@@ -228,7 +219,7 @@ public class DataPermissionUtil {
             return false;
         } else if (userType == OrgUser.USER_TYPE_STATION) {
             int stationId = station.getId();
-            Integer[] ids = userSession.getStations();
+            int[] ids = userSession.getStations();
             if (ids != null && ids.length > 0) {
                 for (int id : ids) {
                     if (id == stationId) {
@@ -238,15 +229,11 @@ public class DataPermissionUtil {
             }
             return false;
         } else if (userType == OrgUser.USER_TYPE_DISTRICT) {
-            if (station.getIsTest()) {
-                return false;
-            }
-
             int districtCode = station.getDistrictCode();
             int provinceCode = station.getProvinceCode();
             int cityCode = station.getCityCode();
 
-            Integer[] ownDistrictCodes = userSession.getDistricts();
+            int[] ownDistrictCodes = userSession.getDistricts();
             for (int ownCode : ownDistrictCodes) {
                 if (ownCode == provinceCode || ownCode == cityCode || ownCode == districtCode) {
                     return true;
@@ -287,4 +274,12 @@ public class DataPermissionUtil {
         return false;
     }
 
+
+    private static List<Integer> toIntegerList(int[] intArray) {
+        List<Integer> list = new ArrayList<>(intArray.length);
+        for (int i : intArray) {
+            list.add(i);
+        }
+        return list;
+    }
 }

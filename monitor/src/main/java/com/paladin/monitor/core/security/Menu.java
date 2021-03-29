@@ -1,11 +1,9 @@
 package com.paladin.monitor.core.security;
 
-import com.paladin.monitor.model.org.OrgPermission;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -20,29 +18,17 @@ public class Menu implements Serializable {
 
     private String icon;
 
-    private boolean owned;
-
-    private boolean isRoot;
-
-    private int order;
-
     private List<Menu> children;
 
-    public Menu(){
-
+    public boolean equals(Object obj) {
+        if (obj instanceof Menu) {
+            return id.equals(((Menu) obj).id);
+        }
+        return false;
     }
 
-    public Menu(Permission permission, boolean owned) {
-        this.id = permission.getId();
-        OrgPermission source = permission.getSource();
-        this.url = source.getUrl();
-        this.name = source.getName();
-        this.icon = source.getMenuIcon();
-        this.order = source.getListOrder();
-        this.owned = owned;
-        this.isRoot = permission.isRootMenu();
-        this.children = new ArrayList<>();
+    public int hashCode() {
+        return 17 * 31 + id.hashCode();
     }
-
 
 }

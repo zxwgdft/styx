@@ -1,4 +1,4 @@
-package com.paladin.monitor.core.config;
+package com.paladin.monitor.service.config.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +17,5 @@ public class CAlarm {
     private String name;
     private String formula;
     private String variableIds;
-    private Set<Integer> noticeTarget;
 
 }

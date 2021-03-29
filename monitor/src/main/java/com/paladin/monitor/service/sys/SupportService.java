@@ -16,7 +16,7 @@ import java.util.List;
  * @author TontoZhou
  * @since 2020/8/31
  */
-@FeignClient(name = "msms-support")
+@FeignClient(name = "styx-support")
 public interface SupportService {
 
     @PostMapping("/file/operate")

@@ -1,4 +1,4 @@
-package com.paladin.monitor.core.config;
+package com.paladin.monitor.service.config.dto;
 
 import lombok.Getter;
 import lombok.Setter;

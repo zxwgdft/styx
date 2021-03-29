@@ -1,5 +1,6 @@
-package com.styx.data.service.dto;
+package com.paladin.monitor.service.config.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +14,6 @@ public class CTerminal {
 
     private int id;
     private String uid;
-    private int stationId;
     private int type;
     private String varIds;
     private String alarmIds;
