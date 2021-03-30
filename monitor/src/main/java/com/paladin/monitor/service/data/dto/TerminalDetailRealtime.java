@@ -1,12 +1,9 @@
 package com.paladin.monitor.service.data.dto;
 
-import com.paladin.monitor.service.config.vo.VariableVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 /**
  * @author TontoZhou
@@ -31,9 +28,6 @@ public class TerminalDetailRealtime {
 
     @ApiModelProperty("终端类型")
     private Integer type;
-
-    @ApiModelProperty("参数列表")
-    private List<VariableVO> variables;
 
     @ApiModelProperty("终端数据")
     private TerminalRealtime data;

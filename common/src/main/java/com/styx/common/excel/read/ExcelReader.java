@@ -16,15 +16,13 @@ public class ExcelReader<T> {
      */
     private Map<Class<?>, ReadPropertyConvert<?>> classConvertCacheMap = new HashMap<>();
     private Map<Class<?>, PropertyValidate> classValidateCacheMap = new HashMap<>();
-    ;
 
     /*
      * 根据名称找到对应的{@link ReadPropertyConvert}和{@link PropertyValidate}方法
      */
     private Map<String, ReadPropertyConvert<?>> nameConvertCacheMap = new HashMap<>();
-    ;
     private Map<String, PropertyValidate> nameValidateCacheMap = new HashMap<>();
-    ;
+
 
     /**
      * 增加指定类型转换器

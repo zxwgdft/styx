@@ -56,11 +56,5 @@ public class TerminalControlController {
     }
 
 
-    @ApiOperation("测试终端转为正式终端")
-    @GetMapping("/turn/formal")
-    public R turnFormal(@RequestParam String terminalIds) {
-        terminalManager.turnFormal(StringUtil.stringToIntList(terminalIds));
-        return R.success();
-    }
 
 }

@@ -49,7 +49,6 @@ public class TerminalManager implements ApplicationRunner, Runnable {
     private long variableVersion = -1;
     private long alarmVersion = -1;
     private long terminalVersion = -1;
-    private long othersVersion = -1;
 
     @Autowired
     private InternalMonitorService monitorService;
@@ -66,7 +65,6 @@ public class TerminalManager implements ApplicationRunner, Runnable {
             VersionUpdate versionUpdate = new VersionUpdate(nodeName);
             versionUpdate.setAlarmVersion(alarmVersion);
             versionUpdate.setVariableVersion(variableVersion);
-            versionUpdate.setOthersVersion(othersVersion);
             versionUpdate.setTerminalVersion(terminalVersion);
 
             VersionConfig versionConfig = monitorService.getVersionConfig(versionUpdate);

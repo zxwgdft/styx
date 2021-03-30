@@ -19,7 +19,7 @@ public interface WriteComponent {
 	 *            源数据
 	 * @return 返回经过剥离的有效的数据
 	 */
-	public Object peelData(Object data);
+	Object peelData(Object data);
 
 	/**
 	 * 写EXCEL
@@ -38,6 +38,6 @@ public interface WriteComponent {
 	 *            通用样式
 	 * @return
 	 */
-	public int write(Object data, Sheet sheet, Workbook workbook, int rowNum, int span, CellStyle commonCellStyle);
+	int write(Object data, Sheet sheet, Workbook workbook, int rowNum, int span, CellStyle commonCellStyle);
 
 }

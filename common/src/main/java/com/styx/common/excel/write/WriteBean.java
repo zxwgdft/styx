@@ -6,14 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 
  * 子列注释
- * 
- * @author TontZhou
  *
+ * @author TontZhou
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WriteBean {
-	public Class<?> type() default Object.class;
+    Class<?> type() default Object.class;
 }

@@ -17,10 +17,6 @@ public interface TerminalDataMapper extends BaseMapper<TerminalData> {
 
     List<DataRecord> findTerminalData(@Param("terminalId") int terminalId, @Param("startDay") int startDay, @Param("endDay") int endDay, @Param("vids") List<Integer> vids);
 
-    int deleteTestData(@Param("terminalIds") List<Integer> terminalIds);
-
-    List<Data4Upload> findTerminalData4Upload(@Param("index") int index, @Param("limit") int limit);
-
     int insertUploadDataBatch(@Param("list") List<Data4Upload> data);
 
     @Select("SELECT (MAX(b.value) - MIN(b.value) ) AS val FROM terminal_data a INNER JOIN terminal_data_detail b ON a.id = b.data_id WHERE a.`day` >= #{startDay} AND a.`day` <= #{endDay} AND a.terminal_id = #{terminalId} AND b.var_id = #{varId}")

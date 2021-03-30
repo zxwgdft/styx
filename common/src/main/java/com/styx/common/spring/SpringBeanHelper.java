@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * 获取Spring Bean的工具类
- *
+ * <p>
  * 方便静态获取无须继承接口，但必须在Spring容器启动后才能使用
  *
  * @author TontZhou
@@ -122,8 +122,9 @@ public class SpringBeanHelper implements ApplicationContextAware {
     }
 
     private static <T> T getMapFirstValue(Map<String, T> map) {
-        for (T t : map.values())
+        for (T t : map.values()) {
             return t;
+        }
         return null;
     }
 }

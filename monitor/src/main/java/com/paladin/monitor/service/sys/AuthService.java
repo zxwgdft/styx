@@ -72,8 +72,6 @@ public class AuthService {
         response.setUserType(userSession.getUserType());
         response.setSystemAdmin(userSession.isSystemAdmin());
         response.setToken(token);
-        response.setPermissionCodes(userSession.getPermissionCodes());
-        response.setMenus(userSession.getMenuResources());
 
         return response;
     }

@@ -1,14 +1,11 @@
 package com.paladin.monitor.service.sys.dto;
 
-import com.paladin.monitor.core.security.Menu;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * @author TontoZhou
@@ -27,8 +24,4 @@ public class LoginSuccess implements Serializable {
     private String token;
     @ApiModelProperty("是否系统管理员")
     private boolean isSystemAdmin;
-    @ApiModelProperty("权限Code")
-    private Collection<String> permissionCodes;
-    @ApiModelProperty("用户菜单")
-    private List<Menu> menus;
 }

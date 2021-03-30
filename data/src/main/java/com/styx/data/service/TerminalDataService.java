@@ -98,8 +98,6 @@ public class TerminalDataService implements TerminalAlarmHandler, TerminalDataIn
                 terminalData.setCreateTime(now);
                 terminalData.setDay(date);
                 terminalData.setHour(hour);
-                terminalData.setIsTest(terminal.isTest());
-                terminalData.setIsSelf(true);
 
                 terminalDataMapper.insert(terminalData);
 
@@ -227,15 +225,6 @@ public class TerminalDataService implements TerminalAlarmHandler, TerminalDataIn
     }
 
     /**
-     * 删除测试终端数据
-     */
-    public void deleteTestData(List<Integer> terminalIds) {
-        if (terminalIds.size() > 0) {
-            terminalDataMapper.deleteTestData(terminalIds);
-        }
-    }
-
-    /**
      * 接收子节点上传的数据
      */
     @Transactional
@@ -255,8 +244,6 @@ public class TerminalDataService implements TerminalAlarmHandler, TerminalDataIn
                     terminalData.setCreateTime(data.getCreateTime());
                     terminalData.setDay(data.getDay());
                     terminalData.setHour(data.getHour());
-                    terminalData.setIsTest(false);
-                    terminalData.setIsSelf(false);
 
                     terminalDataMapper.insert(terminalData);
 

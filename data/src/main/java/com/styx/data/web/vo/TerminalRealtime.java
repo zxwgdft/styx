@@ -18,12 +18,6 @@ public class TerminalRealtime {
 
     @ApiModelProperty("终端ID")
     private int id;
-    @ApiModelProperty("终端名称")
-    private String name;
-    @ApiModelProperty("站点ID")
-    private int stationId;
-    @ApiModelProperty("站点名称")
-    private String stationName;
     @ApiModelProperty("是否在线")
     private boolean isOnline;
     @ApiModelProperty("最近登录时间")

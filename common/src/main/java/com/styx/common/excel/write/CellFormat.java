@@ -8,5 +8,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CellFormat {
-	public Class<? extends ValueFormator> format();
+	Class<? extends ValueFormator> format();
 }

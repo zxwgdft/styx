@@ -28,6 +28,7 @@ public class PermissionDataCache implements DataCache<PermissionContainer> {
 
     @Override
     public PermissionContainer loadData() {
+
         /**
          * 如果权限只是一个code识别，可以用code作为主键，减少了读取复杂度。
          * 以下方式封装了Permission，如果存在权限属性的扩展，则需要按这种方式去加载，

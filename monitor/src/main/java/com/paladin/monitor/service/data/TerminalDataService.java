@@ -1,16 +1,13 @@
 package com.paladin.monitor.service.data;
 
-import com.paladin.monitor.core.DataPermissionUtil;
-import com.paladin.monitor.core.MonitorUserSession;
-import com.paladin.monitor.core.config.CAlarmContainer;
-import com.paladin.monitor.core.config.CTerminal;
-import com.paladin.monitor.core.config.CTerminalContainer;
-import com.paladin.monitor.core.config.CVariableContainer;
 import com.paladin.monitor.service.config.TerminalService;
+import com.paladin.monitor.service.config.cache.AlarmContainer;
+import com.paladin.monitor.service.config.dto.StationTerminal;
 import com.paladin.monitor.service.data.dto.AlarmStatus;
 import com.paladin.monitor.service.data.dto.TerminalAlarms;
 import com.paladin.monitor.service.data.dto.TerminalDetailRealtime;
 import com.paladin.monitor.service.data.dto.TerminalRealtime;
+import com.styx.common.cache.DataCacheManager;
 import com.styx.common.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,16 +30,11 @@ public class TerminalDataService {
     private RestTemplate restTemplate;
 
     @Autowired
-    private CTerminalContainer terminalContainer;
+    private DataCacheManager dataCacheManager;
+
 
     @Autowired
-    private CAlarmContainer alarmContainer;
-
-    @Autowired
-    private CVariableContainer variableContainer;
-
-    @Autowired
-    private TerminalService stationDeviceService;
+    private TerminalService terminalService;
 
 
     @Value("${monitor.terminal.data.history.default-time-span:10}")
@@ -58,15 +50,10 @@ public class TerminalDataService {
      * 获取终端实时数据
      */
     public TerminalRealtime getRealTimeData(int terminalId) {
-        CTerminal terminal = terminalContainer.getTerminal(terminalId);
-        if (terminal == null || !terminal.isEnabled()) {
+        StationTerminal terminal = terminalService.getEnabledStationTerminal(terminalId);
+        if (terminal == null) {
             throw new BusinessException("终端不存在或未被启用");
         }
-
-        if (!DataPermissionUtil.hasStationPermission(MonitorUserSession.getCurrentUserSession(), terminal)) {
-            throw new BusinessException("您没有权限获取该终端实时数据");
-        }
-
         String serverNode = terminal.getNodeCode();
         try {
             String url = "http://msms-data-" + serverNode + "/terminal/data/realtime?terminalIds=" + terminalId;
@@ -84,7 +71,7 @@ public class TerminalDataService {
     /**
      * 获取节点下多个终端实时数据
      */
-    public List<TerminalRealtime> getRealTimeData(String serverNode, String terminalIds, boolean judgePermission) {
+    public List<TerminalRealtime> getRealTimeData(String serverNode, String terminalIds) {
         if (serverNode == null || serverNode.length() == 0) {
             throw new BusinessException("请选择一个数据服务节点");
         }
@@ -98,17 +85,8 @@ public class TerminalDataService {
             TerminalRealtime[] terminalData = restTemplate.getForEntity(url, TerminalRealtime[].class).getBody();
             List<TerminalRealtime> result = new ArrayList<>(terminalData == null ? 0 : terminalData.length);
             if (terminalData != null && terminalData.length > 0) {
-                if (judgePermission) {
-                    MonitorUserSession userSession = MonitorUserSession.getCurrentUserSession();
-                    for (TerminalRealtime tr : terminalData) {
-                        if (DataPermissionUtil.hasStationPermission(userSession, terminalContainer.getTerminal(tr.getId()))) {
-                            result.add(tr);
-                        }
-                    }
-                } else {
-                    for (TerminalRealtime tr : terminalData) {
-                        result.add(tr);
-                    }
+                for (TerminalRealtime tr : terminalData) {
+                    result.add(tr);
                 }
             }
             return result;
@@ -131,22 +109,11 @@ public class TerminalDataService {
             TerminalAlarms[] terminalAlarms = restTemplate.getForEntity(url, TerminalAlarms[].class).getBody();
             List<TerminalAlarms> result = new ArrayList<>(terminalAlarms == null ? 0 : terminalAlarms.length);
             if (terminalAlarms != null && terminalAlarms.length > 0) {
-                if (judgePermission) {
-                    MonitorUserSession userSession = MonitorUserSession.getCurrentUserSession();
-                    for (TerminalAlarms ta : terminalAlarms) {
-                        if (DataPermissionUtil.hasStationPermission(userSession, terminalContainer.getTerminal(ta.getId()))) {
-                            result.add(ta);
-                            for (AlarmStatus as : ta.getAlarms()) {
-                                as.setName(alarmContainer.getAlarmName(as.getId()));
-                            }
-                        }
-                    }
-                } else {
-                    for (TerminalAlarms ta : terminalAlarms) {
-                        result.add(ta);
-                        for (AlarmStatus as : ta.getAlarms()) {
-                            as.setName(alarmContainer.getAlarmName(as.getId()));
-                        }
+                AlarmContainer alarmContainer = dataCacheManager.getData(AlarmContainer.class);
+                for (TerminalAlarms ta : terminalAlarms) {
+                    result.add(ta);
+                    for (AlarmStatus as : ta.getAlarms()) {
+                        as.setName(alarmContainer.getAlarmName(as.getId()));
                     }
                 }
             }
@@ -161,13 +128,9 @@ public class TerminalDataService {
      * 获取某终端所有报警信息
      */
     public TerminalAlarms getTerminalAlarms(int terminalId) {
-        CTerminal terminal = terminalContainer.getTerminal(terminalId);
-        if (terminal == null || !terminal.isEnabled()) {
+        StationTerminal terminal = terminalService.getEnabledStationTerminal(terminalId);
+        if (terminal == null) {
             throw new BusinessException("终端不存在或未被启用");
-        }
-
-        if (!DataPermissionUtil.hasStationPermission(MonitorUserSession.getCurrentUserSession(), terminal)) {
-            throw new BusinessException("没有权限获取数据");
         }
 
         String serverNode = terminal.getNodeCode();
@@ -175,6 +138,7 @@ public class TerminalDataService {
             String url = "http://msms-data-" + serverNode + "/terminal/data/alarm/terminal?terminalId=" + terminalId;
             TerminalAlarms ta = restTemplate.getForEntity(url, TerminalAlarms.class).getBody();
             if (ta != null) {
+                AlarmContainer alarmContainer = dataCacheManager.getData(AlarmContainer.class);
                 for (AlarmStatus as : ta.getAlarms()) {
                     as.setName(alarmContainer.getAlarmName(as.getId()));
                 }
@@ -193,8 +157,8 @@ public class TerminalDataService {
      * 获取终端详细和实时数据
      */
     public TerminalDetailRealtime findTerminalDetailRealtime(int terminalId) {
-        CTerminal terminal = terminalContainer.getTerminal(terminalId);
-        if (terminal == null || !terminal.isEnabled()) {
+        StationTerminal terminal = terminalService.getEnabledStationTerminal(terminalId);
+        if (terminal == null) {
             throw new BusinessException("终端不存在或未被启用");
         }
 
@@ -207,7 +171,6 @@ public class TerminalDataService {
         detail.setType(terminal.getType());
         detail.setUid(terminal.getUid());
         detail.setData(data);
-        detail.setVariables(variableContainer.getShowVariableOfTerminal(terminal));
 
         return detail;
     }

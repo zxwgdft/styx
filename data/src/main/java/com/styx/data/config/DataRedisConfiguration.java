@@ -24,8 +24,7 @@ public class DataRedisConfiguration extends CachingConfigurerSupport {
 
     @Bean
     public CacheManager cacheManager(LettuceConnectionFactory lettuceConnectionFactory) {
-        RedisCacheManager redisCacheManager = RedisCacheManager.create(lettuceConnectionFactory);
-        return redisCacheManager;
+        return RedisCacheManager.create(lettuceConnectionFactory);
     }
 
     @Bean("jdkRedisTemplate")

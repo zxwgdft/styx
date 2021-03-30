@@ -26,7 +26,7 @@ public class TerminalDataController {
     @ApiOperation(value = "获取终端实时数据")
     @GetMapping("/realtime")
     public List<TerminalRealtime> getRealtimeData(@RequestParam String serverNode, @RequestParam(required = false) String terminalIds) {
-        return terminalDataService.getRealTimeData(serverNode, terminalIds, true);
+        return terminalDataService.getRealTimeData(serverNode, terminalIds);
     }
 
     @ApiOperation(value = "获取单个终端实时数据")

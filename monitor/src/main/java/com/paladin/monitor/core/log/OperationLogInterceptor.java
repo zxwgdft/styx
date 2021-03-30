@@ -1,10 +1,9 @@
 package com.paladin.monitor.core.log;
 
-import com.styx.common.common.R;
-import com.styx.common.service.UserSession;
-import com.styx.common.utils.UUIDUtil;
+import com.paladin.monitor.core.MonitorUserSession;
 import com.paladin.monitor.model.sys.SysLoggerOperate;
 import com.paladin.monitor.service.sys.SysLoggerOperateService;
+import com.styx.common.api.R;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -40,7 +39,7 @@ public class OperationLogInterceptor {
         String modelName = operationLog.model().length() > 0 ? operationLog.model() : clazz.getSimpleName();
         String operateName = operationLog.operate().length() > 0 ? operationLog.operate() : methodName;
 
-        UserSession session = UserSession.getCurrentUserSession();
+        MonitorUserSession session = MonitorUserSession.getCurrentUserSession();
 
         SysLoggerOperate operate = new SysLoggerOperate();
         operate.setClassName(cut(className, 100));

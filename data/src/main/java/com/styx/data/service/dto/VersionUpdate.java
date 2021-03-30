@@ -16,7 +16,6 @@ public class VersionUpdate {
     private long variableVersion;
     private long alarmVersion;
     private long terminalVersion;
-    private long othersVersion;
 
     public VersionUpdate(String serverNode) {
         this.serverNode = serverNode;

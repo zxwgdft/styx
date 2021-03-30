@@ -31,6 +31,7 @@ public class TerminalDataController {
 
     @Autowired
     private TerminalManager terminalManager;
+
     @Autowired
     private TerminalDataService terminalDataService;
 
@@ -99,9 +100,6 @@ public class TerminalDataController {
     private TerminalSimpleRealtime getSimpleRealtime(Terminal terminal) {
         TerminalSimpleRealtime data = new TerminalSimpleRealtime();
         data.setId(terminal.getId());
-        data.setName(terminal.getName());
-        data.setStationId(terminal.getStationId());
-        data.setStationName(terminal.getStationName());
 
         boolean isOnline = terminal.isOnline();
         data.setOnline(isOnline);
@@ -121,9 +119,6 @@ public class TerminalDataController {
     private TerminalRealtime getRealtime(Terminal terminal) {
         TerminalRealtime data = new TerminalRealtime();
         data.setId(terminal.getId());
-        data.setName(terminal.getName());
-        data.setStationId(terminal.getStationId());
-        data.setStationName(terminal.getStationName());
 
         boolean isOnline = terminal.isOnline();
 
@@ -163,8 +158,7 @@ public class TerminalDataController {
             for (Terminal terminal : terminals) {
                 Map<Integer, Terminal.AlarmStatus> map = terminal.getAlarmTriggeringMap();
                 if (map.size() > 0) {
-                    terminalAlarms.add(new TerminalAlarms(terminal.getId(), terminal.getName(),
-                            terminal.getStationId(), terminal.getStationName(), map.values()));
+                    terminalAlarms.add(new TerminalAlarms(terminal.getId(), map.values()));
                 }
             }
         }
@@ -179,8 +173,7 @@ public class TerminalDataController {
             for (Terminal terminal : terminals) {
                 if (terminal.getId() == terminalId) {
                     Map<Integer, Terminal.AlarmStatus> map = terminal.getAlarmTriggeringMap();
-                    return new TerminalAlarms(terminal.getId(), terminal.getName(),
-                            terminal.getStationId(), terminal.getStationName(), map.size() > 0 ? map.values() : null);
+                    return new TerminalAlarms(terminal.getId(), map.size() > 0 ? map.values() : null);
                 }
             }
         }
@@ -193,18 +186,6 @@ public class TerminalDataController {
         return terminalDataService.findTerminalData(query.getTerminalId(), query.getStartDate(), query.getEndDate(), query.getVariableIds());
     }
 
-    @ApiOperation("删除测试终端数据")
-    @GetMapping("/delete/test")
-    public R deleteTestTerminalData(@RequestParam String terminalIds) {
-        if (terminalIds != null && terminalIds.length() > 0) {
-            List<Integer> tids = new ArrayList<>();
-            for (String idStr : terminalIds.split(",")) {
-                tids.add(Integer.valueOf(idStr));
-            }
-            terminalDataService.deleteTestData(tids);
-        }
-        return R.success();
-    }
 
     @ApiOperation("子节点上传数据")
     @PostMapping("/upload")

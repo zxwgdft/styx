@@ -14,12 +14,12 @@ spring:
       max-request-size: 50MB
   cloud:
     nacos:
-      server-addr: 172.16.17.120:8848
+      server-addr: 172.16.17.125:8848
       discovery:
-        ip: 172.16.17.120
+        ip: 172.16.17.125
   datasource:
     name: msms
-    url: jdbc:mysql://172.16.17.120:3306/msms_data_test?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+    url: jdbc:mysql://172.16.17.125:3306/msms_data_test?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
     username: netin
     password: 123456
     type: com.zaxxer.hikari.HikariDataSource
@@ -27,7 +27,7 @@ spring:
       minimum-idle: 15
       maximum-pool-size: 15
   redis:
-    host: 172.16.17.120
+    host: 172.16.17.125
     lettuce:
       pool:
         max-active: 8

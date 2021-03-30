@@ -32,6 +32,8 @@ public class DataConfiguration {
     //
     //---------------------------------------
 
+
+
     /**
      * spring bean 获取帮助类
      */

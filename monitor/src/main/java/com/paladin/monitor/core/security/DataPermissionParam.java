@@ -1,4 +1,4 @@
-package com.paladin.monitor.core;
+package com.paladin.monitor.core.security;
 
 import lombok.Getter;
 import lombok.Setter;

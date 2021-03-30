@@ -20,12 +20,6 @@ import java.util.Collection;
 public class TerminalAlarms {
     @ApiModelProperty("终端ID")
     private int id;
-    @ApiModelProperty("终端名称")
-    private String name;
-    @ApiModelProperty("站点ID")
-    private int stationId;
-    @ApiModelProperty("站点名称")
-    private String stationName;
     @ApiModelProperty("报警")
     private Collection<Terminal.AlarmStatus> alarms;
 }

@@ -38,8 +38,7 @@ public class MonitorShiroConfiguration {
 
     @Bean
     public ShiroRedisSessionDAO redisSessionDAO(ShiroProperties shiroProperties, RedisTemplate<String, Object> jdkRedisTemplate) {
-        ShiroRedisSessionDAO sessionDao = new ShiroRedisSessionDAO(shiroProperties, jdkRedisTemplate);
-        return sessionDao;
+        return new ShiroRedisSessionDAO(shiroProperties, jdkRedisTemplate);
     }
 
     @Bean(name = "sessionManager")

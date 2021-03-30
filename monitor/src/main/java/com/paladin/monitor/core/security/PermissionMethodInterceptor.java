@@ -6,8 +6,6 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 
-import java.util.Set;
-
 /**
  * 简单权限的实现
  * <p>
@@ -26,9 +24,7 @@ public class PermissionMethodInterceptor {
     public void beforeRequest(JoinPoint point, NeedPermission needPermission) {
         String permissionCode = needPermission.value();
         if (permissionCode != null && permissionCode.length() > 0) {
-            MonitorUserSession userSession = MonitorUserSession.getCurrentUserSession();
-            Set<String> codes = userSession.getPermissionCodes();
-            if (!codes.contains(permissionCode)) {
+            if (!PermissionUtil.hasPermission(permissionCode)) {
                 throw new BusinessException("没有访问或操作权限");
             }
         }

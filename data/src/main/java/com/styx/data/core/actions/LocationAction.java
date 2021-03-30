@@ -9,7 +9,7 @@ import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author TontoZhou
@@ -30,14 +30,7 @@ public class LocationAction implements CommandAction {
     public byte[] doAction(ChannelHandlerContext context, Terminal terminal, Datagram datagram) {
 
         String location = terminal.getLocation();
-        byte[] content = null;
-        try {
-            content = location.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            log.error("终端定位[" + location + "]非法字符串");
-            content = new byte[0];
-        }
-
+        byte[] content = location.getBytes(StandardCharsets.UTF_8);
         int size = content.length;
 
         // 返回服务器当前时间

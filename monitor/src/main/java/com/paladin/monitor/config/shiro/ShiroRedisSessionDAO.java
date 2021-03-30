@@ -128,8 +128,7 @@ public class ShiroRedisSessionDAO implements SessionDAO {
 
     @Override
     public Session readSession(Serializable sessionId) throws UnknownSessionException {
-        Session session = getCacheSession(sessionId);
-        return session;
+        return getCacheSession(sessionId);
     }
 
     @Override

@@ -58,21 +58,5 @@ public class OrgUserController extends ControllerSupport {
         return R.success();
     }
 
-    @ApiOperation("删除用户")
-    @PostMapping("/delete")
-    @NeedPermission("sys:user:delete")
-    @OperationLog(model = "用户管理", operate = "删除用户")
-    public R delete(@RequestParam String userId) {
-        orgUserService.removeUser(userId);
-        return R.success();
-    }
-
-    @ApiOperation("重置密码")
-    @GetMapping("/reset")
-    @NeedPermission("sys:user:password")
-    public String resetPassword(@RequestParam String userId) {
-        String password = orgUserService.reset(userId);
-        return password;
-    }
-
+   
 }

@@ -26,13 +26,13 @@ public class Permission implements Serializable {
 
     public boolean equals(Object obj) {
         if (obj instanceof Permission) {
-            return code.equals(((Permission) obj).code);
+            return id.equals(((Permission) obj).id);
         }
         return false;
     }
 
     public int hashCode() {
-        return 17 * 31 + code.hashCode();
+        return 17 * 31 + id.hashCode();
     }
 
 }

@@ -8,4 +8,11 @@
         WHERE a.enabled = 1 AND a.deleted = 0 AND b.enabled = 1 AND b.deleted = 0 AND a.server_node = #{serverNode}
     </select>
 
+    <select id="getEnabledStationTerminal" resultType="com.paladin.monitor.service.config.dto.StationTerminal">
+        SELECT b.id, b.name, b.`type`, b.uid, a.id stationId, a.name stationName, a.server_node nodeCode,
+        a.province_code provinceCode, a.city_code cityCode, a.district_code districtCode
+        FROM config_station a INNER JOIN config_terminal b ON b.station_id = a.id
+        WHERE b.id = #{terminalId} AND b.enabled = 1 AND a.enabled = 1
+    </select>
+
 </mapper>

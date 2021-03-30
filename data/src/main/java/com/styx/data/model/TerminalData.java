@@ -29,9 +29,5 @@ public class TerminalData {
     private Integer day;
     // 小时
     private Integer hour;
-    // 是否测试数据
-    private Boolean isTest;
-    // 是否本服务采集数据
-    private Boolean isSelf;
 
 }

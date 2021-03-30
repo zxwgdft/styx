@@ -1,11 +1,7 @@
 package com.paladin.monitor.core;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.paladin.monitor.config.shiro.ShiroRedisSessionDAO;
 import org.apache.shiro.SecurityUtils;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * 通用用户会话信息
@@ -22,7 +18,7 @@ public class MonitorUserSession extends ShiroRedisSessionDAO.ControlledSession {
     private int[] stations;
     private int[] districts;
 
-    private List<String> roleIds;
+    private String[] roleIds;
     private boolean isSystemAdmin = false;
 
 
@@ -44,6 +40,7 @@ public class MonitorUserSession extends ShiroRedisSessionDAO.ControlledSession {
         this.stations = stations;
         this.districts = districts;
         this.userType = userType;
+        this.roleIds = roleIds;
 
         this.forceUpdate();
     }
@@ -68,22 +65,13 @@ public class MonitorUserSession extends ShiroRedisSessionDAO.ControlledSession {
         return (MonitorUserSession) SecurityUtils.getSubject().getSession();
     }
 
-
-    @JsonIgnore
-    public Collection<String> getRoles() {
+    public String[] getRoles() {
         return roleIds;
-    }
-
-    @JsonIgnore
-    public Collection<String> getStringPermissions() {
-        // 返回权限字符串数组，这里返回null，如果
-        return null;
     }
 
     public boolean isSystemAdmin() {
         return isSystemAdmin;
     }
-
 
     public int getUserType() {
         return userType;

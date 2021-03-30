@@ -3,16 +3,16 @@ package com.styx.common.utils.secure;
 
 import org.apache.commons.codec.binary.Hex;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 
 public class SecureUtil {
 
-    private static SecureRandom secureRandom = new SecureRandom();
-    private static int DEFAULT_NUM_BYTES = 16;
+    private final static SecureRandom secureRandom = new SecureRandom();
 
     public static String createSalt() {
-        return createSalt(DEFAULT_NUM_BYTES);
+        return createSalt(16);
     }
 
     public static String createSalt(int numBytes) {
@@ -25,8 +25,8 @@ public class SecureUtil {
         // 进行一次加盐操作
         try {
             MessageDigest digest = MessageDigest.getInstance("MD5");
-            byte[] saltBytes = salt.getBytes("UTF-8");
-            byte[] contentBytes = content.getBytes("UTF-8");
+            byte[] saltBytes = salt.getBytes(StandardCharsets.UTF_8);
+            byte[] contentBytes = content.getBytes(StandardCharsets.UTF_8);
 
             digest.reset();
             digest.update(saltBytes);
