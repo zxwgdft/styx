@@ -36,11 +36,11 @@ public class TerminalManager implements ApplicationRunner, Runnable {
     @Value("${data.config.max-maintain-hours:48}")
     private int maxMaintainHours;
 
+    @Value("${data.config.data-persist-interval:10}")
     private int dataPersistInterval;
 
     private String nodeName;
 
-    private volatile String parentNodeCode;
     private volatile int index = 0;
     private Map<String, Terminal>[] terminalMapArray = new Map[2];
     private Map<Integer, Variable>[] variableMapArray = new Map[2];
@@ -86,13 +86,10 @@ public class TerminalManager implements ApplicationRunner, Runnable {
                         Variable variable = new Variable();
                         variable.setId(cVariable.getId());
                         variable.setName(cVariable.getName());
-                        variable.setAddressStart(cVariable.getAddressStart());
-                        variable.setSensorType(cVariable.getSensorType());
-                        variable.setSwitchAddress(cVariable.getSwitchAddress());
-                        variable.setValueType(cVariable.getValueType());
+                        variable.setBytePosition(cVariable.getBytePosition());
+                        variable.setBitPosition(cVariable.getBitPosition());
+                        variable.setType(cVariable.getType());
                         variable.setPersisted(cVariable.isPersisted());
-                        variable.setMax(cVariable.getMax());
-                        variable.setMin(cVariable.getMin());
 
                         variableMap.put(variable.getId(), variable);
                     }
@@ -132,15 +129,6 @@ public class TerminalManager implements ApplicationRunner, Runnable {
             }
 
 
-            long oVersion = versionConfig.getOthersVersion();
-            if (oVersion > othersVersion) {
-                COthers others = versionConfig.getOthers();
-
-                // 加载配置
-                dataPersistInterval = others.getDataPersistInterval();
-            }
-
-
             long tVersion = versionConfig.getTerminalVersion();
 
             if (tVersion > terminalVersion) {
@@ -176,8 +164,6 @@ public class TerminalManager implements ApplicationRunner, Runnable {
             variableMapArray[old] = null;
             alarmMapArray[old] = null;
 
-            parentNodeCode = versionConfig.getParentNodeCode();
-
             loaded = true;
         } catch (Exception e) {
             log.error("尝试加载配置失败:" + e.getMessage());
@@ -209,10 +195,6 @@ public class TerminalManager implements ApplicationRunner, Runnable {
 
     public Map<Integer, Alarm> getAlarmMap() {
         return alarmMapArray[index];
-    }
-
-    public String getParentNodeCode() {
-        return parentNodeCode;
     }
 
 
@@ -251,21 +233,6 @@ public class TerminalManager implements ApplicationRunner, Runnable {
         }
     }
 
-    /**
-     * 测试终端转正式
-     */
-    public void turnFormal(List<Integer> terminalIds) {
-        if (terminalIds != null && terminalIds.size() > 0) {
-            for (int terminalId : terminalIds) {
-                Terminal terminal = getTerminal(terminalId);
-                if (terminal != null && terminal.isTest()) {
-                    terminal.setTest(false);
-                }
-            }
-
-            terminalDataService.deleteTestData(terminalIds);
-        }
-    }
 
     //-------------------------
     // 持久化数据和终端相关维护

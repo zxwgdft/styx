@@ -13,7 +13,6 @@ public class CTerminal {
 
     private int id;
     private String uid;
-    private int stationId;
     private int type;
     private String varIds;
     private String alarmIds;

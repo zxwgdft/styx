@@ -25,9 +25,6 @@ public class ConfigAlarm extends DeletedBaseModel {
     @ApiModelProperty("变量集合")
     private String variableList;
 
-    @ApiModelProperty("通知目标")
-    private String noticeTarget;
-
     @ApiModelProperty("使用状态")
     private Boolean enabled;
 

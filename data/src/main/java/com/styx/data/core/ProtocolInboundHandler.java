@@ -1,7 +1,6 @@
 package com.styx.data.core;
 
 
-import com.styx.data.core.datagram.IntegratedDatagram;
 import com.styx.data.core.datagram.SplitDatagram;
 import com.styx.data.core.terminal.Terminal;
 import com.styx.data.core.terminal.TerminalManager;
@@ -69,15 +68,8 @@ public class ProtocolInboundHandler extends ChannelInboundHandlerAdapter {
                 array = na;
             }
 
-            Datagram datagram = null;
+            Datagram datagram = new SplitDatagram(array);
 
-            if (length < 1000) {
-                // 数据长度小于1000的按照一体机数据协议解析
-                datagram = new IntegratedDatagram(array);
-            } else {
-                // 分体机数据协议
-                datagram = new SplitDatagram(array);
-            }
 
             if (datagram != null) {
                 String terminalID = datagram.getTerminalID();

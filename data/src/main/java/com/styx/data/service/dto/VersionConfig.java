@@ -20,9 +20,4 @@ public class VersionConfig {
 
     private long terminalVersion;
     private List<CTerminal> terminals;
-
-    private long othersVersion;
-    private COthers others;
-
-    private String parentNodeCode;
 }

@@ -20,12 +20,6 @@ import java.util.*;
 public class Terminal {
     // 终端ID
     private int id;
-    // 终端名称
-    private String name;
-    // 站点ID
-    private int stationId;
-    // 站点名称
-    private String stationName;
     // 终端UID
     private String uid;
     // 是否在线
@@ -41,7 +35,7 @@ public class Terminal {
     // 终端变量
     private Set<Integer> variableIds;
     // 终端报警
-    private Set<Integer> noAlarmIds;
+    private Set<Integer> alarmIds;
 
     // 维护结束时间
     private volatile long maintainOffTime;
@@ -53,8 +47,6 @@ public class Terminal {
     private Map<Integer, Float> variableValueMap;
     // 报警状态
     private Map<Integer, AlarmStatus> alarmTriggeringMap;
-    // 是否测试终端
-    private boolean isTest;
 
     // 同步锁
     @Getter(AccessLevel.NONE)
@@ -70,14 +62,10 @@ public class Terminal {
 
     public Terminal(CTerminal cTerminal, Terminal oldTerminal, TerminalDataInitializer terminalDataInitializer, TerminalAlarmHandler terminalAlarmHandler, TerminalManager terminalManager) {
         this.id = cTerminal.getId();
-        this.name = cTerminal.getName();
         this.uid = cTerminal.getUid();
-        this.stationName = cTerminal.getStationName();
-        this.stationId = cTerminal.getStationId();
         this.variableIds = string2set(cTerminal.getVarIds());
-        this.noAlarmIds = string2set(cTerminal.getNoAlarmIds());
+        this.alarmIds = string2set(cTerminal.getAlarmIds());
         this.terminalAlarmHandler = terminalAlarmHandler;
-        this.isTest = cTerminal.isTest();
         this.terminalManager = terminalManager;
 
         if (oldTerminal != null) {
@@ -152,9 +140,6 @@ public class Terminal {
         return set;
     }
 
-    public void setTest(boolean isTest) {
-        this.isTest = isTest;
-    }
 
     /**
      * 获取累计工作时间
@@ -233,22 +218,6 @@ public class Terminal {
         }
     }
 
-    /**
-     * 获取某变量标识（传感器地址）的所有变量
-     *
-     * @param sensorType 变量标识（传感器地址）
-     */
-    public Collection<Variable> getVariableBySensorType(int sensorType) {
-        Map<Integer, Variable> variableMap = terminalManager.getVariableMap();
-        List<Variable> variables = new ArrayList<>();
-        for (Integer varId : this.variableIds) {
-            Variable variable = variableMap.get(varId);
-            if (variable != null && variable.getSensorType() == sensorType) {
-                variables.add(variable);
-            }
-        }
-        return variables;
-    }
 
     /**
      * 获取终端所有变量
@@ -285,16 +254,16 @@ public class Terminal {
      */
     public Collection<Alarm> getAlarms() {
         Map<Integer, Alarm> alarmMap = terminalManager.getAlarmMap();
-        if (this.noAlarmIds.size() > 0) {
+        if (this.alarmIds.size() > 0) {
             List<Alarm> alarms = new ArrayList<>(alarmMap.size());
             for (Alarm alarm : alarmMap.values()) {
-                if (!this.noAlarmIds.contains(alarm.getId())) {
+                if (this.alarmIds.contains(alarm.getId())) {
                     alarms.add(alarm);
                 }
             }
             return alarms;
         } else {
-            return alarmMap.values();
+            return Collections.emptyList();
         }
     }
 
@@ -363,7 +332,7 @@ public class Terminal {
 
                 // 判断并关闭报警
                 Iterator<Map.Entry<Integer, AlarmStatus>> alarmIterator = alarmTriggeringMap.entrySet().iterator();
-                while(alarmIterator.hasNext()) {
+                while (alarmIterator.hasNext()) {
                     Map.Entry<Integer, AlarmStatus> entry = alarmIterator.next();
                     int aid = entry.getKey();
                     if (!triggerAlarmIds.contains(aid)) {

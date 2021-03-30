@@ -24,8 +24,7 @@ import java.util.Map;
 @Component
 public class PLCSensorDataAction implements CommandAction {
 
-    private static final int COMMAND = 0xAA;
-    private static final int REAL_COMMAND = 0x0A;
+    private static final int COMMAND = 0x0A;
 
     @Value("${data.protocol.variable.id-ppf}")
     private int variable_id_ppf;
@@ -46,16 +45,16 @@ public class PLCSensorDataAction implements CommandAction {
 
         // 读取变量值
         for (Variable variable : variables) {
-            int valueType = variable.getValueType();
+            int valueType = variable.getType();
             // 需要减去帧头1字节
-            int address = variable.getAddressStart() - 1;
+            int address = variable.getBytePosition() - 1;
 
             if (address < 0) {
                 log.warn("变量[id:" + variable.getId() + "]解析地址异常，不能为：" + address);
                 continue;
             }
 
-            int switchAddress = variable.getSwitchAddress();
+            int switchAddress = variable.getBitPosition();
 
             float value;
             if (valueType == Constants.VALUE_TYPE_FLOAT) {
@@ -109,7 +108,7 @@ public class PLCSensorDataAction implements CommandAction {
         byte[] response = new byte[18];
 
         response[0] = Constants.FRAME_HEAD;
-        response[1] = REAL_COMMAND;
+        response[1] = COMMAND;
 
         // 从请求数据帧中拷贝终端ID，12位
         datagram.copyTerminalID(response, 2);

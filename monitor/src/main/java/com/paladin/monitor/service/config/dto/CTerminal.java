@@ -1,6 +1,5 @@
 package com.paladin.monitor.service.config.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 

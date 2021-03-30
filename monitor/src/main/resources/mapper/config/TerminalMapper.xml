@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paladin.monitor.mapper.config.ConfigTerminalMapper">
+
+    <select id="findTerminalConfigList" resultType="com.paladin.monitor.service.config.dto.CTerminal">
+        SELECT b.id, b.uid, b.variable_ids varIds, b.alarm_ids alarmIds
+        FROM config_station a INNER JOIN config_terminal b ON a.id = b.station_id
+        WHERE a.enabled = 1 AND a.deleted = 0 AND b.enabled = 1 AND b.deleted = 0 AND a.server_node = #{serverNode}
+    </select>
+
+</mapper>

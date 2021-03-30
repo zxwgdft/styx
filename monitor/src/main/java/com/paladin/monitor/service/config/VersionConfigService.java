@@ -79,12 +79,15 @@ public class VersionConfigService {
     }
 
     private List<CVariable> readVariables(String serverNode) {
+        return configVariableMapper.findVariableConfigList();
     }
 
     private List<CTerminal> readTerminals(String serverNode) {
+        return configTerminalMapper.findTerminalConfigList(serverNode);
     }
 
     private List<CAlarm> readAlarms(String serverNode) {
+        return configAlarmMapper.findAlarmConfigList();
     }
 
 
