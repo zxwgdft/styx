@@ -1,11 +1,13 @@
 package com.styx.monitor.config;
 
-import com.styx.monitor.core.MonitorUserRealm;
-import com.styx.monitor.core.log.OperationLogInterceptor;
-import com.styx.monitor.core.security.PermissionMethodInterceptor;
 import com.styx.common.cache.DataCacheManager;
 import com.styx.common.cache.RedisDataCacheManager;
+import com.styx.common.service.ServiceSupportManager;
 import com.styx.common.spring.SpringBeanHelper;
+import com.styx.monitor.core.MonitorUserRealm;
+import com.styx.monitor.core.MonitorUserSessionFactory;
+import com.styx.monitor.core.log.OperationLogInterceptor;
+import com.styx.monitor.core.security.PermissionMethodInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
@@ -65,6 +67,11 @@ public class MonitorConfiguration {
     }
 
     @Bean
+    public MonitorUserSessionFactory getSessionFactory(){
+        return new MonitorUserSessionFactory();
+    }
+
+    @Bean
     public PermissionMethodInterceptor getPermissionMethodInterceptor() {
         return new PermissionMethodInterceptor();
     }
@@ -74,6 +81,9 @@ public class MonitorConfiguration {
     public OperationLogInterceptor getOperationLogInterceptor() {
         return new OperationLogInterceptor();
     }
+
+
+
 
     //---------------------------------------
     //
@@ -89,5 +99,9 @@ public class MonitorConfiguration {
         return new SpringBeanHelper();
     }
 
+    @Bean
+    public ServiceSupportManager getServiceSupportManager() {
+        return new ServiceSupportManager();
+    }
 
 }

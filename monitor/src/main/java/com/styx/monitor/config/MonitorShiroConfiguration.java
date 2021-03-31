@@ -6,7 +6,10 @@ import org.apache.shiro.authc.AuthenticationListener;
 import org.apache.shiro.authc.Authenticator;
 import org.apache.shiro.authc.pam.AuthenticationStrategy;
 import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.session.mgt.SessionFactory;
+import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -42,37 +45,33 @@ public class MonitorShiroConfiguration {
     }
 
     @Bean(name = "sessionManager")
-    public DefaultWebSessionManager defaultWebSessionManager(ShiroProperties shiroProperties, @Autowired(required = false) ShiroRedisSessionDAO redisSessionDAO) {
+    public SessionManager defaultWebSessionManager(ShiroProperties shiroProperties, SessionFactory sessionFactory, @Autowired(required = false) ShiroRedisSessionDAO redisSessionDAO) {
         DefaultWebSessionManager sessionManager = new ShiroWebSessionManager(shiroProperties);
 
         // 如果设置集群共享session，需要redis来存放session
         sessionManager.setSessionDAO(redisSessionDAO);
         // 用户权限，认证等缓存设置，因为验证权限部分用其他方式实现，所以不需要缓存
         // sessionManager.setCacheManager(new RedisCacheManager());
-        sessionManager.setSessionFactory(new ShiroRedisSessionDAO.ControlledSessionFactory());
+        sessionManager.setSessionFactory(sessionFactory);
 
         // session 监听
         // Collection<SessionListener> sessionListeners = new ArrayList<>();
         // sessionListeners.add(new CustomSessionListener());
         // sessionManager.setSessionListeners(sessionListeners);
 
-        // 单位为毫秒（1秒=1000毫秒） 3600000毫秒为1个小时
-        //sessionManager.setSessionValidationInterval(3600000);
-        // 是否开启 检测，默认开启
-        // sessionManager.setSessionValidationSchedulerEnabled(shiroProperties.isSessionValidationSchedulerEnabled());
-        // 3600000 milliseconds = 1 hour
-        // sessionManager.setGlobalSessionTimeout(shiroProperties.getSessionTime() * 60 * 1000);
-        // 是否删除无效的，默认也是开启
+        // 是否开启检测，默认开启，session过期策略交给redis
+        sessionManager.setSessionValidationSchedulerEnabled(false);
+        // 是否删除无效的，默认开启，使用redis后不需要
         sessionManager.setDeleteInvalidSessions(false);
-        // 是否在url上显示检索得到的sessionid
+        // 是否在url上显示检索得到的sessionid，前后端分离使用token后不需要
         sessionManager.setSessionIdUrlRewritingEnabled(false);
 
         return sessionManager;
     }
 
     @Bean(name = "securityManager")
-    public DefaultWebSecurityManager getDefaultWebSecurityManage(DefaultWebSessionManager defaultWebSessionManager, List<Realm> realms,
-                                                                 List<AuthenticationListener> authenticationListeners) {
+    public SecurityManager getDefaultWebSecurityManage(SessionManager sessionManager, List<Realm> realms,
+                                                       List<AuthenticationListener> authenticationListeners) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setAuthenticator(new ShiroMultiRealmAuthenticator());
         securityManager.setRealms(realms);
@@ -85,12 +84,12 @@ public class MonitorShiroConfiguration {
 
         // 注入缓存管理器;
         // securityManager.setCacheManager(redisCacheManager());
-        securityManager.setSessionManager(defaultWebSessionManager);
+        securityManager.setSessionManager(sessionManager);
         return securityManager;
     }
 
     @Bean(name = "shiroFilter")
-    public ShiroFilterFactoryBean shirFilter(DefaultWebSecurityManager securityManager, ShiroProperties shiroProperties) {
+    public ShiroFilterFactoryBean shirFilter(SecurityManager securityManager, ShiroProperties shiroProperties) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
 
         // 必须设置 SecurityManager
@@ -117,9 +116,6 @@ public class MonitorShiroConfiguration {
         // port（端口验证） org.apache.shiro.web.filter.authz.PortFilter
         // rest (rest方面) org.apache.shiro.web.filter.authz.HttpMethodPermissionFilter
         filterChainDefinitionMap.put("/monitor/login/**", "anon");
-        filterChainDefinitionMap.put("/monitor/verifyCode", "anon");
-        filterChainDefinitionMap.put("/monitor/auth/redirect", "anon");
-        filterChainDefinitionMap.put("/monitor/auth/token", "anon");
         filterChainDefinitionMap.put("/monitor/**", "authc");
         filterChainDefinitionMap.put("/**", "anon");
 

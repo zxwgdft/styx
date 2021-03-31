@@ -95,4 +95,9 @@ public class ShiroWebSessionManager extends DefaultWebSessionManager {
         return s;
     }
 
+
+    protected void applyGlobalSessionTimeout(Session session) {
+        //session.setTimeout(getGlobalSessionTimeout());
+        onChange(session);
+    }
 }

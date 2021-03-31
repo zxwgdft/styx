@@ -136,7 +136,7 @@ public class ShiroRedisSessionDAO implements SessionDAO {
         if (session instanceof ControlledSession) {
             ControlledSession controlledSession = (ControlledSession) session;
             if (controlledSession.isValid()) {
-                // TODO 需要考虑改变了session中object中值，而并没有调用ControlledSession中方法时isContentChanged值不会改变，所以不会更新问题
+                // TODO 需要考虑改变了session中object中值，而并没有调用ControlledSession中方法时needUpdate不会改变，所以不会更新问题
                 if (controlledSession.needUpdate) {
                     cacheSessioin(session.getId(), session, controlledSession.rememberMe);
                     controlledSession.needUpdate = false;
@@ -208,7 +208,6 @@ public class ShiroRedisSessionDAO implements SessionDAO {
         @Override
         public void setTimeout(long timeout) {
             super.setTimeout(timeout);
-            needUpdate = true;
         }
 
         @Override

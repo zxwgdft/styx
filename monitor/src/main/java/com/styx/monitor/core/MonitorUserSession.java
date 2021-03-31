@@ -2,6 +2,7 @@ package com.styx.monitor.core;
 
 import com.styx.monitor.config.shiro.ShiroRedisSessionDAO;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
 
 /**
  * 通用用户会话信息
@@ -62,7 +63,9 @@ public class MonitorUserSession extends ShiroRedisSessionDAO.ControlledSession {
      * 获取当前用户会话
      */
     public static MonitorUserSession getCurrentUserSession() {
-        return (MonitorUserSession) SecurityUtils.getSubject().getSession();
+        Session obj =  SecurityUtils.getSubject().getSession();
+
+        return (MonitorUserSession) obj;
     }
 
     public String[] getRoles() {

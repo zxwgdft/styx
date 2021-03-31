@@ -31,8 +31,8 @@ public class ServiceSupport<Model> {
     private static Map<Class, String[]> selectionCacheMap = new HashMap<>();
 
     protected Class<Model> modelType; // 业务对应类
-    private boolean isBaseModel;
-    private boolean isDeletedModel;
+    protected boolean isBaseModel;
+    protected boolean isDeletedModel;
 
     public ServiceSupport() {
         // 获取泛型类，该泛型类应该是对应数据库某表的实体类类型
@@ -42,23 +42,12 @@ public class ServiceSupport<Model> {
                     + ServiceSupport.class.getName() + "]的泛型，无法为其注册BaseMapper");
         }
         modelType = (Class<Model>) clazz;
-
-        if (BaseModel.class.isAssignableFrom(modelType)) {
-            isBaseModel = true;
-        }
     }
 
 
-    void init() {
-        if (BaseModel.class.isAssignableFrom(modelType)) {
-            isBaseModel = true;
-        }
-
-        if (DeletedBaseModel.class.isAssignableFrom(modelType)) {
-            isDeletedModel = true;
-        }
-
-
+    protected void init() {
+        isBaseModel = BaseModel.class.isAssignableFrom(modelType);
+        isDeletedModel = DeletedBaseModel.class.isAssignableFrom(modelType);
     }
 
     /**
@@ -147,7 +136,7 @@ public class ServiceSupport<Model> {
      * 查找所有结果集合
      */
     public List<Model> findList(Wrapper queryWrapper) {
-        return searchAll(null, queryWrapper);
+        return searchAll(modelType, queryWrapper);
     }
 
     /**
@@ -156,7 +145,7 @@ public class ServiceSupport<Model> {
     public List<Model> findList(Object queryParam) {
         Wrapper queryWrapper = queryParam != null ?
                 QueryWrapperHelper.buildQuery(queryParam) : null;
-        return searchAll(null, queryWrapper);
+        return searchAll(modelType, queryWrapper);
     }
 
     /**

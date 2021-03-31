@@ -1,5 +1,6 @@
 package com.styx.monitor.web;
 
+import com.styx.monitor.service.org.OrgUserService;
 import com.styx.monitor.service.sys.AuthService;
 import com.styx.monitor.service.sys.SysUserService;
 import com.styx.monitor.service.sys.dto.LoginSuccess;
@@ -22,11 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
 
     @Autowired
-    private SysUserService sysUserService;
-
-    @Autowired
     private AuthService authService;
-
 
     @ApiOperation("用户认证")
     @PostMapping("/login")
