@@ -2,7 +2,9 @@ package com.styx.monitor.config.shiro;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.UnknownSessionException;
+import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
@@ -96,8 +98,15 @@ public class ShiroWebSessionManager extends DefaultWebSessionManager {
     }
 
 
-    protected void applyGlobalSessionTimeout(Session session) {
-        //session.setTimeout(getGlobalSessionTimeout());
-        onChange(session);
+    public Session start(SessionContext context){
+        Session session = createSession(context);
+        // 不需要设置session timeout
+        //applyGlobalSessionTimeout(session);
+        onStart(session, context);
+        notifyStart(session);
+        //Don't expose the EIS-tier Session object to the client-tier:
+        return createExposedSession(session, context);
     }
+
+
 }

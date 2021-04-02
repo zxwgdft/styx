@@ -4,14 +4,14 @@ import com.styx.common.cache.DataCacheManager;
 import com.styx.common.cache.RedisDataCacheManager;
 import com.styx.common.service.ServiceSupportManager;
 import com.styx.common.spring.SpringBeanHelper;
+import com.styx.monitor.config.shiro.ShiroRedisSessionDAO;
 import com.styx.monitor.core.MonitorUserRealm;
-import com.styx.monitor.core.MonitorUserSessionFactory;
 import com.styx.monitor.core.log.OperationLogInterceptor;
 import com.styx.monitor.core.security.PermissionMethodInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.session.mgt.SessionFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -58,17 +58,13 @@ public class MonitorConfiguration {
     @Bean
     public AuthorizingRealm getRealm() {
         MonitorUserRealm realm = new MonitorUserRealm();
-        HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
-        hashedCredentialsMatcher.setHashAlgorithmName("md5");// 散列算法:这里使用MD5算法;
-        hashedCredentialsMatcher.setHashIterations(1);// 散列的次数，当于 m比如散列两次，相d5("");
-        realm.setCredentialsMatcher(hashedCredentialsMatcher);
         realm.setAuthenticationTokenClass(UsernamePasswordToken.class);
         return realm;
     }
 
     @Bean
-    public MonitorUserSessionFactory getSessionFactory(){
-        return new MonitorUserSessionFactory();
+    public SessionFactory getSessionFactory() {
+        return new ShiroRedisSessionDAO.ControlledSessionFactory();
     }
 
     @Bean
@@ -81,8 +77,6 @@ public class MonitorConfiguration {
     public OperationLogInterceptor getOperationLogInterceptor() {
         return new OperationLogInterceptor();
     }
-
-
 
 
     //---------------------------------------

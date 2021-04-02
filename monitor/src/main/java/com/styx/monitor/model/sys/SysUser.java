@@ -17,23 +17,22 @@ public class SysUser implements Serializable {
     /**
      * 启用状态
      */
-    public final static Integer STATE_ENABLED = 1;
+    public final static int STATE_ENABLED = 1;
     /**
      * 停用状态
      */
-    public final static Integer STATE_DISABLED = 0;
+    public final static int STATE_DISABLED = 0;
+
     /**
      * 管理员账号
      */
     public final static Integer USER_TYPE_ADMIN = 1;
+
     /**
      * 人员账号
      */
     public final static Integer USER_TYPE_PERSONNEL = 3;
 
-
-    public static final String FIELD_ACCOUNT = "account";
-    public static final String FIELD_USER_ID = "userId";
 
     @TableId
     private String id;

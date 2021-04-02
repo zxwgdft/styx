@@ -80,17 +80,6 @@ public class SysUserService extends ServiceSupport<SysUser> {
         ) == 0;
     }
 
-    /**
-     * 通过账号查找用户
-     */
-    public SysUser getUserByAccount(String account) {
-        List<SysUser> users = findList(
-                new LambdaQueryWrapper<SysUser>()
-                        .eq(SysUser::getAccount, account)
-        );
-        return (users != null && users.size() > 0) ? users.get(0) : null;
-    }
-
 
     /**
      * 更新个人用户账号

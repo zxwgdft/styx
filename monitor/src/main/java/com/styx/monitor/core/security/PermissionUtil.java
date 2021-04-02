@@ -157,7 +157,7 @@ public class PermissionUtil {
 
     public static boolean hasPermission(MonitorUserSession userSession, String permissionCode) {
         if (userSession.isSystemAdmin()) return true;
-        String[] roleIds = userSession.getRoles();
+        String[] roleIds = userSession.getRoleIds();
         if (roleIds == null || roleIds.length == 0) return false;
 
         PermissionContainer permissionContainer = dataCacheManager.getData(PermissionContainer.class);

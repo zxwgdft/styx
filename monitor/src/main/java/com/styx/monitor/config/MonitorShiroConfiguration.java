@@ -46,7 +46,7 @@ public class MonitorShiroConfiguration {
 
     @Bean(name = "sessionManager")
     public SessionManager defaultWebSessionManager(ShiroProperties shiroProperties, SessionFactory sessionFactory, @Autowired(required = false) ShiroRedisSessionDAO redisSessionDAO) {
-        DefaultWebSessionManager sessionManager = new ShiroWebSessionManager(shiroProperties);
+        ShiroWebSessionManager sessionManager = new ShiroWebSessionManager(shiroProperties);
 
         // 如果设置集群共享session，需要redis来存放session
         sessionManager.setSessionDAO(redisSessionDAO);
@@ -58,6 +58,7 @@ public class MonitorShiroConfiguration {
         // Collection<SessionListener> sessionListeners = new ArrayList<>();
         // sessionListeners.add(new CustomSessionListener());
         // sessionManager.setSessionListeners(sessionListeners);
+
 
         // 是否开启检测，默认开启，session过期策略交给redis
         sessionManager.setSessionValidationSchedulerEnabled(false);

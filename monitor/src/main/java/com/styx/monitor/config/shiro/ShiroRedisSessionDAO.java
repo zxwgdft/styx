@@ -10,7 +10,6 @@ import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.session.mgt.SessionFactory;
 import org.apache.shiro.session.mgt.SimpleSession;
-import org.apache.shiro.session.mgt.ValidatingSession;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.session.mgt.eis.SessionIdGenerator;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -23,6 +22,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * redis实现共享session
+ * <p>
+ * 不支持ControlledSession外的其他session（需要修改）
+ * 如果是不需要持久化的，都不会放入redis，例如还未认证
+ * 通过的用户请求不需要持久化
  *
  * @author TontoZhou
  * @since 2018年3月16日
@@ -67,10 +70,10 @@ public class ShiroRedisSessionDAO implements SessionDAO {
      * @param sessionId
      * @param session
      */
-    private void cacheSessioin(Serializable sessionId, Session session, boolean rememberMe) {
-        redisTemplate.opsForValue().set(getRedisKey(sessionId), session, rememberMe ? longSessionTime : sessionTime, TimeUnit.MINUTES);
+    private void cacheSessioin(Serializable sessionId, Session session) {
+        redisTemplate.opsForValue().set(getRedisKey(sessionId), session, session.getTimeout(), TimeUnit.MINUTES);
         if (log.isDebugEnabled()) {
-            log.debug("添加session缓存：" + session);
+            log.debug("添加session缓存：" + sessionId);
         }
     }
 
@@ -82,7 +85,7 @@ public class ShiroRedisSessionDAO implements SessionDAO {
     private void uncacheSession(Session session) {
         redisTemplate.delete(getRedisKey(session.getId()));
         if (log.isDebugEnabled()) {
-            log.debug("移除Redis中session缓存：" + session);
+            log.debug("移除Redis中session缓存：" + session.getId());
         }
     }
 
@@ -95,7 +98,7 @@ public class ShiroRedisSessionDAO implements SessionDAO {
     private Session getCacheSession(Serializable sessionId) {
         Session cached = (Session) redisTemplate.opsForValue().get(getRedisKey(sessionId));
         if (log.isDebugEnabled()) {
-            log.debug("从Redis获取session缓存：" + cached);
+            log.debug("从Redis获取session缓存：" + sessionId);
         }
         return cached;
     }
@@ -105,8 +108,8 @@ public class ShiroRedisSessionDAO implements SessionDAO {
      *
      * @param sessionId
      */
-    private void updateCacheExpireTime(Serializable sessionId, boolean rememberMe) {
-        redisTemplate.expire(getRedisKey(sessionId), rememberMe ? longSessionTime : sessionTime, TimeUnit.MINUTES);
+    private void updateCacheExpireTime(Serializable sessionId, long sessionTime) {
+        redisTemplate.expire(getRedisKey(sessionId), sessionTime, TimeUnit.MINUTES);
         if (log.isDebugEnabled()) {
             log.debug("更新Redis中session缓存过期时间：" + sessionId);
         }
@@ -121,8 +124,14 @@ public class ShiroRedisSessionDAO implements SessionDAO {
     @Override
     public Serializable create(Session session) {
         Serializable sessionId = this.sessionIdGenerator.generateId(session);
-        ((SimpleSession) session).setId(sessionId);
-        cacheSessioin(sessionId, session, false);
+        ControlledSession controlledSession = (ControlledSession) session;
+        controlledSession.setId(sessionId);
+        // 首次创建设置过期时间
+        boolean remember = controlledSession.rememberMe;
+        controlledSession.setTimeout(remember ? longSessionTime : sessionTime);
+
+        cacheSessioin(sessionId, session);
+        controlledSession.needUpdate = false;
         return sessionId;
     }
 
@@ -133,29 +142,17 @@ public class ShiroRedisSessionDAO implements SessionDAO {
 
     @Override
     public void update(Session session) throws UnknownSessionException {
-        if (session instanceof ControlledSession) {
-            ControlledSession controlledSession = (ControlledSession) session;
-            if (controlledSession.isValid()) {
-                // TODO 需要考虑改变了session中object中值，而并没有调用ControlledSession中方法时needUpdate不会改变，所以不会更新问题
-                if (controlledSession.needUpdate) {
-                    cacheSessioin(session.getId(), session, controlledSession.rememberMe);
-                    controlledSession.needUpdate = false;
-                } else {
-                    updateCacheExpireTime(session.getId(), controlledSession.rememberMe);
-                }
+        ControlledSession controlledSession = (ControlledSession) session;
+        if (controlledSession.isValid()) {
+            // TODO 需要考虑改变了session中object中值，而并没有调用ControlledSession中方法时needUpdate不会改变，所以不会更新问题
+            if (controlledSession.needUpdate) {
+                cacheSessioin(session.getId(), session);
+                controlledSession.needUpdate = false;
             } else {
-                uncacheSession(session);
+                updateCacheExpireTime(session.getId(), session.getTimeout());
             }
         } else {
-            if (session instanceof ValidatingSession) {
-                if (((ValidatingSession) session).isValid()) {
-                    cacheSessioin(session.getId(), session, false);
-                } else {
-                    uncacheSession(session);
-                }
-            } else {
-                cacheSessioin(session.getId(), session, false);
-            }
+            uncacheSession(session);
         }
     }
 
@@ -166,6 +163,7 @@ public class ShiroRedisSessionDAO implements SessionDAO {
 
     @Override
     public Collection<Session> getActiveSessions() {
+        // redis 对于模糊查询支持不太友好，暂时不开放这功能
         return null;
     }
 
@@ -208,6 +206,7 @@ public class ShiroRedisSessionDAO implements SessionDAO {
         @Override
         public void setTimeout(long timeout) {
             super.setTimeout(timeout);
+            needUpdate = true;
         }
 
         @Override
@@ -266,8 +265,8 @@ public class ShiroRedisSessionDAO implements SessionDAO {
         }
 
         public void setRememberMe(boolean rememberMe) {
-            needUpdate = true;
             this.rememberMe = rememberMe;
+            needUpdate = true;
         }
     }
 
