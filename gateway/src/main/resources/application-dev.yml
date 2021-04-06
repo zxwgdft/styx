@@ -1,0 +1,45 @@
+server:
+  port: 19020
+
+spring:
+  application:
+    name: styx-gateway
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
+  cloud:
+    nacos:
+      server-addr: 172.16.16.120:8848
+    gateway:
+      locator:
+        enabled: true
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - GET
+              - POST
+            allowed-headers: "*"
+            allow-credentials: true
+            max-age: 3600
+      routes:
+        - predicates:
+            - Path=/monitor/**
+          uri: lb://styx-monitor
+        - predicates:
+            - Path=/support/file/**
+          uri: lb://styx-support
+        - predicates:
+            - Path=/support/static/file/**
+          uri: lb://styx-support
+
+paladin:
+  cors-enabled: true
+  gateway:
+    # APP静态资源地址匹配模式
+    app-path-pattern: /static/app/**
+    # APP静态资源地址
+    app-resource-path: classpath:/static/app/

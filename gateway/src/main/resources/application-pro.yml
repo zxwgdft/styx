@@ -1,0 +1,58 @@
+# http 、 ip访问用的配置
+
+logging:
+  file:
+    path: logs
+    max-history: 30
+
+server:
+  port: 19020
+
+spring:
+  application:
+    name: msms-gateway
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
+  cloud:
+    nacos:
+      server-addr: 172.16.100.224:8848
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - GET
+              - POST
+            allowed-headers: "*"
+            allow-credentials: true
+            max-age: 3600
+      routes:
+        - predicates:
+            - Path=/
+          uri: http://180.100.215.133:19020/static/app/index.html
+          filters:
+            - RedirectTo=302, http://180.100.215.133:19020/static/app/index.html
+        - predicates:
+            - Path=/monitor/**
+          uri: lb://msms-monitor
+        - predicates:
+            - Path=/file/**
+          uri: lb://msms-support
+        - predicates:
+            - Path=/static/file/**
+          uri: lb://msms-support
+
+
+
+
+paladin:
+  cors-enabled: true
+  gateway:
+    # APP静态资源地址匹配模式
+    app-path-pattern: /static/app/**
+    # APP静态资源地址
+    app-resource-path: file:/usr/local/msms/app/

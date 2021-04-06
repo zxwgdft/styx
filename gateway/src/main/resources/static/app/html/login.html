@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Demo System</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="/static/app/assets/bootstrap3/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/static/app/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/app/css/ionicons.min.css">
+    <link rel="stylesheet" href="/static/app/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="/static/app/assets/iCheck/square/_all.css"/>
+    <link rel="stylesheet" href="/static/app/assets/layer/theme/default/layer.css"/>
+</head>
+
+<body class="hold-transition login-page">
+<div class="login-box">
+    <div class="login-logo">
+        <a href="#"><b>Demo</b> System</a>
+    </div>
+    <div class="login-box-body">
+        <p class="login-box-msg">用户登录</p>
+        <form action="#" method="post">
+            <div class="form-group has-feedback">
+                <input type="text" id="username" name="username" class="form-control" placeholder="用户名">
+                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="password" id="password" name="password" class="form-control" placeholder="密码">
+                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <button type="button" onclick="login()" class="btn btn-primary btn-block btn-flat">登录</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript" src="/static/app/assets/jquery/jquery-2.2.4.min.js"></script>
+<script type="text/javascript" src="/static/app/assets/bootstrap3/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/static/app/assets/iCheck/icheck.min.js"></script>
+<script type="text/javascript" src="/static/app/assets/layer/layer.js"></script>
+<script>
+    $(function () {
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue',
+            increaseArea: '20%' // optional
+        });
+    });
+
+    function login() {
+        var data = {
+            username: $("#username").val(),
+            password: $("#password").val()
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/monitor/login",
+            dataType: "json",
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success: function (result) {
+                localStorage.setItem("token", result.token);
+                localStorage.setItem("user", JSON.stringify(result));
+                location.href = "/static/app/html/index.html";
+            },
+            complete: function (XMLHttpRequest, textStatus) {
+                $("button").each(function () {
+                    var that = $(this);
+                    var text = that.text();
+                    that.removeClass('disabled').prop('disabled', false).text(that.data(
+                        "originText"));
+                });
+            },
+            beforeSend: function (XMLHttpRequest) {
+                $("button").each(function () {
+                    var that = $(this);
+                    that.data("loading", true);
+                    var text = that.text();
+                    that.data("originText", text);
+                    that.text(text + '中...').prop('disabled', true).addClass('disabled');
+                });
+            },
+            error: function (xhr, e) {
+                layer.msg("系统异常:" + xhr.status, {
+                    icon: 5,
+                    offset: top ? top : undefined
+                });
+            }
+        });
+
+    }
+</script>
+</body>
+
+</html>

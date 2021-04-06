@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<head th:include="/demo/header"/>
+<link rel="stylesheet" href="/static/app/assets/ueditor/themes/default/css/ueditor.min.css"/>
+
+<body>
+<tt:constant enumcode="sex-type,identification-type,nation-type,"/>
+<section class="content-header">
+    <h1>人员管理</h1>
+    <ol class="breadcrumb">
+        <li><a href="/demo/org/personnel/index"><i class="fa fa-table"></i>列表</a></li>
+        <li class="active">新增</li>
+    </ol>
+</section>
+<section class="content">
+</section>
+<div th:include="/demo/footer"/>
+<script type="text/javascript" src="/static/app/assets/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="/static/app/assets/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript">
+    var options = {
+        id: "model",
+        cancelBtn: false,
+        name: "新增",
+        url: "/demo/org/personnel/save",
+        boxHeader: false,
+        columns: [
+            {
+                title: "姓名",
+                name: "name",
+                required: "required",
+                maxLength: 20,
+                inputType: "TEXT",
+                fieldset: true,
+                legend: '基本信息'
+            },
+
+            {
+                title: "证件类型",
+                name: "identificationType",
+                enum: "identification-type",
+                required: "required",
+                inputType: "SELECT"
+            },
+            {title: "证件号码", name: "identificationNo", required: "required", maxLength: 32, inputType: "TEXT"},
+            {title: "账号", name: "account", required: "required", minLength: 6, maxLength: 20, inputType: "TEXT"},
+
+            {
+                // 该属性后台不会接受，只是示例
+                title: "头像",
+                name: "portrait",
+                colspan: 2,
+                inputType: "ATTACHMENT",
+                fileName: "portraitFiles",
+                isPicture: true, // 如果是图片则只能接收后缀["jpeg", "jpg", "png", "gif"]，优先级低于allowedFileExtensions
+                maxFileCount: 1
+            },
+            {
+                // 从服务器获取单位树形下拉数据，idField 和nameField分别为数据中的value和name
+                title: "所属机构",
+                name: "unitId",
+                inputType: "SELECT-TREE-SERVER",
+                url: "/demo/org/unit/find/tree",
+                layerWidth: "500px", // 弹出框宽度
+                required: "required",
+                isListData: false, // 是否列表形式（如果是列表形式将会自动把数据转换为TREE形式）
+                idField: "id",
+                nameField: "name"
+            },
+
+
+            {title: "性别", name: "sex", enum: "sex-type", inputType: "RADIO", fieldset: true, legend: '详细信息'},
+            {
+                title: "角色",
+                name: "roles",
+                required: "required",
+                inputType: "SELECT-SERVER",
+                multiple: true,
+                url: "/common/org/role/find/all",
+                idField: "id",
+                colspan: 2,
+                nameField: "roleName"
+            },
+            {title: "出生日期", name: "birthday", inputType: "DATE"},
+            {
+                title: "手机号码",
+                name: "cellphone",
+                maxLength: 20,
+                inputType: "TEXT",
+                attr: {
+                    "data-type": "cellphone",
+                    "placeholder": "请输入本人的手机号码"
+                    // 可以增加dom的属性，例如添加数据类型和最大长度用于验证
+                },
+                // 性别男时候才能选择手机号码，如果值为多个可以在数组后面继续添加
+                dependency: ["sex", "1"]
+            },
+            {title: "电话号码", name: "officePhone", maxLength: 20, inputType: "TEXT"},
+            {title: "民族", name: "nation", enum: "nation-type", inputType: "SELECT"},
+            {title: "简历", name: "resume", inputType: "EDITOR", fieldset: true, legend: '补充信息'},
+            {
+                // 子项添加，未做保存处理
+                title: "地址",
+                name: "address",
+                required: "required",
+                inputType: "SUB-MODEL",
+                subViewField: "personnelName",
+                addSubModelBtnTitle: '添加地址',
+                // colCount: 5,
+                subTitleViewHtmml: function (data) {
+                    var html = '<span class="product-description" style="line-height:34px">' + data.city + "-" + data.address + '</span>';
+                    return html;
+                },
+                subModelOptions: {
+                    boxHeader: false,
+                    server: false,
+                    layerOption: {
+                        height: 300,
+                        width: 600
+                    },
+                    columns: [
+                        {title: "所在地区", name: "city", inputType: "TEXT", required: "required"},
+                        {title: "详细地址", name: "address", inputType: "TEXT", required: "required"}
+                    ]
+                }
+            },
+            {
+                title: "附件",
+                name: "attachment",
+                inputType: "ATTACHMENT",
+                fileName: "attachmentFiles",
+                isPicture: false, // 如果是图片则只能接收后缀["jpeg", "jpg", "png", "gif"]，优先级低于allowedFileExtensions
+                allowedFileExtensions: ["jpeg", "jpg", "png", "gif", "txt", "pdf", "xlsx", "xls", "doc", "docx", "rar", "zip", "mp4"]
+            }
+        ]
+    }
+
+    $(function () {
+        var html = generateEditHtml(options);
+        $(".content").html(html);
+        $.initComponent($(".content"));
+
+        var model = new tonto.Model("model", options.columns, {
+            pattern: "edit",
+            // extraParam: null, // 可以为方法或对象，用于扩展表单外提交的字段
+            // 提交表单前调取的方法，如果返回false则不提交
+            // beforeSubmit: function (formData) {
+            // },
+            // 如果想通过自己的方式提交数据，则可以配置submitClick，
+            // 以下代码直接读取了编辑中的表单数据并设置为数据源，然后切换到view状态，达到不提交服务器的作用
+            // 还可以在这里通过json格式提交复杂对象请求，例如上面的地址
+            // submitClick: function(that){
+            //     if (that.formBody.valid()) {
+            //         var d = that.getFormData();
+            //         that.setData(d);
+            //         that.toView();
+            //     }
+            // },
+            successCallback: function () {
+                $.successAlert("保存成功", function () {
+                    window.location = "/demo/org/personnel/index";
+                });
+            }
+        });
+        model.setData(null);
+    });
+</script>
+</body>
+
+</html>
