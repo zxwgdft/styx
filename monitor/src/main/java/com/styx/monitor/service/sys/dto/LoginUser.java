@@ -28,7 +28,7 @@ public class LoginUser {
     private String code;//验证码
 
     @ApiModelProperty("是否记住")
-    private boolean isRememberMe;
+    private boolean rememberMe;
 
 
 }

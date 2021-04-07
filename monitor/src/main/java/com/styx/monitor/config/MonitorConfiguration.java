@@ -41,9 +41,7 @@ public class MonitorConfiguration {
 
 
     /**
-     * 登录登出验证监听
-     *
-     * @return
+     * 数据缓存管理器
      */
     @Bean
     public DataCacheManager getDataCacheManager(@Qualifier("stringRedisTemplate") RedisTemplate<String, String> redisTemplate) {
@@ -52,8 +50,6 @@ public class MonitorConfiguration {
 
     /**
      * 启用登录Realm
-     *
-     * @return
      */
     @Bean
     public AuthorizingRealm getRealm() {

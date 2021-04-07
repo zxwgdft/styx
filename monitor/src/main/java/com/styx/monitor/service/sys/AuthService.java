@@ -1,9 +1,9 @@
 package com.styx.monitor.service.sys;
 
-import com.styx.monitor.core.MonitorUserSession;
-import com.styx.monitor.service.sys.dto.LoginSuccess;
-import com.styx.monitor.service.sys.dto.LoginUser;
 import com.styx.common.exception.BusinessException;
+import com.styx.monitor.core.MonitorUserSession;
+import com.styx.monitor.service.sys.dto.LoginResult;
+import com.styx.monitor.service.sys.dto.LoginUser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
@@ -46,28 +46,26 @@ public class AuthService {
         throw e;
     }
 
-    public LoginSuccess auth() {
-        Subject subject = SecurityUtils.getSubject();
-        if (subject.isAuthenticated()) {
-            return getLoginSuccess((String) subject.getSession().getId());
-        }
-        return null;
-    }
 
-    public LoginSuccess auth(LoginUser loginUser) {
+    /**
+     * 用户认证
+     */
+    public LoginResult auth(LoginUser loginUser) {
         Subject subject = SecurityUtils.getSubject();
-        try {
-            subject.login(new UsernamePasswordToken(loginUser.getUsername(), loginUser.getPassword(), loginUser.isRememberMe()));
-        } catch (RuntimeException e) {
-            parseAuthException(e);
+        if (!subject.isAuthenticated()) {
+            try {
+                subject.login(new UsernamePasswordToken(loginUser.getUsername(), loginUser.getPassword(), loginUser.isRememberMe()));
+            } catch (RuntimeException e) {
+                parseAuthException(e);
+            }
         }
         return getLoginSuccess((String) subject.getSession().getId());
     }
 
-    private LoginSuccess getLoginSuccess(String token) {
+    private LoginResult getLoginSuccess(String token) {
         MonitorUserSession userSession = MonitorUserSession.getCurrentUserSession();
 
-        LoginSuccess response = new LoginSuccess();
+        LoginResult response = new LoginResult(true);
         response.setUsername(userSession.getUserName());
         response.setUserType(userSession.getUserType());
         response.setSystemAdmin(userSession.isSystemAdmin());
@@ -76,5 +74,14 @@ public class AuthService {
         return response;
     }
 
-
+    /**
+     * 检查用户，如果已经登录则返回用户信息
+     */
+    public LoginResult checkAuth() {
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.isAuthenticated()) {
+            return getLoginSuccess((String) subject.getSession().getId());
+        }
+        return new LoginResult(false);
+    }
 }

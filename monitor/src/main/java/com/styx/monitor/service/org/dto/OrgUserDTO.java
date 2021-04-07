@@ -24,15 +24,8 @@ public class OrgUserDTO {
     @NotBlank(message = "用户名称不能为空")
     private String name;
 
-    @ApiModelProperty("所属部门")
-    private String department;
-
     @ApiModelProperty("手机")
     private String cellphone;
-
-    @ApiModelProperty("所属机构")
-    @NotNull(message = "所属机构不能为空")
-    private Integer agency;
 
     @ApiModelProperty("站点ID")
     private String stationId;

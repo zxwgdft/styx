@@ -40,7 +40,6 @@ public class OrgUserController extends ControllerSupport {
 
     @ApiOperation("添加用户")
     @PostMapping("/save")
-    @NeedPermission("sys:user:add")
     @OperationLog(model = "用户管理", operate = "新增用户")
     public String save(@Valid @RequestBody OrgUserDTO save, BindingResult bindingResult) {
         validErrorHandler(bindingResult);
@@ -50,7 +49,6 @@ public class OrgUserController extends ControllerSupport {
 
     @ApiOperation("更新用户")
     @PostMapping("/update")
-    @NeedPermission("sys:user:edit")
     @OperationLog(model = "用户管理", operate = "更新用户")
     public R update(@Valid @RequestBody OrgUserDTO update, BindingResult bindingResult) {
         validErrorHandler(bindingResult);

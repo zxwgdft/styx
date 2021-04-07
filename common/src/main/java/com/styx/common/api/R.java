@@ -22,16 +22,17 @@ import java.io.Serializable;
 @ApiModel(description = "返回信息")
 public class R<T> implements Serializable {
 
-    @ApiModelProperty(value = "CODE", required = true)
+    @ApiModelProperty("CODE")
     private int code;
-    @ApiModelProperty(value = "是否成功", required = true)
+    @ApiModelProperty("是否成功")
     private boolean success;
-    @ApiModelProperty(value = "消息", required = true)
+    @ApiModelProperty("消息")
     private String message;
     @ApiModelProperty("具体业务数据")
     private T data;
 
-    private R() { }
+    private R() {
+    }
 
     private R(IResultCode resultCode) {
         this(resultCode, resultCode.getMessage(), null);
