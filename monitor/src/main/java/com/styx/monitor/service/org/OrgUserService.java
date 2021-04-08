@@ -1,17 +1,17 @@
 package com.styx.monitor.service.org;
 
 
-import com.styx.monitor.core.distrcit.District;
-import com.styx.monitor.core.distrcit.DistrictContainer;
-import com.styx.monitor.model.org.OrgUser;
-import com.styx.monitor.model.sys.SysUser;
-import com.styx.monitor.service.org.dto.OrgUserDTO;
-import com.styx.monitor.service.sys.SysUserService;
 import com.styx.common.exception.BusinessException;
 import com.styx.common.service.ServiceSupport;
 import com.styx.common.utils.StringUtil;
 import com.styx.common.utils.UUIDUtil;
 import com.styx.common.utils.convert.SimpleBeanCopyUtil;
+import com.styx.monitor.core.distrcit.District;
+import com.styx.monitor.core.distrcit.DistrictUtil;
+import com.styx.monitor.model.org.OrgUser;
+import com.styx.monitor.model.sys.SysUser;
+import com.styx.monitor.service.org.dto.OrgUserDTO;
+import com.styx.monitor.service.sys.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -101,7 +101,7 @@ public class OrgUserService extends ServiceSupport<OrgUser> {
     }
 
     private boolean needDistrict(Set<Integer> codeSet, Integer code) {
-        District district = DistrictContainer.getDistrict(code);
+        District district = DistrictUtil.getDistrict(code);
         if (district != null) {
             District parent = district.getParent();
             if (parent == null) {
@@ -122,5 +122,5 @@ public class OrgUserService extends ServiceSupport<OrgUser> {
             return false;
         }
     }
-    
+
 }

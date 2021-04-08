@@ -112,6 +112,10 @@ function initCommon(layui) {
                 return false;
             }
         },
+        // 关闭当前frame弹出层
+        closeFrameLayer: function () {
+            parent.layer.close(parent.layer.getFrameIndex(window.name));
+        },
         // 打开一个HTML内容页面层
         openPageLayer: function (content, options) {
             options = options || {};
@@ -487,8 +491,8 @@ function initForm(layui) {
     var form = layui.form;
 
     $.extend({
-        lengthVerifyFun:function (max, min) {
-            return function(value){
+        lengthVerifyFun: function (max, min) {
+            return function (value) {
 
             }
         }

@@ -2,6 +2,146 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.styx.monitor.mapper.config.ConfigStationMapper">
 
+    <select id="findSimpleList" resultType="com.styx.monitor.service.config.vo.SimpleStation">
+        SELECT id, `name`, district_code districtCode, pinyin_name pinyinName
+        FROM config_station WHERE deleted = 0
+        <if test="query.name!=null and query.name!=''">
+            AND (`name` like CONCAT('%',#{query.name},'%') OR pinyin_name like LOWER(CONCAT('%',#{query.name},'%')))
+        </if>
+        <if test="query.provinceCode!=null">
+            AND province_code = #{query.provinceCode}
+        </if>
+        <if test="query.cityCode!=null">
+            AND city_code = #{query.cityCode}
+        </if>
+        <if test="query.districtCode!=null">
+            AND district_code = #{query.districtCode}
+        </if>
+        <if test="query.enabled!=null">
+            AND enabled = #{query.enabled}
+        </if>
+        <if test="permission.hasAll!=true">
+            AND
+            <trim prefix="(" suffix=")" prefixOverrides="OR">
+                <if test="permission.provinceCode!=null">
+                    OR province_code = #{permission.provinceCode}
+                </if>
+                <if test="permission.provinceCodes!=null">
+                    OR province_code in
+                    <foreach collection="permission.provinceCodes" index="index" item="item" open="(" separator=","
+                             close=")">
+                        #{item}
+                    </foreach>
+                </if>
+                <if test="permission.cityCode!=null">
+                    OR city_code = #{permission.cityCode}
+                </if>
+                <if test="permission.cityCodes!=null">
+                    OR city_code in
+                    <foreach collection="permission.cityCodes" index="index" item="item" open="(" separator=","
+                             close=")">
+                        #{item}
+                    </foreach>
+                </if>
+                <if test="permission.districtCode!=null">
+                    OR district_code = #{permission.districtCode}
+                </if>
+                <if test="permission.districtCodes!=null">
+                    OR district_code in
+                    <foreach collection="permission.districtCodes" index="index" item="item" open="(" separator=","
+                             close=")">
+                        #{item}
+                    </foreach>
+                </if>
+                <if test="permission.stationId!=null">
+                    OR id = #{permission.stationId}
+                </if>
+                <if test="permission.stationIds!=null">
+                    OR id in
+                    <foreach collection="permission.stationIds" index="index" item="item" open="(" separator=","
+                             close=")">
+                        #{item}
+                    </foreach>
+                </if>
+            </trim>
+        </if>
+        ORDER BY order_no DESC
+    </select>
 
+    <select id="findList" resultType="com.styx.monitor.model.config.ConfigStation">
+        SELECT
+        id,
+        `name`,
+        address,
+        province_code provinceCode,
+        city_code cityCode,
+        district_code districtCode,
+        server_node serverNode,
+        enabled,
+        create_time createTime,
+        order_no orderNo
+        FROM config_station WHERE deleted = 0
+        <if test="query.name!=null and query.name!=''">
+            AND (`name` like CONCAT('%',#{query.name},'%') OR pinyin_name like LOWER(CONCAT('%',#{query.name},'%')))
+        </if>
+        <if test="query.provinceCode!=null">
+            AND province_code = #{query.provinceCode}
+        </if>
+        <if test="query.cityCode!=null">
+            AND city_code = #{query.cityCode}
+        </if>
+        <if test="query.districtCode!=null">
+            AND district_code = #{query.districtCode}
+        </if>
+        <if test="query.enabled!=null">
+            AND enabled = #{query.enabled}
+        </if>
+        <if test="permission.hasAll!=true">
+            AND
+            <trim prefix="(" suffix=")" prefixOverrides="OR">
+                <if test="permission.provinceCode!=null">
+                    OR province_code = #{permission.provinceCode}
+                </if>
+                <if test="permission.provinceCodes!=null">
+                    OR province_code in
+                    <foreach collection="permission.provinceCodes" index="index" item="item" open="(" separator=","
+                             close=")">
+                        #{item}
+                    </foreach>
+                </if>
+                <if test="permission.cityCode!=null">
+                    OR city_code = #{permission.cityCode}
+                </if>
+                <if test="permission.cityCodes!=null">
+                    OR city_code in
+                    <foreach collection="permission.cityCodes" index="index" item="item" open="(" separator=","
+                             close=")">
+                        #{item}
+                    </foreach>
+                </if>
+                <if test="permission.districtCode!=null">
+                    OR district_code = #{permission.districtCode}
+                </if>
+                <if test="permission.districtCodes!=null">
+                    OR district_code in
+                    <foreach collection="permission.districtCodes" index="index" item="item" open="(" separator=","
+                             close=")">
+                        #{item}
+                    </foreach>
+                </if>
+                <if test="permission.stationId!=null">
+                    OR id = #{permission.stationId}
+                </if>
+                <if test="permission.stationIds!=null">
+                    OR id in
+                    <foreach collection="permission.stationIds" index="index" item="item" open="(" separator=","
+                             close=")">
+                        #{item}
+                    </foreach>
+                </if>
+            </trim>
+        </if>
+        ORDER BY order_no DESC
+    </select>
 
 </mapper>

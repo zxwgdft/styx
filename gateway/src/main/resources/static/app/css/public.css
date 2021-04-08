@@ -6,11 +6,12 @@ body {
 .layuimini-container {
     border: 1px solid #f2f2f2;
     border-radius: 5px;
-    background-color: #ffffff
+    background-color: #ffffff;
+    padding: 15px
 }
 
 .layuimini-main {
-    margin: 20px 10px 10px 10px;
+    /*margin: 20px 10px 10px 10px;*/
 }
 
 /**必填红点 */

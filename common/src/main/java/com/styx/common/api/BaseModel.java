@@ -16,14 +16,15 @@ public abstract class BaseModel implements Serializable {
     private Date createTime;
 
     @TableField(select = false)
-    @ApiModelProperty("创建者")
+    @ApiModelProperty(hidden = true)
     private String createBy;
 
-    @ApiModelProperty("更新时间")
+    @TableField(select = false)
+    @ApiModelProperty(hidden = true)
     private Date updateTime;
 
     @TableField(select = false)
-    @ApiModelProperty("更新者")
+    @ApiModelProperty(hidden = true)
     private String updateBy;
 
 }

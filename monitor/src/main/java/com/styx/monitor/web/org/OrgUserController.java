@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 
-@Api(tags = "用户管理")
+@Api(tags = "用户")
 @RestController
 @RequestMapping("/monitor/org/user")
 public class OrgUserController extends ControllerSupport {
@@ -26,7 +26,7 @@ public class OrgUserController extends ControllerSupport {
     @Autowired
     private OrgUserService orgUserService;
 
-    @ApiOperation("用户列表查询")
+    @ApiOperation("用户列表")
     @PostMapping("/find/page")
     public PageResult<OrgUser> findPage(@RequestBody OrgUserQuery query) {
         return orgUserService.findPage(query);
@@ -38,7 +38,7 @@ public class OrgUserController extends ControllerSupport {
         return orgUserService.get(userId);
     }
 
-    @ApiOperation("添加用户")
+    @ApiOperation("用户新增")
     @PostMapping("/save")
     @OperationLog(model = "用户管理", operate = "新增用户")
     public String save(@Valid @RequestBody OrgUserDTO save, BindingResult bindingResult) {
@@ -47,7 +47,7 @@ public class OrgUserController extends ControllerSupport {
         return password;
     }
 
-    @ApiOperation("更新用户")
+    @ApiOperation("用户更新")
     @PostMapping("/update")
     @OperationLog(model = "用户管理", operate = "更新用户")
     public R update(@Valid @RequestBody OrgUserDTO update, BindingResult bindingResult) {

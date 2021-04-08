@@ -73,6 +73,12 @@ public class ServiceSupport<Model> {
     }
 
     public void save(Model model) {
+        if (isBaseModel) {
+            Date now = new Date();
+            BaseModel baseModel = ((BaseModel) model);
+            baseModel.setCreateTime(now);
+            baseModel.setUpdateTime(now);
+        }
         baseMapper.insert(model);
     }
 

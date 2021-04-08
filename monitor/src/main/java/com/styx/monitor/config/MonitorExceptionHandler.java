@@ -29,13 +29,12 @@ public class MonitorExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(SystemException.class)
     public ResponseEntity<Object> systemExceptionHandler(SystemException ex, WebRequest request) {
-        log.error("系统异常！", ex);
-        return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+        return handleExceptionInternal(ex, "服务异常，请稍后再尝试", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> systemExceptionHandler(Exception ex, WebRequest request) {
-        return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+        return handleExceptionInternal(ex, "服务异常，请稍后再尝试", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
 

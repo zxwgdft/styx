@@ -1,7 +1,5 @@
 package com.styx.common.spring.web;
 
-import com.styx.common.api.HttpCode;
-import com.styx.common.api.R;
 import com.styx.common.exception.BusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
@@ -25,7 +23,7 @@ public class ControllerSupport {
             for (FieldError error : bindingResult.getFieldErrors()) {
                 result[i++] = new String[]{error.getCode(), error.getField(), error.getDefaultMessage()};
             }
-            throw new BusinessException(HttpStatus.BAD_REQUEST, "", R.fail(HttpCode.REQUEST_VALID_ERROR, "请求参数验证未通过", result));
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "请求参数验证未通过", result);
         }
     }
 

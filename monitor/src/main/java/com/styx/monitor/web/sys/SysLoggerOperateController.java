@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Api(tags = "操作日志管理")
+@Api(tags = "操作日志")
 @RestController
 @RequestMapping("/monitor/sys/logger/operate")
 public class SysLoggerOperateController {
@@ -20,7 +20,7 @@ public class SysLoggerOperateController {
     @Autowired
     private SysLoggerOperateService sysLoggerOperateService;
 
-    @ApiOperation("操作日志查询")
+    @ApiOperation("日志列表")
     @PostMapping("/find/page")
     public PageResult<SysLoggerOperate> findPage(@RequestBody SysLoggerOperateQuery query) {
         return sysLoggerOperateService.findPage(query);

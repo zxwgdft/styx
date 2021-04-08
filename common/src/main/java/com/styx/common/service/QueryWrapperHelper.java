@@ -31,7 +31,7 @@ public class QueryWrapperHelper {
      * @return
      */
     public static QueryWrapper buildQuery(Object queryParam) {
-        return buildQuery(new QueryWrapper());
+        return buildQuery(new QueryWrapper(), queryParam);
     }
 
     /**

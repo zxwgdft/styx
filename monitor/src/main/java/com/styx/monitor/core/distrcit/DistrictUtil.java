@@ -15,7 +15,7 @@ import java.util.Map;
  * @since 2020/5/7
  */
 @Slf4j
-public class DistrictContainer {
+public class DistrictUtil {
 
     public final static int CHINA_CODE = 1;
 
@@ -24,7 +24,7 @@ public class DistrictContainer {
 
     static {
         try {
-            InputStream input = DistrictContainer.class.getResourceAsStream("district.json");
+            InputStream input = DistrictUtil.class.getResourceAsStream("district.json");
             rootDistrict = new ObjectMapper().readValue(input, new TypeReference<List<District>>() {
             });
             registerDistrict(rootDistrict);
@@ -88,5 +88,24 @@ public class DistrictContainer {
             return district.getFullName();
         }
         return null;
+    }
+
+    public static void perfectDistrictQuery(DistrictQuery query) {
+        query.setCityCode(null);
+        query.setProvinceCode(null);
+        Integer code = query.getDistrictCode();
+        if (code != null) {
+            District district = districtMap.get(code);
+            if (district != null) {
+                int level = district.getLevel();
+                if (level == 1) {
+                    query.setProvinceCode(code);
+                } else if (level == 2) {
+                    query.setCityCode(code);
+                }
+            } else {
+                query.setDistrictCode(null);
+            }
+        }
     }
 }

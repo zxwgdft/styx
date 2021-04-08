@@ -81,9 +81,7 @@
         table.on('toolbar(dataTableFilter)', function (obj) {
             if (obj.event === 'add') {  // 监听添加操作
                 $.openUrlLayerOrLocate('user-add.html',{
-                    title: '添加用户',
-                    shade: 0.2,
-                    shadeClose: true
+                    title: '添加用户'
                 });
             } else if (obj.event === 'delete') {  // 监听删除操作
                 var checkStatus = table.checkStatus('dataTable')
@@ -102,7 +100,6 @@
                     type: 2,
                     shade: 0.2,
                     maxmin: true,
-                    shadeClose: true,
                     area: ['100%', '100%'],
                     content: '../table/edit.html',
                 });

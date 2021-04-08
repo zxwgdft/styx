@@ -12,98 +12,191 @@
 <body>
 <div class="layuimini-container">
     <div class="layuimini-main">
-        <form class="layui-form" action="" lay-filter="example">
+        <form class="layui-form" action="">
+
             <div class="layui-form-item">
                 <label class="layui-form-label">用户姓名</label>
                 <div class="layui-input-block">
-                    <input type="text" name="name" lay-verify="required|username" autocomplete="off" placeholder="请输入用户姓名"
+                    <input type="text" name="name" lay-verify="required|username" autocomplete="off"
+                           placeholder="请输入用户姓名"
                            class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">用户账号</label>
                 <div class="layui-input-block">
-                    <input type="text" name="account" lay-verify="account" autocomplete="off" placeholder="请输入用户账号"
+                    <input type="text" name="account" lay-verify="required|account" autocomplete="off"
+                           placeholder="请输入用户账号"
                            class="layui-input">
                 </div>
             </div>
 
-
             <div class="layui-form-item">
                 <label class="layui-form-label">用户类型</label>
                 <div class="layui-input-block">
-                    <input type="radio" name="type" value="个人用户" title="个人用户" checked="">
-                    <input type="radio" name="type" value="站点管理员" title="站点管理员">
-                    <input type="radio" name="type" value="地区管理员" title="地区管理员">
-                    <input type="radio" name="type" value="应用管理员" title="应用管理员">
+                    <input type="radio" name="type" value="1" title="个人用户" checked="">
+                    <input type="radio" name="type" value="2" title="站点管理员">
+                    <input type="radio" name="type" value="3" title="地区管理员">
+                    <input type="radio" name="type" value="9" title="应用管理员">
                 </div>
             </div>
 
+            <div class="layui-form-item" id="stationFormItem" style="display: none">
+                <label class="layui-form-label">管辖站点</label>
+                <div id="station" class="layui-input-block"></div>
+            </div>
+
+            <div class="layui-form-item" id="districtFormItem" style="display: none">
+                <label class="layui-form-label">管辖地区</label>
+                <div id="district" class="layui-input-block"></div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户角色</label>
+                <div id="role" class="layui-input-block"></div>
+            </div>
 
             <div class="layui-form-item">
                 <div class="layui-input-block">
-                    <button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+                    <button class="layui-btn" lay-submit="">提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    <button onclick="parent.layer.close(parent.layer.getFrameIndex(window.name))" style="float: right" class="layui-btn layui-btn-danger">关闭</button>
                 </div>
             </div>
         </form>
-
     </div>
 </div>
 
 <script src="../../lib/layui/layui-2.6.3.min.js" charset="utf-8"></script>
+<script src="../../js/lay-config.js" charset="utf-8"></script>
 <script src="../../js/common.js" charset="utf-8"></script>
 <script>
-    layui.use(['form'], function () {
+    layui.use(['form', 'xmSelect'], function () {
         var form = layui.form,
             $ = layui.$;
 
         initCommon(layui);
 
+        var stationSelect = xmSelect.render({
+            el: '#station',
+            tips: '请选择管辖站点',
+            data: [],
+            toolbar: {show: true},
+            name: 'stationId',
+            filterable: true,
+            filterMethod: function (val, item, index, prop) {
+                if (val == item.name || val == item.pinyinName) {
+                    return true;
+                }
+                if (item.name.indexOf(val) != -1 || item.pinyinName.indexOf(val) != -1) {
+                    return true;
+                }
+                return false;
+            },
+            prop: {
+                name: 'name',
+                value: 'id'
+            }
+        });
+
+        var roleSelect = xmSelect.render({
+            el: '#role',
+            tips: '请选择角色',
+            data: [],
+            name: 'role',
+            toolbar: {show: true},
+            layVerify: 'required',
+            prop: {
+                name: 'roleName',
+                value: 'id'
+            }
+        });
+
+        var districtSelect = xmSelect.render({
+            el: '#district',
+            tips: '请选择管辖地区',
+            data: [],
+            name: 'districtCode',
+            toolbar: {show: true},
+            filterable: true,
+            prop: {
+                name: 'name',
+                value: 'id'
+            },
+            tree: {
+                //是否显示树状结构
+                show: true,
+                //是否显示虚线
+                showLine: false,
+                //间距
+                indent: 20,
+                //默认展开节点的数组, 为 true 时, 展开所有节点
+                expandedKeys: [-1],
+                //是否严格遵守父子模式
+                strict: false,
+                //是否开启极简模式
+                simple: false,
+                //点击节点是否展开
+                clickExpand: true,
+                //点击节点是否选中
+                clickCheck: true,
+            },
+
+        });
+
+        $.postJsonAjax("/monitor/config/station/find/all/simple", {}, function (res) {
+            stationSelect.update({
+                data: res
+            })
+        });
+
+        $.postJsonAjax("/monitor/org/role/find/all", {}, function (res) {
+            roleSelect.update({
+                data: res
+            })
+        });
+
+        $.getJSON("../../api/district.json", function (res) {
+            districtSelect.update({
+                data: res
+            })
+        });
 
 
         //自定义验证规则
         form.verify({
             username: function (value) {
-                if(value.length >10){
+                if (value.length > 10) {
                     return "用户姓名不能超过10个字符";
                 }
-            }
-            , pass: [
+            },
+            account: [
                 /^[\S]{6,12}$/
-                , '密码必须6到12位，且不能出现空格'
+                , '账号必须6到12位，且不能出现空格'
             ]
-            , content: function (value) {
-                layedit.sync(editIndex);
-            }
         });
 
-        //监听指定开关
-        form.on('switch(switchTest)', function (data) {
-            layer.msg('开关checked：' + (this.checked ? 'true' : 'false'), {
-                offset: '6px'
-            });
-            layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+
+        form.on('radio', function (data) {
+            if (data.value == 2) {
+                $("#stationFormItem").show();
+                $("#districtFormItem").hide();
+            } else if (data.value == 3) {
+                $("#stationFormItem").hide();
+                $("#districtFormItem").show();
+            } else {
+                $("#stationFormItem").hide();
+                $("#districtFormItem").hide();
+            }
         });
 
         //监听提交
-        form.on('submit(demo1)', function (data) {
+        form.on('submit', function (data) {
             layer.alert(JSON.stringify(data.field), {
                 title: '最终的提交信息'
             })
             return false;
         });
-
-        //表单初始赋值
-        form.val('example', {
-            "username": "贤心" // "name": "value"
-            , "password": "123456"
-            , "interest": 1
-            , "like[write]": true //复选框选中状态
-            , "close": true //开关状态
-            , "sex": "女"
-            , "desc": "我爱 layui"
-        })
-
 
     });
 </script>

@@ -3,7 +3,7 @@ package com.styx.monitor.core.security;
 
 import com.styx.monitor.core.MonitorUserSession;
 import com.styx.monitor.core.distrcit.District;
-import com.styx.monitor.core.distrcit.DistrictContainer;
+import com.styx.monitor.core.distrcit.DistrictUtil;
 import com.styx.monitor.model.org.OrgUser;
 import com.styx.common.cache.DataCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,12 +59,12 @@ public class PermissionUtil {
                     if (districtCodes.length == 1) {
                         int code = districtCodes[0];
 
-                        if (code == DistrictContainer.CHINA_CODE) {
+                        if (code == DistrictUtil.CHINA_CODE) {
                             param.setHasAll(true);
                             return param;
                         }
 
-                        District district = DistrictContainer.getDistrict(code);
+                        District district = DistrictUtil.getDistrict(code);
                         if (district != null) {
                             int lvl = district.getLevel();
                             if (lvl == 1) {
@@ -84,12 +84,12 @@ public class PermissionUtil {
                         List<Integer> cities = new ArrayList<>();
                         List<Integer> districts = new ArrayList<>();
                         for (Integer code : districtCodes) {
-                            if (code == DistrictContainer.CHINA_CODE) {
+                            if (code == DistrictUtil.CHINA_CODE) {
                                 param.setHasAll(true);
                                 return param;
                             }
 
-                            District district = DistrictContainer.getDistrict(code);
+                            District district = DistrictUtil.getDistrict(code);
                             if (district != null) {
                                 int lvl = district.getLevel();
                                 if (lvl == 1) {

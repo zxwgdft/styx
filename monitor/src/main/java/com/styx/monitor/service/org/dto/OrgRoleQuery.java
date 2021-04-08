@@ -17,4 +17,8 @@ public class OrgRoleQuery extends PageParam {
     @QueryCondition(type = QueryType.LIKE)
     private String roleName;
 
+    @ApiModelProperty("是否启用")
+    @QueryCondition(type = QueryType.EQUAL)
+    private Boolean enable;
+
 }
