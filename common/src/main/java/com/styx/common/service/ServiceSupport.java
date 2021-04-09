@@ -3,12 +3,14 @@ package com.styx.common.service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.styx.common.api.BaseModel;
 import com.styx.common.api.DeletedBaseModel;
 import com.styx.common.service.annotation.IgnoreSelection;
+import com.styx.common.service.mybatis.CommonMapper;
 import com.styx.common.utils.convert.SimpleBeanCopyUtil;
 import com.styx.common.utils.reflect.Entity;
 import com.styx.common.utils.reflect.EntityField;
@@ -16,6 +18,7 @@ import com.styx.common.utils.reflect.ReflectUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -39,28 +42,40 @@ public class ServiceSupport<Model> {
         Class<?> clazz = ReflectUtil.getSuperClassArgument(this.getClass(), ServiceSupport.class, 0);
         if (clazz == null) {
             log.warn("实现类[" + this.getClass().getName() + "]没有明确定义["
-                    + ServiceSupport.class.getName() + "]的泛型，无法为其注册BaseMapper");
+                    + ServiceSupport.class.getName() + "]的泛型，无法为其注册commonMapper");
         }
         modelType = (Class<Model>) clazz;
     }
 
+    protected Method pkGetMethod; // 主键对应get方法
+    protected Method pkSetMethod; // 主键对应set方法
 
     protected void init() {
         isBaseModel = BaseModel.class.isAssignableFrom(modelType);
         isDeletedModel = DeletedBaseModel.class.isAssignableFrom(modelType);
+
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(modelType);
+        if (tableInfo.havePK()) {
+            // 获取主键相关方法
+            // 因为mybatis plus 只支持一个主键，所以这里也只做一个主键的处理（多主键情况我们直接使用mybatis）
+            //
+            EntityField entityField = Entity.getEntity(modelType).getEntityField(tableInfo.getKeyColumn());
+            pkGetMethod = entityField.getGetMethod();
+            pkSetMethod = entityField.getSetMethod();
+        }
     }
 
     /**
-     * 基于mybatis plus的BaseMapper
+     * 基于mybatis plus的commonMapper
      */
-    private BaseMapper<Model> baseMapper;
+    protected CommonMapper<Model> commonMapper;
 
-    public BaseMapper<Model> getBaseMapper() {
-        return baseMapper;
+    public CommonMapper<Model> getCommonMapper() {
+        return commonMapper;
     }
 
-    public void setBaseMapper(BaseMapper<Model> baseMapper) {
-        this.baseMapper = baseMapper;
+    public void setCommonMapper(CommonMapper<Model> commonMapper) {
+        this.commonMapper = commonMapper;
     }
 
 
@@ -69,26 +84,20 @@ public class ServiceSupport<Model> {
     // -------------------------
 
     public Model get(Serializable id) {
-        return baseMapper.selectById(id);
+        return commonMapper.selectById(id);
     }
 
     public void save(Model model) {
-        if (isBaseModel) {
-            Date now = new Date();
-            BaseModel baseModel = ((BaseModel) model);
-            baseModel.setCreateTime(now);
-            baseModel.setUpdateTime(now);
-        }
-        baseMapper.insert(model);
+        commonMapper.insert(model);
     }
 
     public boolean update(Model model) {
-        return baseMapper.updateById(model) > 0;
+        return commonMapper.updateById(model) > 0;
     }
 
-    public boolean removeById(Serializable id) {
+    public boolean deleteById(Serializable id) {
         // 逻辑删除实现
-        return baseMapper.deleteById(id) > 0;
+        return commonMapper.deleteById(id) > 0;
     }
 
 
@@ -184,16 +193,16 @@ public class ServiceSupport<Model> {
 
         if (modelType != clazz) {
             queryWrapper = buildSelection(queryWrapper, clazz);
-            List<Model> result = baseMapper.selectList(queryWrapper);
+            List<Model> result = commonMapper.selectList(queryWrapper);
             if (result != null && result.size() > 0) {
-                // mybatis plus baseMapper 没有提供改变返回对象的方法，这里
+                // mybatis plus commonMapper 没有提供改变返回对象的方法，这里
                 // 使用bean copy方法，增加了一些性能损耗。
                 return SimpleBeanCopyUtil.simpleCopyList(result, clazz);
             } else {
                 return Collections.EMPTY_LIST;
             }
         } else {
-            return baseMapper.selectList(queryWrapper);
+            return commonMapper.selectList(queryWrapper);
         }
     }
 
@@ -214,7 +223,7 @@ public class ServiceSupport<Model> {
      */
     public int searchCount(Wrapper queryWrapper) {
         queryWrapper = buildCommon(queryWrapper);
-        return baseMapper.selectCount(queryWrapper);
+        return commonMapper.selectCount(queryWrapper);
     }
 
     /**

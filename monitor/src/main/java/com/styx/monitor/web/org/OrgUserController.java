@@ -1,14 +1,13 @@
 package com.styx.monitor.web.org;
 
+import com.styx.common.api.R;
+import com.styx.common.service.PageResult;
+import com.styx.common.spring.web.ControllerSupport;
 import com.styx.monitor.core.log.OperationLog;
-import com.styx.monitor.core.security.NeedPermission;
 import com.styx.monitor.model.org.OrgUser;
 import com.styx.monitor.service.org.OrgUserService;
 import com.styx.monitor.service.org.dto.OrgUserDTO;
 import com.styx.monitor.service.org.dto.OrgUserQuery;
-import com.styx.common.api.R;
-import com.styx.common.service.PageResult;
-import com.styx.common.spring.web.ControllerSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,21 +39,28 @@ public class OrgUserController extends ControllerSupport {
 
     @ApiOperation("用户新增")
     @PostMapping("/save")
-    @OperationLog(model = "用户管理", operate = "新增用户")
-    public String save(@Valid @RequestBody OrgUserDTO save, BindingResult bindingResult) {
+    @OperationLog(model = "用户管理", operate = "用户新增")
+    public R save(@Valid @RequestBody OrgUserDTO save, BindingResult bindingResult) {
         validErrorHandler(bindingResult);
-        String password = orgUserService.saveUser(save);
-        return password;
+        orgUserService.saveUser(save);
+        return R.success();
     }
 
     @ApiOperation("用户更新")
     @PostMapping("/update")
-    @OperationLog(model = "用户管理", operate = "更新用户")
+    @OperationLog(model = "用户管理", operate = "用户更新")
     public R update(@Valid @RequestBody OrgUserDTO update, BindingResult bindingResult) {
         validErrorHandler(bindingResult);
         orgUserService.updateUser(update);
         return R.success();
     }
 
-   
+    @ApiOperation("用户删除")
+    @PostMapping("/delete")
+    @OperationLog(model = "用户管理", operate = "用户删除")
+    public R delete(@RequestParam String id) {
+        orgUserService.deleteById(id);
+        return R.success();
+    }
+
 }

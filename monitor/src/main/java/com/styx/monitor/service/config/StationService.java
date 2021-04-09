@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.styx.common.service.PageResult;
 import com.styx.common.service.ServiceSupport;
+import com.styx.monitor.core.MonitorServiceSupport;
 import com.styx.monitor.core.distrcit.DistrictUtil;
 import com.styx.monitor.core.security.DataPermissionParam;
 import com.styx.monitor.core.security.PermissionUtil;
@@ -19,7 +20,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class StationService extends ServiceSupport<ConfigStation> {
+public class StationService extends MonitorServiceSupport<ConfigStation> {
 
     @Autowired
     private ConfigStationMapper stationMapper;

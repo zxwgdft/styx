@@ -1,6 +1,6 @@
 package com.styx.monitor.mapper.config;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.styx.common.service.mybatis.CommonMapper;
 import com.styx.monitor.model.config.ConfigAlarm;
 import com.styx.monitor.service.config.dto.CAlarm;
 import org.apache.ibatis.annotations.Select;
@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
-public interface ConfigAlarmMapper extends BaseMapper<ConfigAlarm> {
+public interface ConfigAlarmMapper extends CommonMapper<ConfigAlarm> {
 
     @Update("UPDATE alarm SET enabled = #{enabled} WHERE id = #{id}")
     int updateEnabled(Integer id, boolean enabled);

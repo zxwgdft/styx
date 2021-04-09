@@ -2,10 +2,10 @@ package com.styx.monitor.service.org;
 
 
 import com.styx.common.exception.BusinessException;
-import com.styx.common.service.ServiceSupport;
 import com.styx.common.utils.StringUtil;
 import com.styx.common.utils.UUIDUtil;
 import com.styx.common.utils.convert.SimpleBeanCopyUtil;
+import com.styx.monitor.core.MonitorServiceSupport;
 import com.styx.monitor.core.distrcit.District;
 import com.styx.monitor.core.distrcit.DistrictUtil;
 import com.styx.monitor.model.org.OrgUser;
@@ -22,11 +22,14 @@ import java.util.Set;
 
 
 @Service
-public class OrgUserService extends ServiceSupport<OrgUser> {
+public class OrgUserService extends MonitorServiceSupport<OrgUser> {
 
     @Autowired
     private SysUserService sysUserService;
 
+    /**
+     * 新增用户和账号，并返回默认密码
+     */
     @Transactional
     public String saveUser(OrgUserDTO saveUser) {
         checkUser(saveUser);

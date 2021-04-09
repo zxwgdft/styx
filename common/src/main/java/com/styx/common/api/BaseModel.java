@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-public abstract class BaseModel implements Serializable {
+public class BaseModel implements Serializable {
 
     @ApiModelProperty("创建时间")
     private Date createTime;

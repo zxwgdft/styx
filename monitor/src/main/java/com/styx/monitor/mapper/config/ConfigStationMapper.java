@@ -1,6 +1,6 @@
 package com.styx.monitor.mapper.config;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.styx.common.service.mybatis.CommonMapper;
 import com.styx.monitor.core.security.DataPermissionParam;
 import com.styx.monitor.model.config.ConfigStation;
 import com.styx.monitor.service.config.dto.StationQuery;
@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
-public interface ConfigStationMapper extends BaseMapper<ConfigStation> {
+public interface ConfigStationMapper extends CommonMapper<ConfigStation> {
 
     @Update("UPDATE config_station SET enabled = #{enabled} WHERE id = #{id}")
     int updateStationEnabled(@Param("id") int id, @Param("enabled") boolean enabled);

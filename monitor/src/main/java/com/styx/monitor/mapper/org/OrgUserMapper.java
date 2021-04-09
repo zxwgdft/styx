@@ -1,9 +1,9 @@
 package com.styx.monitor.mapper.org;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.styx.common.service.mybatis.CommonMapper;
 import com.styx.monitor.model.org.OrgUser;
 
 
-public interface OrgUserMapper extends BaseMapper<OrgUser> {
+public interface OrgUserMapper extends CommonMapper<OrgUser> {
 
 }

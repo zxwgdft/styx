@@ -1,6 +1,7 @@
 package com.styx.common.api;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,9 +12,10 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public abstract class DeletedBaseModel extends BaseModel {
+public class DeletedBaseModel extends BaseModel {
 
     @TableField(select = false)
     @ApiModelProperty(hidden = true)
+    @TableLogic
     private Boolean deleted;
 }

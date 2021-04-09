@@ -1,22 +1,21 @@
 package com.styx.monitor.service.sys;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.styx.monitor.mapper.sys.SysUserMapper;
-import com.styx.monitor.model.sys.SysUser;
 import com.styx.common.exception.BusinessException;
-import com.styx.common.service.ServiceSupport;
 import com.styx.common.utils.UUIDUtil;
 import com.styx.common.utils.secure.SecureUtil;
+import com.styx.monitor.core.MonitorServiceSupport;
+import com.styx.monitor.mapper.sys.SysUserMapper;
+import com.styx.monitor.model.sys.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
 import java.util.regex.Pattern;
 
 @Service
-public class SysUserService extends ServiceSupport<SysUser> {
+public class SysUserService extends MonitorServiceSupport<SysUser> {
 
     @Value("${styx.default-password:1}")
     private String defaultPassword;
@@ -31,7 +30,7 @@ public class SysUserService extends ServiceSupport<SysUser> {
     private Pattern accountPattern = Pattern.compile("^\\w{6,30}$");
     private Pattern passwordPattern = Pattern.compile("^\\w{6,20}$");
 
-
+    // 获取默认密码（随机或固定）
     private String getDefaultPassword() {
         if (randomPassword) {
             return UUIDUtil.createUUID().substring(0, 10);
@@ -40,7 +39,7 @@ public class SysUserService extends ServiceSupport<SysUser> {
     }
 
     /**
-     * 创建一个账号
+     * 创建一个账号，并返回密码
      */
     public String createUserAccount(String account, String userId, Integer type) {
         if (account == null || !validateAccount(account)) {
@@ -68,8 +67,6 @@ public class SysUserService extends ServiceSupport<SysUser> {
 
     /**
      * 验证账号
-     *
-     * @return true 可用/false 不可用
      */
     public boolean validateAccount(String account) {
         if (!accountPattern.matcher(account).matches()) {

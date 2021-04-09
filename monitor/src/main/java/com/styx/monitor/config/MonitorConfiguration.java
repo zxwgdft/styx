@@ -3,6 +3,7 @@ package com.styx.monitor.config;
 import com.styx.common.cache.DataCacheManager;
 import com.styx.common.cache.RedisDataCacheManager;
 import com.styx.common.service.ServiceSupportManager;
+import com.styx.common.service.mybatis.CommonSqlInjector;
 import com.styx.common.spring.SpringBeanHelper;
 import com.styx.monitor.config.shiro.ShiroRedisSessionDAO;
 import com.styx.monitor.core.MonitorUserRealm;
@@ -58,11 +59,17 @@ public class MonitorConfiguration {
         return realm;
     }
 
+    /**
+     * shiro自定义session工厂
+     */
     @Bean
     public SessionFactory getSessionFactory() {
         return new ShiroRedisSessionDAO.ControlledSessionFactory();
     }
 
+    /**
+     * 权限AOP实现
+     */
     @Bean
     public PermissionMethodInterceptor getPermissionMethodInterceptor() {
         return new PermissionMethodInterceptor();
@@ -89,9 +96,20 @@ public class MonitorConfiguration {
         return new SpringBeanHelper();
     }
 
+    /**
+     * 基于mybatis plus和业务封装的支持类管理启用
+     */
     @Bean
     public ServiceSupportManager getServiceSupportManager() {
         return new ServiceSupportManager();
+    }
+
+    /**
+     * 扩展mybatis plus 通用方法
+     */
+    @Bean
+    public CommonSqlInjector getCommonSqlInjector() {
+        return new CommonSqlInjector();
     }
 
 }
