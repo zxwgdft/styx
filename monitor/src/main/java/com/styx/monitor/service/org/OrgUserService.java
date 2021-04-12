@@ -63,7 +63,7 @@ public class OrgUserService extends MonitorServiceSupport<OrgUser> {
         sysUserService.updateUserAccount(id, user.getAccount());
 
         SimpleBeanCopyUtil.simpleCopy(updateUser, user);
-        update(user);
+        updateWhole(user);
     }
 
     /**

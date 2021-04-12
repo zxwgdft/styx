@@ -30,7 +30,14 @@
                            class="layui-input">
                 </div>
             </div>
-
+            <div class="layui-form-item">
+                <label class="layui-form-label">手机号码</label>
+                <div class="layui-input-block">
+                    <input type="text" name="cellphone" lay-verify="phone" autocomplete="off"
+                           placeholder="请输入手机号码"
+                           class="layui-input">
+                </div>
+            </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">用户类型</label>
                 <div class="layui-input-block">
@@ -58,9 +65,11 @@
 
             <div class="layui-form-item">
                 <div class="layui-input-block">
-                    <button class="layui-btn" lay-submit="">提交</button>
+                    <button class="layui-btn submit-btn" lay-submit="">提交</button>
                     <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-                    <button onclick="parent.layer.close(parent.layer.getFrameIndex(window.name))" style="float: right" class="layui-btn layui-btn-danger">关闭</button>
+                    <button onclick="layui.$.closeFrameLayer()" style="float: right"
+                            class="layui-btn layui-btn-danger">关闭
+                    </button>
                 </div>
             </div>
         </form>
@@ -192,9 +201,15 @@
 
         //监听提交
         form.on('submit', function (data) {
-            layer.alert(JSON.stringify(data.field), {
-                title: '最终的提交信息'
-            })
+            $.postJsonAjax("/monitor/org/user/save", data.field, function (password) {
+                $.successAlert("创建用户成功，密码为：" + password, function () {
+                    $.closeFrameLayer();
+                    if (parent && parent.refresh) {
+                        parent.refresh();
+                    }
+                });
+            }, $(".submit-btn"));
+
             return false;
         });
 

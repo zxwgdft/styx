@@ -91,8 +91,18 @@ public class ServiceSupport<Model> {
         commonMapper.insert(model);
     }
 
-    public boolean update(Model model) {
-        return commonMapper.updateById(model) > 0;
+    /**
+     * 更新整个对象（包括null值）
+     */
+    public boolean updateWhole(Model model) {
+        return commonMapper.updateWholeById(model) > 0;
+    }
+
+    /**
+     * 更新对象中非null字段
+     */
+    public boolean updateSelection(Model model) {
+        return commonMapper.updateWholeById(model) > 0;
     }
 
     public boolean deleteById(Serializable id) {

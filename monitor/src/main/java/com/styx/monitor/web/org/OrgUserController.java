@@ -40,10 +40,9 @@ public class OrgUserController extends ControllerSupport {
     @ApiOperation("用户新增")
     @PostMapping("/save")
     @OperationLog(model = "用户管理", operate = "用户新增")
-    public R save(@Valid @RequestBody OrgUserDTO save, BindingResult bindingResult) {
+    public String save(@Valid @RequestBody OrgUserDTO save, BindingResult bindingResult) {
         validErrorHandler(bindingResult);
-        orgUserService.saveUser(save);
-        return R.success();
+        return orgUserService.saveUser(save);
     }
 
     @ApiOperation("用户更新")

@@ -94,7 +94,6 @@
         table.on('tool(dataTableFilter)', function (obj) {
             var data = obj.data;
             if (obj.event === 'edit') {
-
                 var index = layer.open({
                     title: '编辑用户',
                     type: 2,
@@ -114,8 +113,12 @@
                 });
             }
         });
-
     });
+
+    function refresh(){
+        layui.table.reload("dataTable");
+    }
+
 </script>
 
 </body>

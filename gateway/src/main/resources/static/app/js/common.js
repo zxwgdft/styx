@@ -1,3 +1,10 @@
+var _context = {
+    common: false,
+    constant: false,
+    table: false,
+
+}
+
 function initCommon(layui) {
     var $ = layui.$;
     $.extend({
@@ -114,7 +121,9 @@ function initCommon(layui) {
         },
         // 关闭当前frame弹出层
         closeFrameLayer: function () {
-            parent.layer.close(parent.layer.getFrameIndex(window.name));
+            if (parent && parent.layer) {
+                parent.layer.close(parent.layer.getFrameIndex(window.name));
+            }
         },
         // 打开一个HTML内容页面层
         openPageLayer: function (content, options) {
@@ -484,24 +493,34 @@ function initCommon(layui) {
             return window.mycache[key];
         }
     });
+
+    _context.common = true;
 };
 
+function initConstant(layui) {
+    if (!_context.common) {
+        initCommon(layui);
+    }
 
-function initForm(layui) {
-    var form = layui.form;
+    var $ = layui.$;
 
-    $.extend({
-        lengthVerifyFun: function (max, min) {
-            return function (value) {
+    if (_context.dictionary) {
+        _context.constant = true;
+    } else {
+        var json = localStorage.getItem("dictionary");
+        var dictionary = json ? JSON.parse(json) : {};
+        dictionary.version = dictionary.version || -1;
+        $.postAjax();
 
-            }
-        }
-    });
+    }
 
 }
 
-
 function initTable(layui) {
+    if (!_context.common) {
+        initCommon(layui);
+    }
+
     var table = layui.table,
         form = layui.form,
         $ = layui.$;
@@ -562,4 +581,5 @@ function initTable(layui) {
         }
     });
 
+    _context.table = true;
 }

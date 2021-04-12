@@ -26,7 +26,16 @@ public class MonitorServiceSupport<Model> extends ServiceSupport<Model> {
         commonMapper.insert(model);
     }
 
-    public boolean update(Model model) {
+    public boolean updateWhole(Model model) {
+        if (isBaseModel) {
+            BaseModel baseModel = ((BaseModel) model);
+            baseModel.setUpdateTime(new Date());
+            baseModel.setUpdateBy(MonitorUserSession.getCurrentUserSession().getUserId());
+        }
+        return commonMapper.updateWholeById(model) > 0;
+    }
+
+    public boolean updateSelection(Model model) {
         if (isBaseModel) {
             BaseModel baseModel = ((BaseModel) model);
             baseModel.setUpdateTime(new Date());

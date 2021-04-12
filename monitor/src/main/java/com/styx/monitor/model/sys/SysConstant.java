@@ -18,8 +18,6 @@ public class SysConstant {
 
     private String name;
 
-    private String description;
-
     private Integer orderNo;
 
 
