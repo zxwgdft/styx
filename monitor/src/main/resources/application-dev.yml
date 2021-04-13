@@ -1,6 +1,6 @@
 logging:
   level:
-    com.paladin: debug
+    com.styx.mapper: debug
 
 server:
   port: 19021

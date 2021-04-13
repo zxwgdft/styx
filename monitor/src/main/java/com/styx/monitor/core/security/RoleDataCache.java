@@ -18,7 +18,7 @@ public class RoleDataCache implements DataCache<RoleContainer> {
     }
 
     @Override
-    public RoleContainer loadData() {
+    public RoleContainer loadData(long version) {
         return new RoleContainer(orgRoleMapper.findList());
     }
 }

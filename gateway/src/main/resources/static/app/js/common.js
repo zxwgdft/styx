@@ -510,10 +510,30 @@ function initConstant(layui) {
         var json = localStorage.getItem("dictionary");
         var dictionary = json ? JSON.parse(json) : {};
         dictionary.version = dictionary.version || -1;
-        $.postAjax();
-
+        $.sendAjax({
+            type: "POST",
+            url: "/monitor/sys/constant/get/all?version=" + dictionary.version,
+            async: false,
+            success: function (res) {
+                if (res.json && dictionary.version != res.version) {
+                    dictionary.data = JSON.parse(res.json);
+                    dictionary.version = res.version;
+                    localStorage.setItem("dictionary", JSON.stringify(dictionary));
+                }
+                _context.dictionary = dictionary;
+            }
+        });
     }
 
+    $.extend({
+        getConstantName: function (type, code) {
+            var codeMap = _context.dictionary.data[type];
+            return codeMap ? codeMap[code] : null;
+        },
+        getConstants: function (type) {
+            return _context.dictionary.data[type];
+        }
+    });
 }
 
 function initTable(layui) {
@@ -583,3 +603,25 @@ function initTable(layui) {
 
     _context.table = true;
 }
+
+var styx = {}
+
+styx.LazyCallback = function () {
+    this.count = 0;
+    this.data = {};
+}
+
+styx.LazyCallback.prototype.getLazyCallBack = function (callback, count) {
+    var that = this;
+    return function (data, field) {
+        that.data[field] = data;
+        that.count++;
+        if (that.count >= count) {
+            callback.apply(that);
+        }
+    }
+}
+
+
+
+

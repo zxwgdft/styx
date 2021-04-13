@@ -10,6 +10,7 @@ public class MemoryDataCacheWrapper<T> implements DataCacheWrapper<T> {
 
     private DataCache<T> source;
     private T data;
+    private long version = 0;
     private boolean loaded = false;
 
     public MemoryDataCacheWrapper(DataCache<T> dataCache) {
@@ -18,6 +19,7 @@ public class MemoryDataCacheWrapper<T> implements DataCacheWrapper<T> {
 
     public void toLoad() {
         synchronized (source) {
+            version++;
             loaded = false;
         }
     }
@@ -27,7 +29,7 @@ public class MemoryDataCacheWrapper<T> implements DataCacheWrapper<T> {
             // 为了性能只做到load过程的同步，但不保证返回data时候loaded为true
             synchronized (source) {
                 if (!loaded) {
-                    data = source.loadData();
+                    data = source.loadData(version);
                     loaded = true;
                 }
             }

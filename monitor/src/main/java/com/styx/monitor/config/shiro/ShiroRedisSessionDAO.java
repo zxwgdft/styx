@@ -275,7 +275,7 @@ public class ShiroRedisSessionDAO implements SessionDAO {
     public static class ControlledSessionFactory implements SessionFactory {
 
         /*
-         * 使用 {@link com.paladin.configuration.ShiroRedisSessionDAO.ControlledSession}
+         * 使用 {@link com.styx.configuration.ShiroRedisSessionDAO.ControlledSession}
          * 控制session update次数
          */
         @Override

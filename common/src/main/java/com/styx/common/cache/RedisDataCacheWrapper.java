@@ -40,10 +40,11 @@ public class RedisDataCacheWrapper<T> implements DataCacheWrapper<T> {
                 synchronized (source) {
                     current = getVersion();
                     if (version != current) {
-                        data = source.loadData();
                         if (current > version) {
+                            data = source.loadData(current);
                             version = current;
                         } else {
+                            data = source.loadData(version);
                             redisTemplate.opsForValue().set(cacheKey, String.valueOf(version));
                         }
                     }
@@ -52,7 +53,7 @@ public class RedisDataCacheWrapper<T> implements DataCacheWrapper<T> {
             return data;
         } catch (Exception e) {
             log.error("数据缓存异常！", e);
-            return source.loadData();
+            return source.loadData(version);
         }
     }
 
@@ -60,6 +61,5 @@ public class RedisDataCacheWrapper<T> implements DataCacheWrapper<T> {
         String value = redisTemplate.opsForValue().get(cacheKey);
         return value == null ? 0 : Long.valueOf(value);
     }
-
 
 }

@@ -16,8 +16,11 @@ public interface DataCache<T> {
 
     /**
      * 加载数据
+     *
+     * @param version 数据对应版本号
+     * @return 返回缓存数据
      */
-    T loadData();
+    T loadData(long version);
 
 
 }

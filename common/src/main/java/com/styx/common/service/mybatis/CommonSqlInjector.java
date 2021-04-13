@@ -16,6 +16,7 @@ public class CommonSqlInjector extends DefaultSqlInjector {
         List<AbstractMethod> list = super.getMethodList(mapperClass);
         list.add(new LogicDelete());
         list.add(new UpdateWholeById());
+        list.add(new SelectWholeById());
         return list;
     }
 }

@@ -52,7 +52,7 @@ public class OrgUserService extends MonitorServiceSupport<OrgUser> {
             throw new BusinessException("用户ID不能为空");
         }
 
-        OrgUser user = get(id);
+        OrgUser user = getWhole(id);
         if (user == null) {
             throw new BusinessException("找不到需要更新的用户[ID:" + id + "]");
         }

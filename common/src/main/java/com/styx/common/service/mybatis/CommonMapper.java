@@ -18,8 +18,11 @@ public interface CommonMapper<Model> extends BaseMapper<Model> {
     String PARAM_ID = "id";
     String PARAM_DBM = "dbm";
 
+    String METHOD_SELECT_WHOLE_BY_ID = "selectWholeById";
     String METHOD_LOGIC_DELETE_BY_ID = "logicDeleteById";
     String METHOD_UPDATE_WHOLE_BY_ID = "updateWholeById";
+
+
 
     /**
      * 默认mybatis plus有逻辑删除功能，但是没法同时把删除时间和删除用户的信息更新到表中，下面方法因此而生
@@ -28,4 +31,6 @@ public interface CommonMapper<Model> extends BaseMapper<Model> {
 
 
     int updateWholeById(@Param(Constants.ENTITY) Model model);
+
+    Model selectWholeById(Serializable id);
 }

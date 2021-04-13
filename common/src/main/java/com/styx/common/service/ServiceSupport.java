@@ -87,6 +87,10 @@ public class ServiceSupport<Model> {
         return commonMapper.selectById(id);
     }
 
+    public Model getWhole(Serializable id) {
+        return commonMapper.selectWholeById(id);
+    }
+
     public void save(Model model) {
         commonMapper.insert(model);
     }

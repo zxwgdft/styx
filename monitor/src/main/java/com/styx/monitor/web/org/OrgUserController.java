@@ -33,8 +33,8 @@ public class OrgUserController extends ControllerSupport {
 
     @ApiOperation("用户详情")
     @GetMapping("/get")
-    public OrgUser getDetail(@RequestParam String userId) {
-        return orgUserService.get(userId);
+    public OrgUser getDetail(@RequestParam String id) {
+        return orgUserService.get(id);
     }
 
     @ApiOperation("用户新增")
