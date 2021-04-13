@@ -217,7 +217,7 @@ function initCommon(layui) {
                 formPaddingLeft: 10,
                 formButtonBar: [{
                     id: subOp.id + '_edit_cancel_btn',
-                    type: 'button',
+                    type: 'static.app.page.example.button',
                     name: '取消',
                     class: 'btn btn-default btn-block',
                     order: 999
@@ -561,7 +561,7 @@ function initTable(layui) {
                     return {
                         "code": 0,
                         "msg": "",
-                        "total": res.total,
+                        "count": res.total,
                         "data": res.data
                     }
                 },

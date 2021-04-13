@@ -546,7 +546,7 @@ $.offAll = function () {
 var config = {
 
     // 默认菜单配置
-    menus: ['head', 'bold', 'fontSize', 'fontName', 'italic', 'underline', 'strikeThrough', 'foreColor', 'backColor', 'link', 'list', 'justify', 'quote', 'emoticon', 'image', 'table', 'video', 'code', 'undo', 'redo'],
+    menus: ['head', 'bold', 'fontSize', 'fontName', 'italic', 'underline', 'strikeThrough', 'foreColor', 'backColor', 'link', 'list', 'justify', 'quote', 'emoticon', 'image', 'static.app.page.example.table', 'video', 'code', 'undo', 'redo'],
 
     fontNames: ['宋体', '微软雅黑', 'Arial', 'Tahoma', 'Verdana'],
 
@@ -2533,7 +2533,7 @@ Table.prototype = {
         if (!$selectionELem) {
             return;
         }
-        var $table = $selectionELem.parentUntil('table');
+        var $table = $selectionELem.parentUntil('static.app.page.example.table');
         if (!$table) {
             return;
         }
