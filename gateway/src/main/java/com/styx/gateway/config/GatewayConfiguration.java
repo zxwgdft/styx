@@ -1,4 +1,4 @@
-package com.paladin.gateway.config;
+package com.styx.gateway.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -49,7 +49,7 @@ public class GatewayConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "paladin", value = "cors-enabled", havingValue = "true", matchIfMissing = false)
+    @ConditionalOnProperty(prefix = "gateway", value = "cors-enabled", havingValue = "true", matchIfMissing = false)
     public CorsWebFilter corsFilter(GlobalCorsProperties globalCorsProperties) {
         Map<String, CorsConfiguration> corsConfigMap = globalCorsProperties.getCorsConfigurations();
         if (corsConfigMap.size() == 0) {

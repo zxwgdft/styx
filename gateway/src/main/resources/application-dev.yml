@@ -36,10 +36,9 @@ spring:
             - Path=/support/static/file/**
           uri: lb://styx-support
 
-paladin:
+gateway:
   cors-enabled: true
-  gateway:
-    # APP静态资源地址匹配模式
-    app-path-pattern: /static/app/**
-    # APP静态资源地址
-    app-resource-path: classpath:/static/app/
+  # APP静态资源地址匹配模式
+  app-path-pattern: /static/app/**
+  # APP静态资源地址
+  app-resource-path: classpath:/static/app/

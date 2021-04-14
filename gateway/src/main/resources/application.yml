@@ -5,6 +5,7 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
   resources:
+    # 异常页面涉及到
     static-locations:
       - classpath:/static/
       - classpath:/static/app

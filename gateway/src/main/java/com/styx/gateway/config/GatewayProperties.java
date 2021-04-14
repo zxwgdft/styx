@@ -1,4 +1,4 @@
-package com.paladin.gateway.config;
+package com.styx.gateway.config;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +13,7 @@ import java.util.Map;
  */
 @Getter
 @Setter
-@ConfigurationProperties("paladin.gateway")
+@ConfigurationProperties("gateway")
 public class GatewayProperties {
 
     private Map<String, String> staticResource = new LinkedHashMap<>();
