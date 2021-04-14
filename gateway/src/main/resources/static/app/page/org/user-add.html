@@ -78,6 +78,7 @@
 
 <script src="../../lib/layui/layui-2.6.3.min.js" charset="utf-8"></script>
 <script src="../../js/lay-config.js" charset="utf-8"></script>
+<script src="../../js/district.js" charset="utf-8"></script>
 <script src="../../js/common.js" charset="utf-8"></script>
 <script>
     layui.use(['form', 'xmSelect'], function () {
@@ -124,7 +125,7 @@
         var districtSelect = xmSelect.render({
             el: '#district',
             tips: '请选择管辖地区',
-            data: [],
+            data: _districts,
             name: 'districtCode',
             toolbar: {show: true},
             filterable: true,
@@ -161,12 +162,6 @@
 
         $.postJsonAjax("/monitor/org/role/find/all", {}, function (res) {
             roleSelect.update({
-                data: res
-            })
-        });
-
-        $.getJSON("../../api/district.json", function (res) {
-            districtSelect.update({
                 data: res
             })
         });

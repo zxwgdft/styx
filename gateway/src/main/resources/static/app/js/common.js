@@ -584,6 +584,20 @@ function initTable(layui) {
             }
             options = $.extend(default_options, options);
 
+            if (options.cols) {
+                for (var m = 0; m < options.cols.length; m++) {
+                    var o = options.cols[m];
+                    if ($.isArray(o)) {
+                        for (var n = 0; n < o.length; n++) {
+                            var k = o[n];
+                            if (!k.align) k.align = 'center';
+                        }
+                    } else {
+                        o.align = 'center';
+                    }
+                }
+            }
+
             if (options.searchFilter) {
                 form.on('submit(' + options.searchFilter + ')', function (data) {
                     var tableId = options.id || $(options.elem).attr("id");

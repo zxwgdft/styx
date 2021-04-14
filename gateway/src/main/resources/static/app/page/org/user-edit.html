@@ -77,6 +77,7 @@
 
 <script src="../../lib/layui/layui-2.6.3.min.js" charset="utf-8"></script>
 <script src="../../js/lay-config.js" charset="utf-8"></script>
+<script src="../../js/district.js" charset="utf-8"></script>
 <script src="../../js/common.js" charset="utf-8"></script>
 <script>
     layui.use(['form', 'xmSelect'], function () {
@@ -137,7 +138,7 @@
         var districtSelect = xmSelect.render({
             el: '#district',
             tips: '请选择管辖地区',
-            data: [],
+            data: _districts,
             name: 'districtCode',
             toolbar: {show: true},
             filterable: true,
@@ -173,11 +174,6 @@
         }, 2);
 
         var lazyCallback2 = new styx.LazyCallback().getLazyCallBack(function () {
-            var districtCode = this.data.user.districtCode;
-            districtCode && districtSelect.setValue(districtCode.split(","));
-        }, 2);
-
-        var lazyCallback3 = new styx.LazyCallback().getLazyCallBack(function () {
             var role = this.data.user.role;
             role && roleSelect.setValue(role.split(","));
         }, 2);
@@ -189,18 +185,11 @@
             lazyCallback1(res, "station");
         });
 
-        $.getJSON("../../api/district.json", function (res) {
-            districtSelect.update({
-                data: res
-            })
-            lazyCallback2(res, "districtCode")
-        });
-
         $.postJsonAjax("/monitor/org/role/find/all", {}, function (res) {
             roleSelect.update({
                 data: res
             });
-            lazyCallback3(res, "role");
+            lazyCallback2(res, "role");
         });
 
 
@@ -214,7 +203,9 @@
             showByType(res.type);
             lazyCallback1(res, "user");
             lazyCallback2(res, "user");
-            lazyCallback3(res, "user");
+
+            var districtCode = res.districtCode;
+            districtCode && districtSelect.setValue(districtCode.split(","));
         });
 
 

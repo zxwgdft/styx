@@ -17,7 +17,7 @@
             <form class="layui-form layui-form-pane" action="">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">用户姓名</label>
+                        <label class="layui-form-label">站点名称</label>
                         <div class="layui-input-inline">
                             <input type="text" name="name" autocomplete="off" class="layui-input">
                         </div>
@@ -33,7 +33,8 @@
 
         <script type="text/html" id="toolbar">
             <div class="layui-btn-container">
-                <button class="layui-btn layui-btn-sm data-add-btn" lay-event="add"><i class="layui-icon layui-icon-addition"></i>添加用户
+                <button class="layui-btn layui-btn-sm data-add-btn" lay-event="add"><i
+                        class="layui-icon layui-icon-addition"></i>添加站点
                 </button>
             </div>
         </script>
@@ -48,6 +49,7 @@
     </div>
 </div>
 <script src="../../lib/layui/layui-2.6.3.min.js" charset="utf-8"></script>
+<script src="../../js/district.js" charset="utf-8"></script>
 <script src="../../js/common.js" charset="utf-8"></script>
 <script>
     layui.use(['form', 'table'], function () {
@@ -56,22 +58,32 @@
 
         initCommon(layui);
         initTable(layui);
-        initConstant(layui);
 
         $.renderTable({
             elem: '#dataTable',
-            url: '/monitor/org/user/find/page',
+            url: '/monitor/config/station/find/page',
             toolbar: '#toolbar',
             defaultToolbar: ['filter', 'exports', 'print'],
             cols: [[
-                {field: 'name', title: '用户姓名'},
                 {
-                    field: 'type', title: '用户类型', templet: function (d) {
-                        return $.getConstantName("user-type", d.type)
+                    field: 'name', title: '站点名称'
+                },
+                {
+                    field: 'districtCode', title: '站点地区', templet: function (d) {
+                        return getDistrictName(d.districtCode);
                     }
                 },
-                {field: 'cellphone', title: '手机号码'},
-                {field: 'account', title: '账号'},
+                {
+                    field: 'address', title: '站点地址', templet: function (d) {
+                        return '<div style = "text-align:left">' + d.address + '</div>'
+                    }
+                },
+                {field: 'serverNode', width: 100, title: '数据节点'},
+                {
+                    field: 'enabled', title: '状态', width: 80, templet: function (d) {
+                        return d.enabled === true ? '启用' : '停用';
+                    }
+                },
                 {title: '操作', width: 150, toolbar: '#dataTableBar', align: "center"}
             ]],
             searchFilter: 'data-search-btn',
