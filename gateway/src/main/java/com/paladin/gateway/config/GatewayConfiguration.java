@@ -23,7 +23,7 @@ import java.util.Map;
  */
 @Slf4j
 @Configuration
-@EnableConfigurationProperties(GatewayProperties.class)
+@EnableConfigurationProperties({GatewayProperties.class})
 public class GatewayConfiguration {
 
     @Bean
@@ -65,4 +65,6 @@ public class GatewayConfiguration {
         }
         return new CorsWebFilter(source);
     }
+
+
 }

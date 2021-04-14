@@ -2,14 +2,14 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>404</title>
+    <title>403</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta http-equiv="Access-Control-Allow-Origin" content="*">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
-    <link rel="stylesheet" href="../../lib/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="lib/layui/css/layui.css" media="all">
     <style>
         .error .clip .shadow {height:180px;}
         .error .clip:nth-of-type(2) .shadow {width:130px;}
@@ -18,8 +18,8 @@
         .error h2 {font-size:32px;}
         .error .msg {top:-190px;left:30%;width:80px;height:80px;line-height:80px;font-size:32px;}
         .error span.triangle {top:70%;right:0%;border-left:20px solid #535353;border-top:15px solid transparent;border-bottom:15px solid transparent;}
-        .error .container-error-404 {top: 50%;margin-top: 250px;position:relative;height:250px;padding-top:40px;}
-        .error .container-error-404 .clip {display:inline-block;transform:skew(-45deg);}
+        .error .container-error-403 {top: 50%;margin-top: 250px;position:relative;height:250px;padding-top:40px;}
+        .error .container-error-403 .clip {display:inline-block;transform:skew(-45deg);}
         .error .clip .shadow {overflow:hidden;}
         .error .clip:nth-of-type(2) .shadow {overflow:hidden;position:relative;box-shadow:inset 20px 0px 20px -15px rgba(150,150,150,0.8),20px 0px 20px -15px rgba(150,150,150,0.8);}
         .error .clip:nth-of-type(3) .shadow:after,.error .clip:nth-of-type(1) .shadow:after {content:"";position:absolute;right:-8px;bottom:0px;z-index:9999;height:100%;width:10px;background:linear-gradient(90deg,transparent,rgba(173,173,173,0.8),transparent);border-radius:50%;}
@@ -39,7 +39,7 @@
             .error h2 {font-size:18px;}
             .error .msg {top:-110px;left:15%;width:40px;height:40px;line-height:40px;font-size:18px;}
             .error span.triangle {top:70%;right:-3%;border-left:10px solid #535353;border-top:8px solid transparent;border-bottom:8px solid transparent;}
-            .error .container-error-404 {height:150px;}
+            .error .container-error-403 {height:150px;}
         }
     </style>
 </head>
@@ -47,7 +47,7 @@
 <div class="error">
     <div class="container-floud">
         <div style="text-align: center">
-            <div class="container-error-404">
+            <div class="container-error-403">
                 <div class="clip">
                     <div class="shadow">
                         <span class="digit thirdDigit"></span>
@@ -67,11 +67,11 @@
                     <span class="triangle"></span>
                 </div>
             </div>
-            <h2 class="h1">很抱歉，你访问的页面找不到了</h2>
+            <h2 class="h1">很抱歉，您没有权限访问该页面</h2>
         </div>
     </div>
 </div>
-<script src="../../lib/layui/layui-2.6.3.min.js" charset="utf-8"></script>
+<script src="lib/layui/layui-2.6.3.min.js" charset="utf-8"></script>
 <script>
     function randomNum() {
         return Math.floor(Math.random() * 9) + 1;
@@ -99,7 +99,7 @@
     loop1 = setInterval(function () {
         if (i > 100) {
             clearInterval(loop1);
-            document.querySelector('.firstDigit').textContent = 4;
+            document.querySelector('.firstDigit').textContent = 3;
         } else {
             document.querySelector('.firstDigit').textContent = randomNum();
             i++;
