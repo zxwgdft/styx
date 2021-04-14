@@ -13,28 +13,10 @@
 <div class="layuimini-container">
     <div class="layuimini-main">
 
-        <div>
-            <form class="layui-form layui-form-pane" action="">
-                <div class="layui-form-item">
-                    <div class="layui-inline">
-                        <label class="layui-form-label">站点名称</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="name" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <button type="submit" class="layui-btn layui-btn-normal layui-btn-fluid" lay-submit
-                                lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-
         <script type="text/html" id="toolbar">
             <div class="layui-btn-container">
                 <button class="layui-btn layui-btn-sm data-add-btn" lay-event="add"><i
-                        class="layui-icon layui-icon-addition"></i>添加站点
+                        class="layui-icon layui-icon-addition"></i>添加终端
                 </button>
             </div>
         </script>
@@ -42,7 +24,6 @@
         <table class="layui-hide" id="dataTable" lay-filter="dataTableFilter"></table>
 
         <script type="text/html" id="dataTableBar">
-            <a class="layui-btn layui-btn-warm layui-btn-xs data-count-edit" lay-event="terminal">终端管理</a>
             <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
             <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
         </script>
@@ -85,7 +66,7 @@
                         return d.enabled === true ? '启用' : '停用';
                     }
                 },
-                {title: '操作', width: 200, toolbar: '#dataTableBar', align: "center"}
+                {title: '操作', width: 150, toolbar: '#dataTableBar', align: "center"}
             ]],
             searchFilter: 'data-search-btn',
         });
