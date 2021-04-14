@@ -4,7 +4,7 @@
  * @version 1.1
  */
 
-layui.define(['laypage', 'static.app.page.example.form'], function (exports) {
+layui.define(['laypage', 'form'], function (exports) {
     "use strict";
 
     var IconPicker = function () {

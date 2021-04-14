@@ -1,4 +1,4 @@
-layui.define(['static.app.page.example.layer', 'static.app.page.example.form', 'laytpl'], function (exports) {
+layui.define(['layer', 'form', 'laytpl'], function (exports) {
     "use strict";
 
     let $ = layui.$

@@ -1,4 +1,4 @@
-layui.define(['static.app.page.example.table', 'jquery', 'static.app.page.example.form'], function (exports) {
+layui.define(['table', 'jquery', 'form'], function (exports) {
     "use strict";
 
     var MOD_NAME = 'tableSelect',
