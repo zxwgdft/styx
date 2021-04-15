@@ -1,0 +1,171 @@
+[
+  {
+    "id": 30,
+    "name": "PH值",
+    "type": 2,
+    "min": 6.00,
+    "max": 9.00,
+    "startPosition": 235,
+    "switchPosition": 0
+  },
+  {
+    "id": 31,
+    "name": "总余氯值",
+    "type": 2,
+    "min": 2.00,
+    "max": 20.00,
+    "startPosition": 239,
+    "switchPosition": 0
+  },
+  {
+    "id": 87,
+    "name": "COD",
+    "type": 2,
+    "min": 0.00,
+    "max": 60.00,
+    "startPosition": 227,
+    "switchPosition": 0
+  },
+  {
+    "id": 88,
+    "name": "NH3-N",
+    "type": 2,
+    "min": 0.00,
+    "max": 15.00,
+    "startPosition": 231,
+    "switchPosition": 0
+  },
+  {
+    "id": 100,
+    "name": "总氮",
+    "type": 2,
+    "min": 0.00,
+    "max": 15.00,
+    "startPosition": 215,
+    "switchPosition": 0
+  },
+  {
+    "id": 101,
+    "name": "总磷",
+    "type": 2,
+    "min": 0.00,
+    "max": 5.00,
+    "startPosition": 243,
+    "switchPosition": 0
+  },
+  {
+    "id": 34,
+    "name": "瞬时流量",
+    "type": 2,
+    "min": 10.00,
+    "max": 50.00,
+    "startPosition": 261,
+    "switchPosition": 0
+  },
+  {
+    "id": 35,
+    "type": 2,
+    "min": 0.00,
+    "max": 1000000.00,
+    "startPosition": 265,
+    "switchPosition": 0
+  },
+  {
+    "id": 48,
+    "type": 3,
+    "startPosition": 28,
+    "switchPosition": 3,
+    "value": 0
+  },
+  {
+    "id": 54,
+    "type": 0,
+    "startPosition": 29,
+    "switchPosition": 1,
+    "value": 1
+  },
+  {
+    "id": 53,
+    "type": 0,
+    "startPosition": 29,
+    "switchPosition": 0,
+    "value": 1
+  },
+  {
+    "id": 83,
+    "type": 0,
+    "startPosition": 29,
+    "switchPosition": 7,
+    "value": 0
+  },
+  {
+    "id": 55,
+    "type": 3,
+    "startPosition": 29,
+    "switchPosition": 2,
+    "value": 1
+  },
+  {
+    "id": 49,
+    "type": 0,
+    "startPosition": 28,
+    "switchPosition": 4,
+    "value": 0
+  },
+  {
+    "id": 50,
+    "type": 0,
+    "startPosition": 28,
+    "switchPosition": 5,
+    "value": 0
+  },
+  {
+    "id": 90,
+    "type": 0,
+    "startPosition": 30,
+    "switchPosition": 1,
+    "value": 1
+  },
+  {
+    "id": 93,
+    "type": 0,
+    "startPosition": 45,
+    "switchPosition": 1,
+    "value": 0
+  },
+  {
+    "id": 94,
+    "type": 0,
+    "startPosition": 51,
+    "switchPosition": 2,
+    "value": 0
+  },
+  {
+    "id": 45,
+    "type": 0,
+    "startPosition": 28,
+    "switchPosition": 0,
+    "value": 0
+  },
+  {
+    "id": 46,
+    "type": 0,
+    "startPosition": 28,
+    "switchPosition": 1,
+    "value": 0
+  },
+  {
+    "id": 96,
+    "type": 0,
+    "startPosition": 61,
+    "switchPosition": 7,
+    "value": 0
+  },
+  {
+    "id": 68,
+    "type": 0,
+    "startPosition": 36,
+    "switchPosition": 1,
+    "value": 1
+  }
+]

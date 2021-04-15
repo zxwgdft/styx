@@ -167,6 +167,12 @@
                 <artifactId>shiro-spring</artifactId>
                 <version>1.7.1</version>
             </dependency>
+
+            <dependency>
+                <groupId>args4j</groupId>
+                <artifactId>args4j</artifactId>
+                <version>2.33</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

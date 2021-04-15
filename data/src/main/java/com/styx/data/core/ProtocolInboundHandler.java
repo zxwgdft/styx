@@ -1,7 +1,6 @@
 package com.styx.data.core;
 
 
-import com.styx.data.core.datagram.SplitDatagram;
 import com.styx.data.core.terminal.Terminal;
 import com.styx.data.core.terminal.TerminalManager;
 import io.netty.buffer.ByteBuf;
@@ -68,7 +67,7 @@ public class ProtocolInboundHandler extends ChannelInboundHandlerAdapter {
                 array = na;
             }
 
-            Datagram datagram = new SplitDatagram(array);
+            Datagram datagram = new Datagram(array);
 
 
             if (datagram != null) {
