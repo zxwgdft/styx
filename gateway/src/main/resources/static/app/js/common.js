@@ -330,6 +330,7 @@ function initCommon(layui) {
                 };
             }
 
+
             if (!options.error) {
                 options.error = function (xhr, e) {
                     var code = xhr.status;
@@ -343,13 +344,20 @@ function initCommon(layui) {
                     } else if (code == 490) {
                         $.validErrorHandler(xhr);
                     } else {
-                        $.errorMessage(xhr.responseText || "操作失败");
+                        var rj = xhr.responseJSON;
+                        rj ? $.errorMessage(rj.message || rj.error || "操作失败") :
+                            $.errorMessage(xhr.responseText || "操作失败");
                     }
                 }
             }
 
             options.dataType = options.dataType || 'json';
             options.headers = options.headers || {};
+
+            if (!options.headers.Accept) {
+                options.headers.Accept = 'application/json';
+            }
+
             options.headers["Authorization"] = $.getToken() || '';
             $.ajax(options);
         },
@@ -532,6 +540,13 @@ function initConstant(layui) {
         },
         getConstants: function (type) {
             return _context.dictionary.data[type];
+        },
+        initConstantSelect: function (select, constantType) {
+            select = $(select);
+            var cs = $.getConstants(constantType);
+            for (var o in cs) {
+                select.append("<option value='" + o + "'>" + cs[o] + "</option>");
+            }
         }
     });
 }
@@ -551,6 +566,7 @@ function initTable(layui) {
                 method: "post",
                 contentType: "application/json",
                 headers: {
+                    "Accept": "application/json",
                     "Authorization": $.getToken()
                 },
                 request: {
@@ -558,12 +574,21 @@ function initTable(layui) {
                     limitName: "limit"
                 },
                 parseData: function (res) {
-                    return {
+                    res = res || [];
+
+                    var r = {
                         "code": 0,
                         "msg": "",
-                        "count": res.total,
-                        "data": res.data
                     }
+
+                    if ($.isArray(res)) {
+                        r.count = res.length;
+                        r.data = res;
+                    } else {
+                        r.count = res.total;
+                        r.data = res.data;
+                    }
+                    return r;
                 },
                 limits: [10, 15, 20, 25, 50, 100],
                 limit: 15,
@@ -578,7 +603,9 @@ function initTable(layui) {
                     } else if (code == 403) {
                         $.errorMessage(xhr.responseText || "您没有权限访问数据");
                     } else {
-                        $.errorMessage(xhr.responseText || "获取数据失败");
+                        var rj = xhr.responseJSON;
+                        rj ? $.errorMessage(rj.message || rj.error || "获取数据失败") :
+                            $.errorMessage(xhr.responseText || "获取数据失败");
                     }
                 }
             }

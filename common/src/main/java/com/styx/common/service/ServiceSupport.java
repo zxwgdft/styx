@@ -172,9 +172,7 @@ public class ServiceSupport<Model> {
      * 查找所有结果集合
      */
     public List<Model> findList(Object queryParam) {
-        Wrapper queryWrapper = queryParam != null ?
-                QueryWrapperHelper.buildQuery(queryParam) : null;
-        return searchAll(modelType, queryWrapper);
+        return searchAll(modelType, queryParam != null ? QueryWrapperHelper.buildQuery(queryParam) : null);
     }
 
     /**
@@ -188,9 +186,7 @@ public class ServiceSupport<Model> {
      * 查找所有结果集合
      */
     public <T> List<T> findList(Class<T> clazz, Object queryParam) {
-        Wrapper queryWrapper = queryParam != null ?
-                QueryWrapperHelper.buildQuery(queryParam) : null;
-        return searchAll(clazz, queryWrapper);
+        return searchAll(clazz, queryParam != null ? QueryWrapperHelper.buildQuery(queryParam) : null);
     }
 
     /**
@@ -259,10 +255,16 @@ public class ServiceSupport<Model> {
      * 查找分页结果集合
      */
     public <T> PageResult<T> findPage(Class<T> clazz, PageParam pageParam, Object queryParam) {
-        Wrapper queryWrapper = queryParam != null ?
-                QueryWrapperHelper.buildQuery(queryParam) : null;
-        return searchPage(clazz, pageParam, queryWrapper);
+        return searchPage(clazz, pageParam, queryParam != null ? QueryWrapperHelper.buildQuery(queryParam) : null);
     }
+
+    /**
+     * 查找分页结果集合
+     */
+    public PageResult<Model> findPage(PageParam pageParam, Object queryParam) {
+        return searchPage(modelType, pageParam, queryParam != null ? QueryWrapperHelper.buildQuery(queryParam) : null);
+    }
+
 
     /**
      * 查询分页结果集

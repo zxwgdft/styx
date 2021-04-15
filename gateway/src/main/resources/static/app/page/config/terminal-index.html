@@ -13,6 +13,14 @@
 <div class="layuimini-container">
     <div class="layuimini-main">
 
+        <div class="layui-row">
+            <span class="layui-breadcrumb">
+              <a href="station-index.html">站点列表</a>
+              <a><cite>终端管理</cite></a>
+            </span>
+
+            <a class="layui-btn layui-btn-sm layui-btn-danger" href="station-index.html" style="float: right">返回</a>
+        </div>
         <script type="text/html" id="toolbar">
             <div class="layui-btn-container">
                 <button class="layui-btn layui-btn-sm data-add-btn" lay-event="add"><i
@@ -31,7 +39,6 @@
     </div>
 </div>
 <script src="../../lib/layui/layui-2.6.3.min.js" charset="utf-8"></script>
-<script src="../../js/district.js" charset="utf-8"></script>
 <script src="../../js/common.js" charset="utf-8"></script>
 <script>
     layui.use(['form', 'table'], function () {
@@ -40,27 +47,25 @@
 
         initCommon(layui);
         initTable(layui);
+        initConstant(layui);
 
         $.renderTable({
             elem: '#dataTable',
-            url: '/monitor/config/station/find/page',
+            url: '/monitor/config/terminal/find/station?id=' + $.getUrlVariable("id"),
             toolbar: '#toolbar',
             defaultToolbar: ['filter', 'exports', 'print'],
             cols: [[
                 {
-                    field: 'name', title: '站点名称'
+                    field: 'name', title: '终端名称'
                 },
                 {
-                    field: 'districtCode', title: '站点地区', templet: function (d) {
-                        return getDistrictName(d.districtCode);
-                    }
+                    field: 'uid', title: 'UID'
                 },
                 {
-                    field: 'address', title: '站点地址', templet: function (d) {
-                        return '<div style = "text-align:left">' + d.address + '</div>'
+                    field: 'type', title: '终端类型', templet: function (d) {
+                        return $.getConstantName("terminal-type", d.type)
                     }
                 },
-                {field: 'serverNode', width: 100, title: '数据节点'},
                 {
                     field: 'enabled', title: '状态', width: 80, templet: function (d) {
                         return d.enabled === true ? '启用' : '停用';
@@ -68,7 +73,7 @@
                 },
                 {title: '操作', width: 150, toolbar: '#dataTableBar', align: "center"}
             ]],
-            searchFilter: 'data-search-btn',
+            page: false
         });
 
 
@@ -77,8 +82,8 @@
          */
         table.on('toolbar(dataTableFilter)', function (obj) {
             if (obj.event === 'add') {  // 监听添加操作
-                $.openUrlLayerOrLocate('user-add.html', {
-                    title: '添加用户'
+                $.openUrlLayerOrLocate('terminal-add.html', {
+                    title: '添加终端'
                 });
             }
         });
@@ -87,19 +92,17 @@
         table.on('tool(dataTableFilter)', function (obj) {
             var data = obj.data;
             if (obj.event === 'edit') {
-                $.openUrlLayerOrLocate('user-edit.html?id=' + data.id, {
-                    title: '编辑用户'
+                $.openUrlLayerOrLocate('terminal-edit.html?id=' + data.id, {
+                    title: '编辑终端'
                 });
             } else if (obj.event === 'delete') {
-                layer.confirm('确定删除用户吗？', function (index) {
+                layer.confirm('确定删除终端吗？', function (index) {
                     layer.close(index);
-                    $.postAjax("/monitor/org/user/delete?id=" + data.id, function () {
+                    $.postAjax("/monitor/config/terminal/delete?id=" + data.id, function () {
                         $.successMessage("删除成功！");
                         refresh();
                     });
                 });
-            } else if (obj.event === 'terminal') {
-                location.href = 'terminal-index.html';
             }
         });
     });

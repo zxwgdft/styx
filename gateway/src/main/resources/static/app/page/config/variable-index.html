@@ -17,9 +17,27 @@
             <form class="layui-form layui-form-pane" action="">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">站点名称</label>
+                        <label class="layui-form-label">名称</label>
                         <div class="layui-input-inline">
                             <input type="text" name="name" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">类型</label>
+                        <div class="layui-input-inline">
+                            <select id="typeSelect" name="type">
+                                <option value="">全部</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">状态</label>
+                        <div class="layui-input-inline">
+                            <select name="enabled" lay-filter="enabled">
+                                <option value="">全部</option>
+                                <option value="1">启用</option>
+                                <option value="0">停用</option>
+                            </select>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -34,7 +52,7 @@
         <script type="text/html" id="toolbar">
             <div class="layui-btn-container">
                 <button class="layui-btn layui-btn-sm data-add-btn" lay-event="add"><i
-                        class="layui-icon layui-icon-addition"></i>添加站点
+                        class="layui-icon layui-icon-addition"></i>添加变量
                 </button>
             </div>
         </script>
@@ -42,7 +60,6 @@
         <table class="layui-hide" id="dataTable" lay-filter="dataTableFilter"></table>
 
         <script type="text/html" id="dataTableBar">
-            <a class="layui-btn layui-btn-warm layui-btn-xs data-count-edit" lay-event="terminal">终端管理</a>
             <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
             <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
         </script>
@@ -50,7 +67,6 @@
     </div>
 </div>
 <script src="../../lib/layui/layui-2.6.3.min.js" charset="utf-8"></script>
-<script src="../../js/district.js" charset="utf-8"></script>
 <script src="../../js/common.js" charset="utf-8"></script>
 <script>
     layui.use(['form', 'table'], function () {
@@ -59,27 +75,32 @@
 
         initCommon(layui);
         initTable(layui);
+        initConstant(layui);
+
+        $.initConstantSelect("#typeSelect", "variable-type");
 
         $.renderTable({
             elem: '#dataTable',
-            url: '/monitor/config/station/find/page',
+            url: '/monitor/config/variable/find/page',
             toolbar: '#toolbar',
             defaultToolbar: ['filter', 'exports', 'print'],
             cols: [[
                 {
-                    field: 'name', title: '站点名称'
+                    field: 'name', title: '变量名称'
                 },
                 {
-                    field: 'districtCode', title: '站点地区', templet: function (d) {
-                        return getDistrictName(d.districtCode);
+                    field: 'type', title: '变量类型', templet: function (d) {
+                        return $.getConstantName("variable-type", d.type)
                     }
                 },
+                {field: 'unit', title: '变量单位'},
+                {field: 'min', title: '最小值'},
+                {field: 'max', title: '最大值'},
                 {
-                    field: 'address', title: '站点地址', templet: function (d) {
-                        return '<div style = "text-align:left">' + d.address + '</div>'
+                    field: 'bytePosition', title: '数据位置', templet: function (d) {
+                        return d.type == 0 || d.type == 3 ? d.bytePosition + '(' + d.bitPosition + ')' : d.bytePosition;
                     }
                 },
-                {field: 'serverNode', width: 100, title: '数据节点'},
                 {
                     field: 'enabled', title: '状态', width: 80, templet: function (d) {
                         return d.enabled === true ? '启用' : '停用';
@@ -89,30 +110,29 @@
             ]],
             searchFilter: 'data-search-btn',
         });
-
+        layui.form.render();
 
         /**
          * toolbar监听事件
          */
         table.on('toolbar(dataTableFilter)', function (obj) {
             if (obj.event === 'add') {  // 监听添加操作
-                $.openUrlLayerOrLocate('station-add.html', {
+                $.openUrlLayerOrLocate('variable-add.html', {
                     title: '添加站点'
                 });
             }
         });
 
-
         table.on('tool(dataTableFilter)', function (obj) {
             var data = obj.data;
             if (obj.event === 'edit') {
-                $.openUrlLayerOrLocate('station-edit.html?id=' + data.id, {
+                $.openUrlLayerOrLocate('variable-edit.html?id=' + data.id, {
                     title: '编辑站点'
                 });
             } else if (obj.event === 'delete') {
                 layer.confirm('确定删除站点吗？', function (index) {
                     layer.close(index);
-                    $.postAjax("/monitor/config/station/delete?id=" + data.id, function () {
+                    $.postAjax("/monitor/config/variable/delete?id=" + data.id, function () {
                         $.successMessage("删除成功！");
                         refresh();
                     });

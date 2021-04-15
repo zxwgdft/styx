@@ -1,6 +1,6 @@
 logging:
   level:
-    com.styx.mapper: debug
+    com.styx: debug
 
 server:
   port: 19021
