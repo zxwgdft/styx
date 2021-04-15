@@ -20,7 +20,6 @@ public class DataProducer {
     protected int min;
 
     protected float value;
-
     protected boolean random;
 
     public DataProducer(int address, int max, int min) {
