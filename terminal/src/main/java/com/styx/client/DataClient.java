@@ -1,4 +1,4 @@
-package com.paladin.client;
+package com.styx.client;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;

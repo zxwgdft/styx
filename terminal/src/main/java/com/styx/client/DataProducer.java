@@ -1,4 +1,4 @@
-package com.paladin.client;
+package com.styx.client;
 
 import lombok.Getter;
 import lombok.Setter;

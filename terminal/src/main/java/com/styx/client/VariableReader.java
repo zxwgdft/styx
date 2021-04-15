@@ -1,4 +1,4 @@
-package com.paladin.client;
+package com.styx.client;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;

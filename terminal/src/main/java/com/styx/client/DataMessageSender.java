@@ -1,4 +1,4 @@
-package com.paladin.client;
+package com.styx.client;
 
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
