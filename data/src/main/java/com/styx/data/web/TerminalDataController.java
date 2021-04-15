@@ -187,12 +187,4 @@ public class TerminalDataController {
     }
 
 
-    @ApiOperation("子节点上传数据")
-    @PostMapping("/upload")
-    public R getUploadData(@RequestBody List<Data4Upload> data) {
-        terminalDataService.receiveUploadData(data);
-        return R.success();
-    }
-
-
 }

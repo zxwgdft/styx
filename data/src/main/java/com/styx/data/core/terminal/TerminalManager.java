@@ -268,8 +268,6 @@ public class TerminalManager implements ApplicationRunner, Runnable {
         }
         this.nodeName = appName.substring(GlobalConstants.DATA_SERVICE_PREFIX.length());
 
-        loadConfig();
-
         ScheduledExecutorService service1 = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
             public Thread newThread(Runnable r) {
                 Thread thread = new Thread(r);
@@ -279,7 +277,7 @@ public class TerminalManager implements ApplicationRunner, Runnable {
             }
         });
 
-        service1.scheduleWithFixedDelay(() -> loadConfig(), 10, configSyncInterval, TimeUnit.SECONDS);
+        service1.scheduleWithFixedDelay(() -> loadConfig(), 0, configSyncInterval, TimeUnit.SECONDS);
 
         ScheduledExecutorService service2 = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
             public Thread newThread(Runnable r) {

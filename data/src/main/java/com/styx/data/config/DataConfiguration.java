@@ -1,5 +1,6 @@
 package com.styx.data.config;
 
+import com.styx.common.service.mybatis.CommonSqlInjector;
 import com.styx.common.spring.SpringBeanHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -40,6 +41,14 @@ public class DataConfiguration {
     @Bean
     public SpringBeanHelper springBeanHolder() {
         return new SpringBeanHelper();
+    }
+
+    /**
+     * 扩展mybatis plus 通用方法
+     */
+    @Bean
+    public CommonSqlInjector getCommonSqlInjector() {
+        return new CommonSqlInjector();
     }
 
 }

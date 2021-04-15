@@ -15,8 +15,6 @@ spring:
   cloud:
     nacos:
       server-addr: localhost:8848
-
-
   datasource:
     name: msms
     url: jdbc:mysql://172.16.16.125:3306/styx_monitor?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
@@ -38,47 +36,13 @@ spring:
     port: 6379
     timeout: 1000
 
-
 ribbon:
   ReadTimeout: 5000
   ConnectTimeout: 5000
 
-
 monitor:
-  verify:
-    enabled: false
   shiro:
     login-url: /monitor/login
     session-time: 60
   # 默认密码
   default-password: 1
-  config:
-    # 配置检查间隔，生产中应该尽量短
-    check-version-interval: 20
-    # 维护最大时长（小时）
-    max-maintain-hours: 48
-    # 认证重定向url
-    auth-redirect-url: /dfsd
-  template:
-    alarm-trigger: 【江苏菲捷斯】时间：{time}，位置：{station}，报警信息：{alarm}
-    alarm-closed: 【江苏菲捷斯】{station}在时间{time}{alarm}已经处理完毕
-  terminal:
-    analysis:
-      # 大屏排行榜大小
-      ranking-size: 5
-      # 大屏历史趋势图表展示天数
-      show-day-size: 7
-      # 导出站点月报数据的变量
-      day-report-variable:
-        - id: 30
-          name: PH日均值
-        - id: 31
-          name: 氯日均值（mg/L）
-        - id: 35
-          name: 日累计流量（m³）
-    data:
-      history:
-        # 终端历史数据默认查询时间跨度（多少天内数据）
-        default-time-span: 10
-        # 终端历史数据最大查询时间跨度（最多多少天的数据）
-        max-time-span: 31

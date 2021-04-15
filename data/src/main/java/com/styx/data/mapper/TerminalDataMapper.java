@@ -1,6 +1,6 @@
 package com.styx.data.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.styx.common.service.mybatis.CommonMapper;
 import com.styx.data.model.TerminalData;
 import com.styx.data.service.dto.Data4Upload;
 import com.styx.data.service.dto.DataRecord;
@@ -13,7 +13,7 @@ import java.util.List;
  * @author TontoZhou
  * @since 2020/11/13
  */
-public interface TerminalDataMapper extends BaseMapper<TerminalData> {
+public interface TerminalDataMapper extends CommonMapper<TerminalData> {
 
     List<DataRecord> findTerminalData(@Param("terminalId") int terminalId, @Param("startDay") int startDay, @Param("endDay") int endDay, @Param("vids") List<Integer> vids);
 

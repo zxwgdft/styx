@@ -21,5 +21,4 @@ public class VersionConfig {
     private long terminalVersion;
     private List<CTerminal> terminals;
 
-    private String parentNodeCode;
 }
