@@ -4,6 +4,7 @@ package com.styx.data.core;
 import com.styx.data.core.terminal.Terminal;
 import com.styx.data.core.terminal.TerminalManager;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -15,8 +16,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 /**
  * 消息处理器
+ * <p>
+ * 因为本处理类属于业务上最终处理类，我们不必调用ChannelHandlerContext.fireXXXXX
+ * 方法抛到下一个处理类，但因此缺失了默认最终处理类 TailContext 中的逻辑，所以
+ * 在相关方法中补上释放内存的代码（ReferenceCountUtil.release）
  *
  * @author shenq
  * @date 2018-04-03 13:52
@@ -44,63 +51,72 @@ public class ProtocolInboundHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        try {
-            channelRead(ctx, (ByteBuf) msg);
-        } finally {
-            ReferenceCountUtil.release(msg);
-        }
+        channelRead(ctx, (ByteBuf) msg);
+        // 因为没有 ctx.fireChannelRead(msg)，所以这里我们需要手动调用释放内存
+        ReferenceCountUtil.release(msg);
     }
 
     private void channelRead(ChannelHandlerContext ctx, ByteBuf buf) {
         if (!buf.hasArray()) {
-            // 获取可读的字节数
-            int length = buf.readableBytes();
-            // 分配一个新的数组来保存字节
-            byte[] array = new byte[length];
-            // 字节复制到数组
-            buf.getBytes(buf.readerIndex(), array);
+            // 帧头部分
+            byte[] head = new byte[23];
+            buf.readBytes(head);
 
-            if (array[0] == (byte) 0xfa) {
-                // 按照现在的解码器规则会出现第一帧多一个FA的情况，需要判断并删除
-                byte[] na = new byte[length - 1];
-                System.arraycopy(array, 1, na, 0, length - 1);
-                array = na;
+            if (head[0] != 0xfa) {
+                throw new ProtocolException("协议错误，帧头异常");
             }
 
-            Datagram datagram = new Datagram(array);
+            // 12字节终端UID
+            String uid = ByteBufUtil.hexDump(head, 1, 12);
+            // 7位字节时间
+            LocalDateTime time = ProtocolUtil.getTimeByBCD(head, 13);
+            // 功能字，1字节
+            int command = head[20] & 0xff;
 
+            // 数据部分
+            byte[] data = new byte[1000];
+            buf.readBytes(data);
 
-            if (datagram != null) {
-                String terminalID = datagram.getTerminalID();
-                Terminal terminal = terminalManager.getTerminal(terminalID);
-                if (terminal != null) {
-                    byte[] response = commandActionManager.doAction(ctx, terminal, datagram);
-                    if (response != null) {
-                        ByteBuf outBuf = Unpooled.buffer();
-                        outBuf.writeBytes(response);
-                        ctx.writeAndFlush(outBuf);
-                    }
-                } else {
-                    log.warn("找不到终端[" + terminalID + "]");
+            byte toCheck = buf.readByte();
+            // 校验
+            byte check = 0;
+            for (byte b : head) check ^= b;
+            for (byte b : data) check ^= b;
+            if (check != toCheck) {
+                throw new ProtocolException("协议错误，校验异常");
+            }
+
+            Datagram datagram = new Datagram(uid, command, time, head, data);
+
+            Terminal terminal = terminalManager.getTerminal(uid);
+            if (terminal != null) {
+                byte[] response = commandActionManager.doAction(ctx, terminal, datagram);
+                if (response != null) {
+                    ByteBuf outBuf = Unpooled.buffer();
+                    outBuf.writeBytes(response);
+                    ctx.writeAndFlush(outBuf);
                 }
+            } else {
+                log.warn("找不到终端[" + uid + "]");
             }
         }
     }
 
-
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         log.error(cause.getMessage(), cause);
+        // 因为没有 ctx.fireExceptionCaught(cause)，所以这里我们需要手动调用释放内存
+        ReferenceCountUtil.release(cause);
     }
 
-
     @Override
-    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
         if (evt instanceof IdleStateEvent) {
+            // 超时离线
             offline(ctx);
-        } else {
-            super.userEventTriggered(ctx, evt);
         }
+        // 因为没有 ctx.fireUserEventTriggered(evt)，所以这里我们需要手动调用释放内存
+        ReferenceCountUtil.release(evt);
     }
 
     @Override

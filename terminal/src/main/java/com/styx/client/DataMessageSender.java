@@ -34,7 +34,7 @@ public class DataMessageSender extends ChannelInboundHandlerAdapter implements R
 
     public DataMessageSender(DataClient client, String terminalUid) {
         this.client = client;
-        datagram = new byte[1028];
+        datagram = new byte[1024];
 
         datagram[0] = (byte) 0xfa;
         datagram[1] = (byte) 0x0a;

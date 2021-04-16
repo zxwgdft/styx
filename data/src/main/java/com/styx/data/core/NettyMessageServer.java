@@ -8,6 +8,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.FixedLengthFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
@@ -43,8 +44,6 @@ public class NettyMessageServer {
         int processorSize = Runtime.getRuntime().availableProcessors();
         final EventExecutorGroup eventExecutorGroup = new DefaultEventExecutorGroup(processorSize * 3);
 
-        final ByteBuf delimiter = Unpooled.copiedBuffer(new byte[]{Constants.FRAME_FOOT, Constants.FRAME_HEAD});
-
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
@@ -62,9 +61,9 @@ public class NettyMessageServer {
                              * 需要协议升级解决
                              */
 
-                            pipeline.addLast(new DelimiterBasedFrameDecoder(2048, true, delimiter));
+                            pipeline.addLast(new FixedLengthFrameDecoder(1024));
                             // 超时设置
-                            pipeline.addLast(new IdleStateHandler(0, 0, 40, TimeUnit.SECONDS));
+                            pipeline.addLast(new IdleStateHandler(0, 0, 60, TimeUnit.SECONDS));
                             // 协议出站处理器
                             pipeline.addLast(outboundHandler);
                             // 协议处理器，是否开启EventExecutorGroup，
@@ -97,7 +96,6 @@ public class NettyMessageServer {
 //                    bossGroup.shutdownGracefully();
 //                }
 //            });
-
 
             // 等待服务器  socket 关闭 。
             // 在这个例子中，这不会发生，但你可以优雅地关闭你的服务器。

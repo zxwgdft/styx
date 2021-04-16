@@ -9,20 +9,20 @@ import java.time.LocalDateTime;
 public class ProtocolUtil {
 
     /**
-     * 计算校验码，字节求和
+     * 计算校验码(XOR)
      */
-    public static byte calcCheckCode(byte[] data) {
-        return calcCheckCode(data, 0, data.length);
+    public static byte calcXORCode(byte[] data) {
+        return calcXORCode(data, 0, data.length);
     }
 
     /**
-     * 计算校验码，字节求和
+     * 计算校验码(XOR)
      */
-    public static byte calcCheckCode(byte[] data, int startIndex, int length) {
+    public static byte calcXORCode(byte[] data, int startIndex, int length) {
         byte bt = 0;
         int last = startIndex + length;
         for (int i = startIndex; i < last; i++) {
-            bt += data[i];
+            bt ^= data[i];
         }
         return bt;
     }
@@ -48,5 +48,34 @@ public class ProtocolUtil {
             return (byte) n;
         }
         return (byte) (n / 10 * 16 + n % 10);
+    }
+
+
+    // 根据BCD码形式获取时间， 例如[0x20 0x16 0x10 0x31 0x15 0x04 0x23] 代表时间2016-10-31 15:04:23
+    public static LocalDateTime getTimeByBCD(byte[] bytes, int index) {
+        byte b1 = bytes[index++];
+        byte b2 = bytes[index++];
+
+        int year = ((b1 >> 4 & 0xff) * 1000) + ((b1 & 0x0f) * 100)
+                + ((b2 >> 4 & 0xff) * 10) + (b2 & 0x0f);
+
+        b1 = bytes[index++];
+        b2 = bytes[index++];
+        int month = ((b1 >> 4 & 0xff) * 1000) + ((b1 & 0x0f) * 100)
+                + ((b2 >> 4 & 0xff) * 10) + (b2 & 0x0f);
+
+        b1 = bytes[index++];
+        int day = ((b1 >> 4 & 0xff) * 10) + (b1 & 0x0f);
+
+        b1 = bytes[index++];
+        int hour = ((b1 >> 4 & 0xff) * 10) + (b1 & 0x0f);
+
+        b1 = bytes[index++];
+        int minute = ((b1 >> 4 & 0xff) * 10) + (b1 & 0x0f);
+
+        b1 = bytes[index];
+        int second = ((b1 >> 4 & 0xff) * 10) + (b1 & 0x0f);
+
+        return LocalDateTime.of(year, month, day, hour, minute, second);
     }
 }

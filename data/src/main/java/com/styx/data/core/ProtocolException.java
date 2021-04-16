@@ -6,6 +6,10 @@ package com.styx.data.core;
  */
 public class ProtocolException extends RuntimeException {
 
+    public ProtocolException() {
+        super("协议异常");
+    }
+    
     public ProtocolException(String message) {
         super(message);
     }
