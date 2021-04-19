@@ -143,13 +143,6 @@ public class TerminalDataService implements TerminalAlarmHandler, TerminalDataIn
     }
 
     @Override
-    @Transactional
-    public void alarmUntreatedHandle(int terminalId, int alarmId, long startTime) {
-        Date _startTime = new Date(startTime);
-        // TODO
-    }
-
-    @Override
     public Map<Integer, Terminal.AlarmStatus> getAlarmTriggering(int id) {
         List<TerminalAlarm> alarmList = terminalAlarmMapper.getAlarmIdOfTerminal(id);
         if (alarmList != null && alarmList.size() > 0) {

@@ -12,7 +12,4 @@ public interface TerminalAlarmHandler {
     // 报警管理处理
     void alarmClosedHandle(int terminalId, int alarmId, long startTime);
 
-    // 报警超时再次触发或者报警不再需要触发时调用
-    void alarmUntreatedHandle(int terminalId, int alarmId, long startTime);
-
 }

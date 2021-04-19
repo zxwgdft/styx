@@ -1,8 +1,6 @@
 package com.styx.data.core.terminal;
 
 import com.googlecode.aviator.AviatorEvaluator;
-import com.styx.data.core.Constants;
-import com.styx.data.model.TerminalInfo;
 import com.styx.data.service.dto.CTerminal;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -30,15 +28,10 @@ public class Terminal {
     private long lastWorkTime = -1;
     // 工作累计时间(分钟)
     private long workTotalTime;
-    // 工作状态 0 待机 1处理中 2 排放中 3 未知异常 4 维护中
-    private int workStatus;
     // 终端变量
     private Set<Integer> variableIds;
     // 终端报警
     private Set<Integer> alarmIds;
-
-    // 维护结束时间
-    private volatile long maintainOffTime;
 
 
     // 最近一次接收数据时间
@@ -60,7 +53,7 @@ public class Terminal {
     @Getter(AccessLevel.NONE)
     private TerminalManager terminalManager;
 
-    public Terminal(CTerminal cTerminal, Terminal oldTerminal, TerminalDataInitializer terminalDataInitializer, TerminalAlarmHandler terminalAlarmHandler, TerminalManager terminalManager) {
+    public Terminal(CTerminal cTerminal, Terminal oldTerminal, TerminalAlarmHandler terminalAlarmHandler, TerminalManager terminalManager) {
         this.id = cTerminal.getId();
         this.uid = cTerminal.getUid();
         this.variableIds = string2set(cTerminal.getVarIds());
@@ -68,63 +61,76 @@ public class Terminal {
         this.terminalAlarmHandler = terminalAlarmHandler;
         this.terminalManager = terminalManager;
 
-        if (oldTerminal != null) {
-            synchronized (oldTerminal.lock) {
-                this.isOnline = oldTerminal.isOnline;
-                this.lastLoginTime = oldTerminal.lastLoginTime;
-                this.lastWorkTime = oldTerminal.lastWorkTime;
-                this.workTotalTime = oldTerminal.workTotalTime;
-                this.workStatus = oldTerminal.workStatus;
-                this.dataUpdateTime = oldTerminal.dataUpdateTime;
-                this.variableValueMap = oldTerminal.variableValueMap;
-                this.alarmTriggeringMap = new HashMap<>();
-                this.maintainOffTime = oldTerminal.getMaintainOffTime();
+        synchronized (oldTerminal.lock) {
+            this.isOnline = oldTerminal.isOnline;
+            this.lastLoginTime = oldTerminal.lastLoginTime;
+            this.lastWorkTime = oldTerminal.lastWorkTime;
+            this.workTotalTime = oldTerminal.workTotalTime;
+            this.dataUpdateTime = oldTerminal.dataUpdateTime;
+            this.variableValueMap = oldTerminal.variableValueMap;
+            this.alarmTriggeringMap = new HashMap<>();
 
-                Map<Integer, AlarmStatus> oldAlarmMap = oldTerminal.alarmTriggeringMap;
-                if (oldAlarmMap != null) {
-                    Collection<Alarm> alarms = getAlarms();
-                    if (alarms != null) {
-                        for (Alarm alarm : alarms) {
-                            Integer aid = alarm.getId();
-                            AlarmStatus alarmStatus = oldAlarmMap.remove(aid);
-                            if (alarmStatus != null) {
-                                this.alarmTriggeringMap.put(aid, alarmStatus);
-                            }
-                        }
-                    }
-
-                    /*
-                     * 不再属于该终端但之前已经存在的报警，需要关闭
-                     */
-                    for (Map.Entry<Integer, AlarmStatus> entry : oldAlarmMap.entrySet()) {
-                        int aid = entry.getKey();
-                        long startTime = entry.getValue().startTime;
-                        try {
-                            terminalAlarmHandler.alarmUntreatedHandle(id, aid, startTime);
-                        } catch (Exception e) {
-                            log.error("报警[terminalID:" + id + ",alarmID:" + aid + "]不再处理调用异常", e);
+            Map<Integer, AlarmStatus> oldAlarmMap = oldTerminal.alarmTriggeringMap;
+            if (oldAlarmMap != null) {
+                Collection<Alarm> alarms = getAlarms();
+                if (alarms != null) {
+                    for (Alarm alarm : alarms) {
+                        Integer aid = alarm.getId();
+                        AlarmStatus alarmStatus = oldAlarmMap.remove(aid);
+                        if (alarmStatus != null) {
+                            this.alarmTriggeringMap.put(aid, alarmStatus);
                         }
                     }
                 }
 
+                /*
+                 * 不再属于该终端但之前已经存在的报警，需要关闭
+                 */
+                for (Map.Entry<Integer, AlarmStatus> entry : oldAlarmMap.entrySet()) {
+                    int aid = entry.getKey();
+                    log.info("报警[terminalID:{},alarmID:{}]被忽略", id, aid);
+                }
             }
-        } else {
-            // 初始化
-            this.alarmTriggeringMap = terminalDataInitializer.getAlarmTriggering(id);
-            if (this.alarmTriggeringMap == null) {
-                this.alarmTriggeringMap = new HashMap<>();
-            }
+        }
+    }
 
-            TerminalInfo terminalInfo = terminalDataInitializer.getTerminalInfo(id);
-            if (terminalInfo != null) {
-                this.workTotalTime = terminalInfo.getWorkTotalTime() * 60000L;
-                this.dataUpdateTime = terminalInfo.getUpdateTime().getTime();
-                Date date = terminalInfo.getLastLoginTime();
-                if (date != null) {
-                    this.lastLoginTime = date.getTime();
+    public Terminal(CTerminal cTerminal, Terminal oldTerminal, TerminalAlarmHandler terminalAlarmHandler, TerminalManager terminalManager) {
+        this.id = cTerminal.getId();
+        this.uid = cTerminal.getUid();
+        this.variableIds = string2set(cTerminal.getVarIds());
+        this.alarmIds = string2set(cTerminal.getAlarmIds());
+        this.terminalAlarmHandler = terminalAlarmHandler;
+        this.terminalManager = terminalManager;
+
+        synchronized (oldTerminal.lock) {
+            this.isOnline = oldTerminal.isOnline;
+            this.lastLoginTime = oldTerminal.lastLoginTime;
+            this.lastWorkTime = oldTerminal.lastWorkTime;
+            this.workTotalTime = oldTerminal.workTotalTime;
+            this.dataUpdateTime = oldTerminal.dataUpdateTime;
+            this.variableValueMap = oldTerminal.variableValueMap;
+            this.alarmTriggeringMap = new HashMap<>();
+
+            Map<Integer, AlarmStatus> oldAlarmMap = oldTerminal.alarmTriggeringMap;
+            if (oldAlarmMap != null) {
+                Collection<Alarm> alarms = getAlarms();
+                if (alarms != null) {
+                    for (Alarm alarm : alarms) {
+                        Integer aid = alarm.getId();
+                        AlarmStatus alarmStatus = oldAlarmMap.remove(aid);
+                        if (alarmStatus != null) {
+                            this.alarmTriggeringMap.put(aid, alarmStatus);
+                        }
+                    }
                 }
 
-                this.maintainOffTime = terminalInfo.getMaintainOffTime();
+                /*
+                 * 不再属于该终端但之前已经存在的报警，需要关闭
+                 */
+                for (Map.Entry<Integer, AlarmStatus> entry : oldAlarmMap.entrySet()) {
+                    int aid = entry.getKey();
+                    log.info("报警[terminalID:{},alarmID:{}]被忽略", id, aid);
+                }
             }
         }
     }
@@ -154,35 +160,6 @@ public class Terminal {
         }
     }
 
-    /**
-     * 开始维护
-     */
-    public void toMaintain(int hours) {
-        maintainOffTime = hours * 3600000L + System.currentTimeMillis();
-    }
-
-    /**
-     * 关闭维护
-     */
-    public void offMaintain() {
-        maintainOffTime = 0;
-    }
-
-    /**
-     * 是否终端维护中
-     *
-     * @return
-     */
-    public boolean isMaintaining() {
-        return maintainOffTime > System.currentTimeMillis();
-    }
-
-    /**
-     * 获取维护结束时间戳，如果不在维护则为0
-     */
-    public long getMaintainOffTime() {
-        return maintainOffTime > System.currentTimeMillis() ? maintainOffTime : 0;
-    }
 
     /**
      * 终端离线
@@ -195,8 +172,6 @@ public class Terminal {
                 }
                 isOnline = false;
             }
-            // 工作状态设置为停机
-            workStatus = Constants.TERMINAL_WORK_STATUS_WAIT;
         }
     }
 
@@ -349,33 +324,12 @@ public class Terminal {
                 }
             }
 
-            for (Map.Entry<Integer, AlarmStatus> entry : alarmTriggeringMap.entrySet()) {
-                AlarmStatus status = entry.getValue();
-                if (now - status.handleTime > timeOut4Alarm) {
-                    int aid = entry.getKey();
-                    try {
-                        terminalAlarmHandler.alarmUntreatedHandle(id, aid, status.handleTime);
-                        status.handleTime = now;
-                    } catch (Exception e) {
-                        log.error("报警[terminalID:" + id + ",alarmID:" + aid + "]超时处理调用异常", e);
-                    }
-                }
-            }
 
             this.dataUpdateTime = System.currentTimeMillis();
 
             // 分发，需要注意是否在维护状态下也分发事件
             terminalManager.dispatchTerminalDataChangeEvent(this);
         }
-    }
-
-
-    /**
-     * 获取终端定位
-     */
-    public String getLocation() {
-        // TODO 待实现
-        return "待实现";
     }
 
 
@@ -388,8 +342,6 @@ public class Terminal {
         private int id;
         // 第一次触发时间
         private long startTime;
-        // 处理时间
-        private long handleTime;
 
     }
 }

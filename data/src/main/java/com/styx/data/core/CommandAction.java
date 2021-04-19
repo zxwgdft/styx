@@ -11,6 +11,6 @@ public interface CommandAction {
 
     int getCommand();
 
-    byte[] doAction(ChannelHandlerContext context, Terminal terminal, Datagram datagram);
+    byte[] doAction(Terminal terminal, Datagram datagram);
 
 }

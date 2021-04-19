@@ -2,6 +2,8 @@ package com.styx.data.core.terminal;
 
 import com.styx.common.config.GlobalConstants;
 import com.styx.common.exception.SystemException;
+import com.styx.data.mapper.TerminalAlarmMapper;
+import com.styx.data.model.TerminalInfo;
 import com.styx.data.service.InternalMonitorService;
 import com.styx.data.service.TerminalDataService;
 import com.styx.data.service.dto.*;
@@ -40,8 +42,8 @@ public class TerminalManager implements ApplicationRunner, Runnable {
     private int dataPersistInterval;
 
     private String nodeName;
-
     private volatile int index = 0;
+
     private Map<String, Terminal>[] terminalMapArray = new Map[2];
     private Map<Integer, Variable>[] variableMapArray = new Map[2];
     private Map<Integer, Alarm>[] alarmMapArray = new Map[2];
@@ -52,15 +54,18 @@ public class TerminalManager implements ApplicationRunner, Runnable {
 
     @Autowired
     private InternalMonitorService monitorService;
+
     @Autowired
-    private TerminalDataService terminalDataService;
+    private TerminalAlarmMapper terminalAlarmMapper;
+
+    private
 
     @Autowired(required = false)
     private List<TerminalListener> terminalDataListeners;
 
     private boolean loaded;
 
-    public void loadConfig() {
+    public synchronized void loadConfig() {
         try {
             VersionUpdate versionUpdate = new VersionUpdate(nodeName);
             versionUpdate.setAlarmVersion(alarmVersion);
@@ -137,12 +142,28 @@ public class TerminalManager implements ApplicationRunner, Runnable {
                 if (cTerminals != null) {
                     for (CTerminal cTerminal : cTerminals) {
                         String uid = cTerminal.getUid();
-                        try {
-                            Terminal terminal = new Terminal(cTerminal, getTerminal(uid),
-                                    terminalDataService, terminalDataService, this);
-                            terminalMap.put(uid, terminal);
-                        } catch (Exception e) {
-                            log.error("终端[UID:" + uid + "]加载配置异常", e);
+                        Terminal oldTerminal = getTerminal(uid);
+                        if (oldTerminal != null) {
+                            terminalMap.put(uid, new Terminal(cTerminal, oldTerminal, terminalDataService, this));
+                        } else {
+                            int tid = cTerminal.getId();
+                            // 初始化
+                            Map<Integer, AlarmStatus> alarmTriggeringMap = terminalDataService.getAlarmTriggering(tid);
+                            if (alarmTriggeringMap == null) {
+                                alarmTriggeringMap = new HashMap<>();
+                            }
+
+                            TerminalInfo terminalInfo = terminalDataService.getTerminalInfo(tid);
+                            if (terminalInfo != null) {
+                                this.workTotalTime = terminalInfo.getWorkTotalTime() * 60000L;
+                                this.dataUpdateTime = terminalInfo.getUpdateTime().getTime();
+                                Date date = terminalInfo.getLastLoginTime();
+                                if (date != null) {
+                                    this.lastLoginTime = date.getTime();
+                                }
+
+                                this.maintainOffTime = terminalInfo.getMaintainOffTime();
+                            }
                         }
                     }
                 }
@@ -207,30 +228,9 @@ public class TerminalManager implements ApplicationRunner, Runnable {
         }
     }
 
-    /**
-     * 终端开始维护状态
-     */
-    public void startMaintain(int terminalId, int duration) {
-        Terminal terminal = getTerminal(terminalId);
-        if (terminal != null) {
-            // 不能超过最大维护时长
-            if (maxMaintainHours > 0 && maxMaintainHours < duration) {
-                duration = maxMaintainHours;
-            }
-            terminal.toMaintain(duration);
-        }
+    public void dispatchTerminalAlarmEvent(Terminal terminal) {
+       // TODO
     }
-
-    /**
-     * 终端结束维护
-     */
-    public void offMaintain(int terminalId) {
-        Terminal terminal = getTerminal(terminalId);
-        if (terminal != null) {
-            terminal.offMaintain();
-        }
-    }
-
 
     //-------------------------
     // 持久化数据和终端相关维护

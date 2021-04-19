@@ -50,7 +50,7 @@ public class ExpressionTemplate {
         List<String> items = new ArrayList<>();
 
         if (template != null && template.length() > 0) {
-            Pattern pattern = Pattern.compile("value[0-9]+");
+            Pattern pattern = Pattern.compile("\\$[0-9]+");
             Matcher matcher = pattern.matcher(template);
             int i = 0;
             while (matcher.find()) {

@@ -15,16 +15,12 @@ import java.util.Set;
 public class Alarm {
 
     private int id;
-
     // 报警名称
     private String name;
-
     // 公式
     private String formula;
-
     // 公式变量ID集合
     private Set<Integer> variableIds;
-
     // 公式模板
     private ExpressionTemplate formulaTemplate;
 

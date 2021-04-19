@@ -1,14 +1,11 @@
 package com.styx.data.core;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
-import io.netty.handler.codec.FixedLengthFrameDecoder;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
@@ -52,16 +49,8 @@ public class NettyMessageServer {
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
-                            // 按分隔符解析帧
 
-                            /* 现在按照FBFA作为分隔符解码，而FB是前一帧的结尾，FA是后一帧的头，
-                             * 所以会出现第一个数据帧的多出一个FA的问题,并且必须接受到后一帧才
-                             * 能解码出前一帧，所以导致有一个数据帧永远在等待下一个FA出现。
-                             *
-                             * 需要协议升级解决
-                             */
-
-                            pipeline.addLast(new FixedLengthFrameDecoder(1024));
+                            pipeline.addLast(new LengthFieldBasedFrameDecoder(0xffff, 0, 2));
                             // 超时设置
                             pipeline.addLast(new IdleStateHandler(0, 0, 60, TimeUnit.SECONDS));
                             // 协议出站处理器
@@ -76,9 +65,6 @@ public class NettyMessageServer {
                     //.childOption(ChannelOption.SO_KEEPALIVE, true)
                     // 客户端等待队列长度
                     .option(ChannelOption.SO_BACKLOG, backlog);
-
-
-            final NettyMessageServer server = this;
 
 
             // 绑定端口，开始接收进来的连接

@@ -30,7 +30,7 @@ public class ProtocolUtil {
     /**
      * 按照BCD码形式转换当前时间到字节
      */
-    public static void setDateTime(byte[] data, int startIndex) {
+    public static void setTimeByBCD(byte[] data, int startIndex) {
         LocalDateTime dt = LocalDateTime.now();
         int year = dt.getYear();
         data[startIndex++] = intToByte(year / 100);
@@ -51,7 +51,17 @@ public class ProtocolUtil {
     }
 
 
-    // 根据BCD码形式获取时间， 例如[0x20 0x16 0x10 0x31 0x15 0x04 0x23] 代表时间2016-10-31 15:04:23
+    //
+
+    /**
+     * 根据BCD码形式获取时间
+     * <p>
+     * 例如[0x20 0x16 0x10 0x31 0x15 0x04 0x23] 代表时间2016-10-31 15:04:23
+     *
+     * @param bytes 字节数组
+     * @param index 开始位置
+     * @return 时间的LocalDateTime对象
+     */
     public static LocalDateTime getTimeByBCD(byte[] bytes, int index) {
         byte b1 = bytes[index++];
         byte b2 = bytes[index++];
@@ -78,4 +88,48 @@ public class ProtocolUtil {
 
         return LocalDateTime.of(year, month, day, hour, minute, second);
     }
+
+    /**
+     * 获取8字节整数
+     *
+     * @param bytes 字节数组
+     * @param index 开始位置
+     */
+    public static long getLong(byte[] bytes, int index) {
+        return ((long) bytes[index] & 0xff) << 56 |
+                ((long) bytes[index + 1] & 0xff) << 48 |
+                ((long) bytes[index + 2] & 0xff) << 40 |
+                ((long) bytes[index + 3] & 0xff) << 32 |
+                ((long) bytes[index + 4] & 0xff) << 24 |
+                ((long) bytes[index + 5] & 0xff) << 16 |
+                ((long) bytes[index + 6] & 0xff) << 8 |
+                (long) bytes[index + 7] & 0xff;
+    }
+
+
+    /**
+     * 获取4字节整数
+     *
+     * @param bytes 字节数组
+     * @param index 开始位置
+     * @return
+     */
+    public static int getInteger(byte[] bytes, int index) {
+        return (bytes[index] & 0xff) << 24 |
+                (bytes[index + 1] & 0xff) << 16 |
+                (bytes[index + 2] & 0xff) << 8 |
+                bytes[index + 3] & 0xff;
+    }
+
+    /**
+     * 读取量2字节整数
+     *
+     * @param bytes 字节数组
+     * @param index 开始位置
+     */
+    public static int getSmallInteger(byte[] bytes, int index) {
+        return (bytes[index] & 0xff) << 8 |
+                bytes[index + 1] & 0xff;
+    }
+
 }
