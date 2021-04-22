@@ -2,7 +2,7 @@ package com.styx.data.core;
 
 import com.styx.common.spring.SpringBeanHelper;
 import com.styx.data.core.terminal.Terminal;
-import com.styx.data.core.terminal.TerminalManager;
+import com.styx.data.core.terminal.DefaultTerminalManager;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -26,7 +26,7 @@ import java.util.Map;
 public class DatagramHandler extends ChannelInboundHandlerAdapter implements ApplicationRunner {
 
     @Autowired
-    private TerminalManager terminalManager;
+    private DefaultTerminalManager terminalManager;
 
     private Map<Integer, CommandAction> commandActionMap = new HashMap<>();
 

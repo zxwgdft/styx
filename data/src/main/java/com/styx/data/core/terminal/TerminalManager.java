@@ -1,296 +1,53 @@
 package com.styx.data.core.terminal;
 
-import com.styx.common.config.GlobalConstants;
-import com.styx.common.exception.SystemException;
-import com.styx.data.mapper.TerminalAlarmMapper;
-import com.styx.data.model.TerminalInfo;
-import com.styx.data.service.InternalMonitorService;
-import com.styx.data.service.TerminalDataService;
-import com.styx.data.service.dto.*;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
-
-import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 /**
+ * 终端管理器
+ *
  * @author TontoZhou
- * @since 2020/10/26
+ * @since 2021/4/20
  */
-@Slf4j
-@Component
-public class TerminalManager implements ApplicationRunner, Runnable {
+public interface TerminalManager {
 
-    @Autowired
-    private Environment environment;
+    /**
+     * 根据UID获取终端（UID为全局唯一，针对系统内外通用）
+     */
+    Terminal getTerminal(String uid);
 
-    @Value("${data.config.sync-interval:5}")
-    private int configSyncInterval;
+    /**
+     * 根据ID获取终端（ID只针对系统内部使用）
+     */
+    Terminal getTerminal(int id);
 
-    @Value("${data.config.max-maintain-hours:48}")
-    private int maxMaintainHours;
+    /**
+     * 获取所有终端容器
+     */
+    TerminalContainer getTerminalContainer();
 
-    @Value("${data.config.data-persist-interval:10}")
-    private int dataPersistInterval;
+    /**
+     * 获取所有变量容器
+     */
+    VariableContainer getVariableContainer();
 
-    private String nodeName;
-    private volatile int index = 0;
-
-    private Map<String, Terminal>[] terminalMapArray = new Map[2];
-    private Map<Integer, Variable>[] variableMapArray = new Map[2];
-    private Map<Integer, Alarm>[] alarmMapArray = new Map[2];
-
-    private long variableVersion = -1;
-    private long alarmVersion = -1;
-    private long terminalVersion = -1;
-
-    @Autowired
-    private InternalMonitorService monitorService;
-
-    @Autowired
-    private TerminalAlarmMapper terminalAlarmMapper;
-
-    private
-
-    @Autowired(required = false)
-    private List<TerminalListener> terminalDataListeners;
-
-    private boolean loaded;
-
-    public synchronized void loadConfig() {
-        try {
-            VersionUpdate versionUpdate = new VersionUpdate(nodeName);
-            versionUpdate.setAlarmVersion(alarmVersion);
-            versionUpdate.setVariableVersion(variableVersion);
-            versionUpdate.setTerminalVersion(terminalVersion);
-
-            VersionConfig versionConfig = monitorService.getVersionConfig(versionUpdate);
-
-            int nextIndex = (index + 1) % 2;
-
-            long vVersion = versionConfig.getVariableVersion();
-            Map<Integer, Variable> variableMap;
-
-            if (vVersion > variableVersion) {
-                // 更新变量配置
-                List<CVariable> cVariables = versionConfig.getVariables();
-                variableMap = new HashMap<>();
-
-                if (cVariables != null) {
-                    for (CVariable cVariable : cVariables) {
-                        Variable variable = new Variable();
-                        variable.setId(cVariable.getId());
-                        variable.setName(cVariable.getName());
-                        variable.setBytePosition(cVariable.getBytePosition());
-                        variable.setBitPosition(cVariable.getBitPosition());
-                        variable.setType(cVariable.getType());
-                        variable.setPersisted(cVariable.isPersisted());
-
-                        variableMap.put(variable.getId(), variable);
-                    }
-                }
-
-                variableMapArray[nextIndex] = Collections.unmodifiableMap(variableMap);
-                variableVersion = vVersion;
-
-                log.debug("更新变量配置，版本号：" + variableVersion);
-            } else {
-                variableMapArray[nextIndex] = variableMapArray[index];
-            }
-
-            long aVersion = versionConfig.getAlarmVersion();
-            List<Alarm> alarmList;
-
-            if (aVersion > alarmVersion) {
-                List<CAlarm> cAlarms = versionConfig.getAlarms();
-                Map<Integer, Alarm> alarmMap = new HashMap<>();
-                alarmList = new ArrayList<>();
-
-                if (cAlarms != null) {
-                    for (CAlarm cAlarm : cAlarms) {
-                        int aid = cAlarm.getId();
-                        Alarm alarm = new Alarm(aid, cAlarm.getName(), cAlarm.getFormula(), cAlarm.getVariableIds());
-                        alarmMap.put(aid, alarm);
-                        alarmList.add(alarm);
-                    }
-                }
-
-                alarmMapArray[nextIndex] = Collections.unmodifiableMap(alarmMap);
-                alarmVersion = aVersion;
-
-                log.debug("更新报警配置，版本号：" + alarmVersion);
-            } else {
-                alarmMapArray[nextIndex] = alarmMapArray[index];
-            }
-
-
-            long tVersion = versionConfig.getTerminalVersion();
-
-            if (tVersion > terminalVersion) {
-                // 更新终端配置
-                List<CTerminal> cTerminals = versionConfig.getTerminals();
-                Map<String, Terminal> terminalMap = new HashMap<>();
-
-                if (cTerminals != null) {
-                    for (CTerminal cTerminal : cTerminals) {
-                        String uid = cTerminal.getUid();
-                        Terminal oldTerminal = getTerminal(uid);
-                        if (oldTerminal != null) {
-                            terminalMap.put(uid, new Terminal(cTerminal, oldTerminal, terminalDataService, this));
-                        } else {
-                            int tid = cTerminal.getId();
-                            // 初始化
-                            Map<Integer, AlarmStatus> alarmTriggeringMap = terminalDataService.getAlarmTriggering(tid);
-                            if (alarmTriggeringMap == null) {
-                                alarmTriggeringMap = new HashMap<>();
-                            }
-
-                            TerminalInfo terminalInfo = terminalDataService.getTerminalInfo(tid);
-                            if (terminalInfo != null) {
-                                this.workTotalTime = terminalInfo.getWorkTotalTime() * 60000L;
-                                this.dataUpdateTime = terminalInfo.getUpdateTime().getTime();
-                                Date date = terminalInfo.getLastLoginTime();
-                                if (date != null) {
-                                    this.lastLoginTime = date.getTime();
-                                }
-
-                                this.maintainOffTime = terminalInfo.getMaintainOffTime();
-                            }
-                        }
-                    }
-                }
-
-                terminalMapArray[nextIndex] = terminalMap;
-                terminalVersion = tVersion;
-
-                log.debug("更新终端配置，版本号：" + terminalVersion);
-            } else {
-                terminalMapArray[nextIndex] = terminalMapArray[index];
-            }
-
-            // 切换到配置组,并删除旧配置
-            int old = this.index;
-            this.index = nextIndex;
-            terminalMapArray[old] = null;
-            variableMapArray[old] = null;
-            alarmMapArray[old] = null;
-
-            loaded = true;
-        } catch (Exception e) {
-            log.error("尝试加载配置失败:" + e.getMessage());
-        }
-    }
-
-    public Terminal getTerminal(String uid) {
-        return loaded ? terminalMapArray[index].get(uid) : null;
-    }
-
-    public Terminal getTerminal(int id) {
-        if (loaded) {
-            for (Terminal t : terminalMapArray[index].values()) {
-                if (t.getId() == id) {
-                    return t;
-                }
-            }
-        }
-        return null;
-    }
-
-    public Collection<Terminal> getTerminals() {
-        return loaded ? terminalMapArray[index].values() : null;
-    }
-
-    public Map<Integer, Variable> getVariableMap() {
-        return variableMapArray[index];
-    }
-
-    public Map<Integer, Alarm> getAlarmMap() {
-        return alarmMapArray[index];
-    }
-
+    /**
+     * 获取所有报警容器
+     */
+    AlarmContainer getAlarmContainer();
 
     /**
      * 调度分发终端数据变更事件
      */
-    public void dispatchTerminalDataChangeEvent(Terminal terminal) {
-        if (terminalDataListeners != null) {
-            for (TerminalListener listener : terminalDataListeners) {
-                listener.dataChangedHandle(terminal);
-            }
-        }
-    }
+    void dispatchTerminalDataChangeEvent(Terminal terminal);
 
-    public void dispatchTerminalAlarmEvent(Terminal terminal) {
-       // TODO
-    }
+    /**
+     * 调度分发终端报警触发事件
+     */
+    void dispatchTerminalAlarmTriggerEvent(Terminal terminal, List<AlarmStatus> alarmStatuses);
 
-    //-------------------------
-    // 持久化数据和终端相关维护
-    //-------------------------
-
-    private int runTimes = 0;
-
-    @Override
-    public void run() {
-        if (!loaded) return;
-
-        Map<String, Terminal> terminalMap = terminalMapArray[index];
-
-        if (terminalMap != null) {
-            for (Terminal terminal : terminalMap.values()) {
-                terminal.checkOnline();
-            }
-        }
-
-        if (++runTimes >= dataPersistInterval) {
-            if (terminalMap != null) {
-                log.debug("持久化一次终端数据");
-                terminalDataService.persistData(terminalMap.values());
-            }
-            runTimes = 0;
-        }
-    }
-
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
-        // 读取节点名称
-        String appName = environment.getProperty("spring.application.name");
-        if (!appName.startsWith(GlobalConstants.DATA_SERVICE_PREFIX)) {
-            throw new SystemException(SystemException.CODE_ERROR_CONFIG, String.format("#spring.application.name must start with %s", GlobalConstants.DATA_SERVICE_PREFIX));
-        }
-        this.nodeName = appName.substring(GlobalConstants.DATA_SERVICE_PREFIX.length());
-
-        ScheduledExecutorService service1 = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
-            public Thread newThread(Runnable r) {
-                Thread thread = new Thread(r);
-                thread.setDaemon(true);
-                thread.setName("checkConfig");
-                return thread;
-            }
-        });
-
-        service1.scheduleWithFixedDelay(() -> loadConfig(), 0, configSyncInterval, TimeUnit.SECONDS);
-
-        ScheduledExecutorService service2 = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
-            public Thread newThread(Runnable r) {
-                Thread thread = new Thread(r);
-                thread.setDaemon(true);
-                thread.setName("checkData");
-                return thread;
-            }
-        });
-
-        service2.scheduleWithFixedDelay(this, 1, 1, TimeUnit.MINUTES);
-
-    }
-
+    /**
+     * 调度分发终端报警关闭事件
+     */
+    void dispatchTerminalClosedTriggerEvent(Terminal terminal, List<AlarmStatus> alarmStatuses);
 
 }

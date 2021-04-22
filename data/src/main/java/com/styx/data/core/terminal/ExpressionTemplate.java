@@ -40,10 +40,8 @@ public class ExpressionTemplate {
         return sb.toString();
     }
 
-
     // 模板参数map
     protected List<String> items;
-
 
     public void setTemplate(String template) {
 
@@ -72,6 +70,4 @@ public class ExpressionTemplate {
         this.template = template;
         this.items = items;
     }
-
-
 }

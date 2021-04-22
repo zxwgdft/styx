@@ -29,13 +29,14 @@ public class Ranking {
 
     private Object lock = new Object();
 
-    public Ranking() {
-        this(ORDER_TYPE_DESC);
-    }
-
     public Ranking(int orderType) {
         this.orderType = orderType;
         this.nodeMap = new HashMap<>();
+    }
+
+    public Ranking(int initialCapacity, int orderType) {
+        this.orderType = orderType;
+        this.nodeMap = new HashMap<>(initialCapacity);
     }
 
     /**

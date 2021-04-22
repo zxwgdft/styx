@@ -1,10 +1,8 @@
 package com.styx.data.web;
 
-import com.styx.common.api.R;
 import com.styx.data.core.terminal.Terminal;
-import com.styx.data.core.terminal.TerminalManager;
+import com.styx.data.core.terminal.DefaultTerminalManager;
 import com.styx.data.service.TerminalDataService;
-import com.styx.data.service.dto.Data4Upload;
 import com.styx.data.service.dto.DataRecord;
 import com.styx.data.web.dto.TerminalDataQuery;
 import com.styx.data.web.vo.TerminalAlarms;
@@ -30,7 +28,7 @@ import java.util.Map;
 public class TerminalDataController {
 
     @Autowired
-    private TerminalManager terminalManager;
+    private DefaultTerminalManager terminalManager;
 
     @Autowired
     private TerminalDataService terminalDataService;

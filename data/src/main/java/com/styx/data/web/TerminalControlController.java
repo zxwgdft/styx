@@ -1,15 +1,12 @@
 package com.styx.data.web;
 
 import com.styx.common.api.R;
-import com.styx.common.utils.StringUtil;
-import com.styx.data.core.terminal.TerminalManager;
+import com.styx.data.core.terminal.DefaultTerminalManager;
 import com.styx.data.service.TerminalDataService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * @author TontoZhou
@@ -21,7 +18,7 @@ import java.util.List;
 public class TerminalControlController {
 
     @Autowired
-    private TerminalManager terminalManager;
+    private DefaultTerminalManager terminalManager;
 
     @Autowired
     private TerminalDataService terminalDataService;

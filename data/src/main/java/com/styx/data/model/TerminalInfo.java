@@ -22,7 +22,5 @@ public class TerminalInfo {
     private Date lastLoginTime;
 
     private Date updateTime;
-    // 维护结束时间
-    private Long maintainOffTime;
 
 }

@@ -1,9 +1,7 @@
 package com.styx.common.utils;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class StringUtil {
 
@@ -61,7 +59,7 @@ public class StringUtil {
      */
     public static String join(char separator, Object... targets) {
         if (targets == null || targets.length == 0) {
-            return null;
+            return "";
         }
 
         final StringBuilder sb = new StringBuilder();
@@ -86,16 +84,11 @@ public class StringUtil {
 
     /**
      * 分隔符拼接字符串
-     *
-     * @param target
-     * @param separator
-     * @return
      */
     public static String join(final Iterable<?> target, final char separator) {
         if (target == null) {
-            return null;
+            return "";
         }
-
         final StringBuilder sb = new StringBuilder();
         final Iterator<?> it = target.iterator();
         if (it.hasNext()) {
@@ -142,7 +135,7 @@ public class StringUtil {
      * 拼接字符串转int数组
      */
     public static int[] stringToIntArray(String str, String regex) {
-        if (str == null || str.length() == 0) return null;
+        if (str == null || str.length() == 0) return new int[]{};
         String[] sArr = str.split(regex);
         int[] iArr = new int[sArr.length];
         for (int i = 0; i < sArr.length; i++) {
@@ -161,10 +154,10 @@ public class StringUtil {
     }
 
     /**
-     * 拼接字符串转int集合
+     * 拼接字符串转int的list集合
      */
     public static List<Integer> stringToIntList(String str, String regex) {
-        if (str == null || str.length() == 0) return null;
+        if (str == null || str.length() == 0) return Collections.emptyList();
         String[] sArr = str.split(regex);
         List<Integer> list = new ArrayList<>(sArr.length);
         for (int i = 0; i < sArr.length; i++) {
@@ -174,5 +167,19 @@ public class StringUtil {
         return list;
     }
 
+    /**
+     * 拼接字符串转int的set集合
+     */
+    public static Set<Integer> stringToIntegerSet(String ids) {
+        if (ids != null && ids.length() > 0) {
+            String[] idArr = ids.split(",");
+            Set<Integer> set = new HashSet<>(Math.max((int) (idArr.length / .75f) + 1, 16));
+            for (String id : idArr) {
+                set.add(Integer.valueOf(id));
+            }
+            return set;
+        }
+        return Collections.emptySet();
+    }
 
 }

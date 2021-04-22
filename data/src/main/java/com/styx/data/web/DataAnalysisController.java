@@ -1,6 +1,6 @@
 package com.styx.data.web;
 
-import com.styx.data.core.terminal.TerminalManager;
+import com.styx.data.core.terminal.DefaultTerminalManager;
 import com.styx.data.service.DataAnalysisService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,7 +25,7 @@ public class DataAnalysisController {
     private DataAnalysisService dataAnalysisService;
 
     @Autowired
-    private TerminalManager terminalManager;
+    private DefaultTerminalManager terminalManager;
 
     @ApiOperation("获取所有终端累计流量")
     @GetMapping("/flow/all")

@@ -21,8 +21,6 @@ public class TerminalData {
     private Integer terminalId;
     // 是否在线
     private Boolean isOnline;
-    // 工作状态
-    private Integer workStatus;
     // 创建时间
     private Date createTime;
     // 日期 20200101

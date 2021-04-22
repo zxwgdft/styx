@@ -2,7 +2,7 @@ package com.styx.data.service;
 
 import com.styx.data.core.terminal.Terminal;
 import com.styx.data.core.terminal.TerminalListener;
-import com.styx.data.core.terminal.TerminalManager;
+import com.styx.data.core.terminal.DefaultTerminalManager;
 import com.styx.data.mapper.TerminalDataFlowMapper;
 import com.styx.data.mapper.TerminalDataMapper;
 import com.styx.data.model.TerminalDataFlow;
@@ -32,7 +32,7 @@ public class DataAnalysisService implements TerminalListener {
     private TerminalDataMapper terminalDataMapper;
 
     @Autowired
-    private TerminalManager terminalManager;
+    private DefaultTerminalManager terminalManager;
 
     @Autowired
     private InternalMonitorService internalMonitorService;
