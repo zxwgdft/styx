@@ -20,8 +20,8 @@ import java.util.List;
 public abstract class AbstractTerminalManager implements TerminalManager {
 
     protected String nodeName;
-    protected int index = 0;
 
+    private int index = 0;
     protected final TerminalContainer[] terminalContainerArray = new TerminalContainer[2];
     protected final VariableContainer[] variableContainerArray = new VariableContainer[2];
     protected final AlarmContainer[] alarmContainerArray = new AlarmContainer[2];

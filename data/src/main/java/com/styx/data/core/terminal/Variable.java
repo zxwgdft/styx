@@ -1,9 +1,8 @@
 package com.styx.data.core.terminal;
 
+import com.styx.data.core.Constants;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Date;
 
 /**
  * @author TontoZhou
@@ -25,6 +24,10 @@ public class Variable {
     private int bitPosition;
     //是否持久化
     private boolean persisted;
+
+    public boolean isAlarm() {
+        return type == Constants.VALUE_TYPE_FAULT;
+    }
 
 
 }

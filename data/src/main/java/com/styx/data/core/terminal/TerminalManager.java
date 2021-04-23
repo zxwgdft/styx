@@ -41,6 +41,16 @@ public interface TerminalManager {
     void dispatchTerminalDataChangeEvent(Terminal terminal);
 
     /**
+     * 调度分发终端上线事件
+     */
+    void dispatchTerminalOnlineEvent(Terminal terminal);
+
+    /**
+     * 调度分发终端下线变更事件
+     */
+    void dispatchTerminalOfflineEvent(Terminal terminal);
+
+    /**
      * 调度分发终端报警触发事件
      */
     void dispatchTerminalAlarmTriggerEvent(Terminal terminal, List<AlarmStatus> alarmStatuses);

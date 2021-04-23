@@ -8,6 +8,14 @@ import java.util.List;
  */
 public interface TerminalListener {
 
+    default void terminalOnline(Terminal terminal) {
+        // do nothing
+    }
+
+    default void terminalOffline(Terminal terminal) {
+        // do nothing
+    }
+
     default void dataChangedHandle(Terminal terminal) {
         // do nothing
     }

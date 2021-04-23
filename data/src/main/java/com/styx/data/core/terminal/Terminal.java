@@ -147,7 +147,10 @@ public class Terminal {
      */
     public void offline() {
         synchronized (lock) {
-            isOnline = false;
+            if (isOnline) {
+                isOnline = false;
+                terminalManager.dispatchTerminalOfflineEvent(this);
+            }
         }
     }
 
@@ -165,6 +168,7 @@ public class Terminal {
                 long d = System.currentTimeMillis() - dataUpdateTime;
                 if (d > timeOut4Online) {
                     isOnline = false;
+                    terminalManager.dispatchTerminalOfflineEvent(this);
                 }
             }
         }
@@ -172,14 +176,41 @@ public class Terminal {
 
     private long variableVersion = -1;
     private List<Variable> variables;
+    private List<Variable> alarmVariables;
+
+
+    private long alarmVersion = -1;
+    private List<Alarm> alarms;
+
 
     /**
      * 获取终端所有变量
      */
     public List<Variable> getVariables() {
+        readVariable();
+        return this.variables;
+    }
+
+
+    /**
+     * 获取终端所有报警类型变量
+     */
+    public List<Variable> getAlarmVariables() {
+        readVariable();
+        return this.alarmVariables;
+    }
+
+    private void readVariable() {
         VariableContainer variableContainer = terminalManager.getVariableContainer();
         if (variableContainer == null) {
-            return Collections.emptyList();
+            synchronized (lock) {
+                variableContainer = terminalManager.getVariableContainer();
+                if (variableContainer == null) {
+                    this.variables = Collections.emptyList();
+                    this.alarmVariables = Collections.emptyList();
+                    return;
+                }
+            }
         }
 
         long version = variableContainer.getVersion();
@@ -187,56 +218,59 @@ public class Terminal {
             synchronized (lock) {
                 if (version > variableVersion) {
                     List<Variable> variables = new ArrayList<>(this.variableIds.size());
+                    List<Variable> alarmVariables = new ArrayList<>(this.variables.size() / 2 + 1);
                     for (Integer varId : this.variableIds) {
                         Variable variable = variableContainer.getVariable(varId);
                         if (variable != null) {
                             variables.add(variable);
+                            if (variable.isAlarm()) {
+                                alarmVariables.add(variable);
+                            }
                         }
                     }
                     this.variables = variables;
-                    this.variableVersion = version;
+                    this.alarmVariables = alarmVariables;
+                    variableVersion = version;
                 }
             }
         }
-        return this.variables;
-    }
-
-    /**
-     * 获取需要持久化的变量
-     */
-    public Collection<Variable> getPersistedVariables() {
-        Map<Integer, Variable> variableMap = terminalManager.getVariableMap();
-        List<Variable> variables = new ArrayList<>(this.variableIds.size());
-        for (Integer varId : this.variableIds) {
-            Variable variable = variableMap.get(varId);
-            if (variable != null && variable.isPersisted()) {
-                variables.add(variable);
-            }
-        }
-        return variables;
     }
 
     /**
      * 获取所有报警配置
      */
-    public Collection<Alarm> getAlarms() {
-        Map<Integer, Alarm> alarmMap = terminalManager.getAlarmMap();
-        if (this.alarmIds.size() > 0) {
-            List<Alarm> alarms = new ArrayList<>(alarmMap.size());
-            for (Alarm alarm : alarmMap.values()) {
-                if (this.alarmIds.contains(alarm.getId())) {
-                    alarms.add(alarm);
+    public List<Alarm> getAlarms() {
+        AlarmContainer alarmContainer = terminalManager.getAlarmContainer();
+        if (alarmContainer == null) {
+            synchronized (lock) {
+                alarmContainer = terminalManager.getAlarmContainer();
+                if (alarmContainer == null) {
+                    this.alarms = Collections.emptyList();
+                    return this.alarms;
                 }
             }
-            return alarms;
-        } else {
-            return Collections.emptyList();
         }
+
+        long version = alarmContainer.getVersion();
+        if (version > alarmVersion) {
+            synchronized (lock) {
+                if (version > alarmVersion) {
+                    List<Alarm> alarms = new ArrayList<>(this.alarmIds.size());
+                    for (Integer aid : this.alarmIds) {
+                        Alarm alarm = alarmContainer.getAlarm(aid);
+                        if (alarm != null) {
+                            alarms.add(alarm);
+                        }
+                    }
+                    this.alarms = alarms;
+                    this.alarmVersion = version;
+                }
+            }
+        }
+
+        return alarms;
     }
 
-    // 报警超时间隔 24小时
-    @Getter(AccessLevel.NONE)
-    private long timeOut4Alarm = 48 * 60 * 60 * 1000;
 
     /**
      * 设置数据
@@ -246,74 +280,107 @@ public class Terminal {
             long now = System.currentTimeMillis();
             // 上线
             if (!isOnline) {
-                lastLoginTime = lastWorkTime = now;
+                lastLoginTime = now;
                 isOnline = true;
+                terminalManager.dispatchTerminalOnlineEvent(this);
             } else {
-                if (lastWorkTime > 0) {
-                    workTotalTime += now - lastWorkTime;
-                }
-                lastWorkTime = now;
+                workTotalTime += now - dataUpdateTime;
             }
+            // 数据时间更新
+            dataUpdateTime = now;
 
             // 更新变量数据
             this.variableValueMap = variableValueMap;
 
             // 分析报警
-            Collection<Alarm> alarms = getAlarms();
-            Set<Integer> triggerAlarmIds = new HashSet<>();
-            for (Alarm alarm : alarms) {
-                Map<String, Float> valueMap = new HashMap<>();
-                for (Integer id : alarm.getVariableIds()) {
-                    Float value = variableValueMap.get(id);
-                    if (value != null) {
-                        valueMap.put("$" + id, value);
-                    }
-                }
-                String expression = alarm.getFormulaTemplate().createExpression(valueMap);
-                if (expression == null) {
-                    continue;
-                }
-                boolean isAlarm = (boolean) AviatorEvaluator.execute(expression);
-                if (isAlarm) {
-                    triggerAlarmIds.add(alarm.getId());
-                }
-            }
+            analyzeAlarm();
 
-
-            // 如果之前没有的报警判断为新出现报警
-            for (Integer aid : triggerAlarmIds) {
-                if (!alarmTriggeringMap1.containsKey(aid)) {
-                    try {
-                        terminalAlarmHandler.alarmTriggerHandle(id, aid, now);
-                        alarmTriggeringMap.put(aid, new AlarmStatus(aid, now, now));
-                    } catch (Exception e) {
-                        log.error("报警[terminalID:" + id + ",alarmID:" + aid + "]新增处理调用异常", e);
-                    }
-                }
-            }
-
-            // 判断并关闭报警
-            Iterator<Map.Entry<Integer, AlarmStatus>> alarmIterator = alarmTriggeringMap.entrySet().iterator();
-            while (alarmIterator.hasNext()) {
-                Map.Entry<Integer, AlarmStatus> entry = alarmIterator.next();
-                int aid = entry.getKey();
-                if (!triggerAlarmIds.contains(aid)) {
-                    AlarmStatus alarmStatus = entry.getValue();
-                    if (alarmStatus != null) {
-                        try {
-                            terminalAlarmHandler.alarmClosedHandle(id, aid, alarmStatus.startTime);
-                        } catch (Exception e) {
-                            log.error("报警[terminalID:" + id + ",alarmID:" + aid + "]关闭处理调用异常", e);
-                        }
-                    }
-                    alarmIterator.remove();
-                }
-            }
-
-
-            dataUpdateTime = now;
             terminalManager.dispatchTerminalDataChangeEvent(this);
         }
+    }
+
+
+    private void analyzeAlarm() {
+
+        long now = System.currentTimeMillis();
+
+        // 分析报警公式
+        List<Alarm> alarms = getAlarms();
+        // 取一般容量初始化
+        HashMap<Integer, AlarmStatus> triggerAlarms1 = new HashMap<>(Math.max((int) (alarms.size() / .75f / 2) + 1, 16));
+        for (Alarm alarm : alarms) {
+            Map<String, Float> valueMap = new HashMap<>();
+            for (Integer id : alarm.getVariableIds()) {
+                Float value = variableValueMap.get(id);
+                if (value != null) {
+                    valueMap.put("$" + id, value);
+                }
+            }
+            // 创建java支持的表达式
+            String expression = alarm.getFormulaTemplate().createExpression(valueMap);
+            if (expression == null) {
+                continue;
+            }
+            // 执行表达式
+            boolean isAlarm = (boolean) AviatorEvaluator.execute(expression);
+            if (isAlarm) {
+                triggerAlarms1.put(alarm.getId(), new AlarmStatus(alarm.getId(), AlarmStatus.TYPE_FORMULA, now, -1));
+            }
+        }
+
+
+        // 分析报警变量
+        List<Variable> variables = getAlarmVariables();
+        // 取一般容量初始化
+        Map<Integer, AlarmStatus> triggerAlarms2 = new HashMap<>(Math.max((int) (variables.size() / .75f / 2) + 1, 16));
+        for (Variable variable : variables) {
+            int vid = variable.getId();
+            Float value = variableValueMap.get(vid);
+            if (value != null && value.intValue() == 1) {
+                triggerAlarms2.put(vid, new AlarmStatus(vid, AlarmStatus.TYPE_VARIABLE, now, -1));
+            }
+        }
+
+
+        List<AlarmStatus> newAlarms = new ArrayList<>(triggerAlarms1.size() + triggerAlarms2.size());
+        List<AlarmStatus> closedAlarms = new ArrayList<>(alarmTriggeringMap1.size() + alarmTriggeringMap2.size());
+
+
+        // 分析新出的报警
+        for (Map.Entry<Integer, AlarmStatus> entry : triggerAlarms1.entrySet()) {
+            if (!alarmTriggeringMap1.containsKey(entry.getKey())) {
+                newAlarms.add(entry.getValue());
+            }
+        }
+
+        for (Map.Entry<Integer, AlarmStatus> entry : triggerAlarms2.entrySet()) {
+            if (!alarmTriggeringMap2.containsKey(entry.getKey())) {
+                newAlarms.add(entry.getValue());
+            }
+        }
+
+        // 分析关闭的报警
+        for (Map.Entry<Integer, AlarmStatus> entry : alarmTriggeringMap1.entrySet()) {
+            if (!triggerAlarms1.containsKey(entry.getKey())) {
+                AlarmStatus alarmStatus = entry.getValue();
+                alarmStatus.setCloseTime(now);
+                closedAlarms.add(alarmStatus);
+            }
+        }
+
+        for (Map.Entry<Integer, AlarmStatus> entry : alarmTriggeringMap2.entrySet()) {
+            if (!triggerAlarms2.containsKey(entry.getKey())) {
+                AlarmStatus alarmStatus = entry.getValue();
+                alarmStatus.setCloseTime(now);
+                closedAlarms.add(alarmStatus);
+            }
+        }
+
+        this.alarmTriggeringMap1 = triggerAlarms1;
+        this.alarmTriggeringMap2 = triggerAlarms2;
+
+        terminalManager.dispatchTerminalAlarmTriggerEvent(this, newAlarms);
+        terminalManager.dispatchTerminalClosedTriggerEvent(this, closedAlarms);
     }
 
     /**
