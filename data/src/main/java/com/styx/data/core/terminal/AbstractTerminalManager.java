@@ -19,13 +19,13 @@ import java.util.List;
 @Slf4j
 public abstract class AbstractTerminalManager implements TerminalManager {
 
-    protected String nodeName;
 
     private int index = 0;
-    protected final TerminalContainer[] terminalContainerArray = new TerminalContainer[2];
-    protected final VariableContainer[] variableContainerArray = new VariableContainer[2];
-    protected final AlarmContainer[] alarmContainerArray = new AlarmContainer[2];
+    private final TerminalContainer[] terminalContainerArray = new TerminalContainer[2];
+    private final VariableContainer[] variableContainerArray = new VariableContainer[2];
+    private final AlarmContainer[] alarmContainerArray = new AlarmContainer[2];
 
+    protected String nodeName;
     protected List<TerminalListener> terminalListeners;
 
     /**
@@ -141,7 +141,6 @@ public abstract class AbstractTerminalManager implements TerminalManager {
 
     public abstract List<AlarmStatus> getTerminalAlarmStatus(int terminalId);
 
-
     public Terminal getTerminal(String uid) {
         TerminalContainer container = terminalContainerArray[index];
         return container == null ? null : container.getTerminal(uid);
@@ -188,4 +187,19 @@ public abstract class AbstractTerminalManager implements TerminalManager {
         }
     }
 
+    public void dispatchTerminalOnlineEvent(Terminal terminal) {
+        if (terminalListeners != null) {
+            for (TerminalListener listener : terminalListeners) {
+                listener.terminalOnline(terminal);
+            }
+        }
+    }
+
+    public void dispatchTerminalOfflineEvent(Terminal terminal) {
+        if (terminalListeners != null) {
+            for (TerminalListener listener : terminalListeners) {
+                listener.terminalOffline(terminal);
+            }
+        }
+    }
 }

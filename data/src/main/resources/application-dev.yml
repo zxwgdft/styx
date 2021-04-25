@@ -54,28 +54,8 @@ data:
   config:
     # 终端定时更新配置间隔（秒）
     sync-interval: 5
-    # 维护最大时长（小时）
-    max-maintain-hours: 48
-  analysis:
-    day:
-      # 月报每日统计数据每次上传最大记录数
-      upload-max: 5000
-    hour:
-      # 日报每小时统计数据每次上传最大记录数
-      upload-max: 5000
-  upload:
-    # 上传父节点数据量每小时最多
-    per-max: 5000
-    # 上传父节点数据间隔
-    interval: 10
   protocol:
     variable:
-      # 原液位变量ID
-      id-yyw: 75
-      # 排放阀变量ID
-      id-ppf: 68
-      # 原水低液位
-      id-ysdyw: 52
       # 累计流量
       id-ljll: 35
 

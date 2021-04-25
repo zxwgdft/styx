@@ -1,4 +1,4 @@
-package com.styx.data.web.dto;
+package com.styx.data.service.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @ApiModel(description = "终端数据查询")
-public class TerminalDataQuery {
+public class HistoryDataQuery {
 
     @ApiModelProperty("终端ID")
     private int terminalId;

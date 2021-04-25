@@ -1,7 +1,6 @@
 package com.styx.data.web;
 
-import com.styx.data.core.terminal.DefaultTerminalManager;
-import com.styx.data.service.DataAnalysisService;
+import com.styx.data.service.DataFlowService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,19 +21,17 @@ import java.util.Map;
 public class DataAnalysisController {
 
     @Autowired
-    private DataAnalysisService dataAnalysisService;
+    private DataFlowService dataAnalysisService;
 
-    @Autowired
-    private DefaultTerminalManager terminalManager;
 
     @ApiOperation("获取所有终端累计流量")
-    @GetMapping("/flow/all")
+    @GetMapping("/get/flow/all")
     public Map<Integer, Float> getTotalFlowMap() {
         return dataAnalysisService.getTotalFlowMap();
     }
 
     @ApiOperation("获取终端累计流量")
-    @GetMapping("/flow/terminal")
+    @GetMapping("/get/flow")
     public Float getTotalFlowOfTerminal(@RequestParam int terminalId) {
         return dataAnalysisService.getTotalFlowOfTerminal(terminalId);
     }

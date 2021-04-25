@@ -35,9 +35,17 @@ public class Terminal {
 
     // 终端变量
     private Set<Integer> variableIds;
-
     // 终端报警
     private Set<Integer> alarmIds;
+
+    /*
+     * 变量和报警cache用
+     */
+    private long variableVersion = -1;
+    private List<Variable> variables;
+    private List<Variable> alarmVariables;
+    private long alarmVersion = -1;
+    private List<Alarm> alarms;
 
 
     // 最近一次接收数据
@@ -163,24 +171,16 @@ public class Terminal {
      * 检查是否在线（超时判断）
      */
     public void checkOnline() {
-        synchronized (lock) {
-            if (isOnline) {
-                long d = System.currentTimeMillis() - dataUpdateTime;
-                if (d > timeOut4Online) {
+        long d = System.currentTimeMillis() - dataUpdateTime;
+        if (isOnline && d > timeOut4Online) {
+            synchronized (lock) {
+                if (isOnline) {
                     isOnline = false;
                     terminalManager.dispatchTerminalOfflineEvent(this);
                 }
             }
         }
     }
-
-    private long variableVersion = -1;
-    private List<Variable> variables;
-    private List<Variable> alarmVariables;
-
-
-    private long alarmVersion = -1;
-    private List<Alarm> alarms;
 
 
     /**
@@ -280,20 +280,25 @@ public class Terminal {
             long now = System.currentTimeMillis();
             // 上线
             if (!isOnline) {
-                lastLoginTime = now;
+                dataUpdateTime = now;
                 isOnline = true;
+                lastLoginTime = now;
                 terminalManager.dispatchTerminalOnlineEvent(this);
             } else {
                 workTotalTime += now - dataUpdateTime;
+                dataUpdateTime = now;
             }
-            // 数据时间更新
-            dataUpdateTime = now;
+
 
             // 更新变量数据
             this.variableValueMap = variableValueMap;
 
             // 分析报警
-            analyzeAlarm();
+            try {
+                analyzeAlarm();
+            } catch (Exception e) {
+
+            }
 
             terminalManager.dispatchTerminalDataChangeEvent(this);
         }
@@ -306,6 +311,7 @@ public class Terminal {
 
         // 分析报警公式
         List<Alarm> alarms = getAlarms();
+
         // 取一般容量初始化
         HashMap<Integer, AlarmStatus> triggerAlarms1 = new HashMap<>(Math.max((int) (alarms.size() / .75f / 2) + 1, 16));
         for (Alarm alarm : alarms) {
@@ -327,7 +333,6 @@ public class Terminal {
                 triggerAlarms1.put(alarm.getId(), new AlarmStatus(alarm.getId(), AlarmStatus.TYPE_FORMULA, now, -1));
             }
         }
-
 
         // 分析报警变量
         List<Variable> variables = getAlarmVariables();
@@ -376,8 +381,14 @@ public class Terminal {
             }
         }
 
+        List<AlarmStatus> alarmTriggeringList = new ArrayList<>(triggerAlarms1.size() + triggerAlarms2.size());
+        alarmTriggeringList.addAll(triggerAlarms1.values());
+        alarmTriggeringList.addAll(triggerAlarms2.values());
+
+        this.alarmTriggeringList = alarmTriggeringList;
         this.alarmTriggeringMap1 = triggerAlarms1;
         this.alarmTriggeringMap2 = triggerAlarms2;
+
 
         terminalManager.dispatchTerminalAlarmTriggerEvent(this, newAlarms);
         terminalManager.dispatchTerminalClosedTriggerEvent(this, closedAlarms);

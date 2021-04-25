@@ -1,6 +1,6 @@
 package com.styx.data.core.terminal;
 
-import com.styx.data.core.Constants;
+import com.styx.data.core.ProtocolConstants;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,7 +26,7 @@ public class Variable {
     private boolean persisted;
 
     public boolean isAlarm() {
-        return type == Constants.VALUE_TYPE_FAULT;
+        return type == ProtocolConstants.VALUE_TYPE_FAULT;
     }
 
 

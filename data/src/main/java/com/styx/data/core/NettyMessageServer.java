@@ -5,7 +5,6 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
@@ -30,9 +29,7 @@ public class NettyMessageServer {
     private int backlog;
 
     @Autowired
-    private ProtocolOutboundHandler outboundHandler;
-    @Autowired
-    private ProtocolInboundHandler inboundHandler;
+    private DatagramHandler datagramHandler;
 
     public void start() throws Exception {
         final EventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -50,15 +47,15 @@ public class NettyMessageServer {
                         public void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
 
-                            pipeline.addLast(new LengthFieldBasedFrameDecoder(0xffff, 0, 2));
+                            pipeline.addLast(new ProtocolDatagramDecoder());
                             // 超时设置
                             pipeline.addLast(new IdleStateHandler(0, 0, 60, TimeUnit.SECONDS));
                             // 协议出站处理器
-                            pipeline.addLast(outboundHandler);
+                            pipeline.addLast(new ProtocolDatagramEncoder());
                             // 协议处理器，是否开启EventExecutorGroup，
                             // 如果需要开启业务线程，并且需要写操作，建议使用netty自带EventExecutorGroup
                             // 如果不需要写操作，可使用其他线程池作为业务线程池，并自行优化
-                            pipeline.addLast(eventExecutorGroup, inboundHandler);
+                            pipeline.addLast(eventExecutorGroup, datagramHandler);
                         }
                     })
                     // 长时间没有消息接收时，发送探测帧

@@ -2,6 +2,7 @@ package com.styx.data.core.actions;
 
 import com.styx.data.core.CommandAction;
 import com.styx.data.core.Datagram;
+import com.styx.data.core.ProtocolUtil;
 import com.styx.data.core.terminal.Terminal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,9 @@ public class TimeCheckAction implements CommandAction {
 
     @Override
     public byte[] doAction(Terminal terminal, Datagram datagram) {
-        return null;
+        byte[] data = new byte[7];
+        ProtocolUtil.setTimeByBCD(data, 0);
+        return data;
     }
 
 

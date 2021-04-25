@@ -1,11 +1,10 @@
 package com.styx.data.core.actions;
 
 import com.styx.data.core.CommandAction;
-import com.styx.data.core.Constants;
 import com.styx.data.core.Datagram;
+import com.styx.data.core.ProtocolConstants;
 import com.styx.data.core.terminal.Terminal;
 import com.styx.data.core.terminal.Variable;
-import io.netty.util.Attribute;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -45,14 +44,14 @@ public class DataCollectAction implements CommandAction {
 
             try {
                 switch (valueType) {
-                    case Constants.VALUE_TYPE_FLOAT:
+                    case ProtocolConstants.VALUE_TYPE_FLOAT:
                         value = getFloat(data, bytePosition);
                         break;
-                    case Constants.VALUE_TYPE_SWITCH:
-                    case Constants.VALUE_TYPE_FAULT:
+                    case ProtocolConstants.VALUE_TYPE_SWITCH:
+                    case ProtocolConstants.VALUE_TYPE_FAULT:
                         value = getBit(data, bytePosition, switchAddress);
                         break;
-                    case Constants.VALUE_TYPE_INT:
+                    case ProtocolConstants.VALUE_TYPE_INT:
                         value = getInt(data, bytePosition);
                         break;
                     default:
@@ -60,22 +59,16 @@ public class DataCollectAction implements CommandAction {
                         continue;
                 }
             } catch (Exception e) {
-                log.warn("解析变量(ID={})获取数值异常");
+                log.warn("解析变量(ID={})获取数值异常", variable.getId());
                 continue;
             }
 
             variableValueMap.put(variable.getId(), value);
         }
 
-        terminal.setData(workStatus, variableValueMap, true);
+        terminal.setData(variableValueMap);
 
-//        Attribute<String> terminalIDAttr = context.channel().attr(Constants.TERMINAL_ID_KEY);
-//        terminalIDAttr.setIfAbsent(terminal.getUid());
-
-
-        // 返回
-        byte[] response = new byte[18];
-        return response;
+        return null;
     }
 
     private float getFloat(byte[] data, int address) {

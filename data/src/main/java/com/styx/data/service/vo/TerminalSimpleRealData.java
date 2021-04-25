@@ -1,4 +1,4 @@
-package com.styx.data.web.vo;
+package com.styx.data.service.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -12,16 +12,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @ApiModel(description = "终端简要实时数据")
-public class TerminalSimpleRealtime {
+public class TerminalSimpleRealData {
 
     @ApiModelProperty("终端ID")
     private int id;
     @ApiModelProperty("是否在线")
     private boolean isOnline;
-    @ApiModelProperty("工作状态")
-    private int workStatus;
-    @ApiModelProperty("是否维护中")
-    private boolean isMaintaining;
     @ApiModelProperty("是否报警中")
     private boolean isAlarmTriggering;
 }

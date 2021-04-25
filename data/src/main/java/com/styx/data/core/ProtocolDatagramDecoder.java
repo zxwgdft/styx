@@ -3,27 +3,25 @@ package com.styx.data.core;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 /**
- * 数据报解析处理
- * <p>
- *
- * @author shenq
- * @date 2018-04-03 13:52
+ * 基于{@code LengthFieldBasedFrameDecoder}的解码类，对数据帧进一步解析出头部信息和数据内容
  */
 @Slf4j
-@Component
-@ChannelHandler.Sharable
-public class ProtocolInboundHandler extends ChannelInboundHandlerAdapter {
+public class ProtocolDatagramDecoder extends LengthFieldBasedFrameDecoder {
+
+    public ProtocolDatagramDecoder() {
+        super(0xffff, 0, 2);
+    }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        ByteBuf buf = (ByteBuf) msg;
+    protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
+        ByteBuf buf = (ByteBuf) super.decode(ctx, in);
+
+        if (buf == null) return null;
 
         int length = buf.readableBytes();
         if (length < 24) {
@@ -54,7 +52,7 @@ public class ProtocolInboundHandler extends ChannelInboundHandlerAdapter {
             throw new ProtocolException("协议错误，校验异常");
         }
 
-        ctx.fireChannelRead(new Datagram(uid, command, serialNumber, data));
+        return new Datagram(uid, command, serialNumber, head, data);
     }
 
 }

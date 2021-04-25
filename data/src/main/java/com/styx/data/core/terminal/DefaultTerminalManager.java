@@ -7,7 +7,8 @@ import com.styx.data.mapper.TerminalInfoMapper;
 import com.styx.data.model.TerminalInfo;
 import com.styx.data.service.InternalMonitorService;
 import com.styx.data.service.TerminalDataService;
-import com.styx.data.service.dto.*;
+import com.styx.data.service.dto.VersionConfig;
+import com.styx.data.service.dto.VersionUpdate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +17,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -28,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Component
-public class DefaultTerminalManager extends AbstractTerminalManager implements ApplicationRunner, Runnable {
+public class DefaultTerminalManager extends AbstractTerminalManager implements ApplicationRunner {
 
     @Autowired
     private Environment environment;
@@ -59,22 +60,19 @@ public class DefaultTerminalManager extends AbstractTerminalManager implements A
 
     private int runTimes = 0;
 
-    @Override
-    public void run() {
-        if (!loaded) return;
+    public void checkTerminal() {
+        TerminalContainer terminalContainer = getTerminalContainer();
 
-        Map<String, Terminal> terminalMap = terminalMapArray[index];
-
-        if (terminalMap != null) {
-            for (Terminal terminal : terminalMap.values()) {
+        if (terminalContainer != null) {
+            for (Terminal terminal : terminalContainer.getTerminals()) {
                 terminal.checkOnline();
             }
         }
 
         if (++runTimes >= dataPersistInterval) {
-            if (terminalMap != null) {
+            if (terminalContainer != null) {
                 log.debug("持久化一次终端数据");
-                terminalDataService.persistData(terminalMap.values());
+                terminalDataService.persistData(terminalContainer.getTerminals());
             }
             runTimes = 0;
         }
@@ -104,28 +102,27 @@ public class DefaultTerminalManager extends AbstractTerminalManager implements A
             public Thread newThread(Runnable r) {
                 Thread thread = new Thread(r);
                 thread.setDaemon(true);
-                thread.setName("checkData");
+                thread.setName("checkTerminal");
                 return thread;
             }
         });
 
-        service2.scheduleWithFixedDelay(this, 1, 1, TimeUnit.MINUTES);
-
+        service2.scheduleWithFixedDelay(() -> checkTerminal(), 1, 1, TimeUnit.MINUTES);
     }
 
 
     @Override
     public VersionConfig getVersionConfig(VersionUpdate versionUpdate) {
-        return null;
+        return monitorService.getVersionConfig(versionUpdate);
     }
 
     @Override
     public TerminalInfo getTerminalInfo(int terminalId) {
-        return null;
+        return terminalInfoMapper.selectById(terminalId);
     }
 
     @Override
     public List<AlarmStatus> getTerminalAlarmStatus(int terminalId) {
-        return null;
+        return terminalAlarmMapper.getAlarmIdOfTerminal(terminalId);
     }
 }

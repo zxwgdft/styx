@@ -1,187 +1,71 @@
 package com.styx.data.web;
 
-import com.styx.data.core.terminal.Terminal;
-import com.styx.data.core.terminal.DefaultTerminalManager;
+import com.styx.common.utils.StringUtil;
+import com.styx.data.core.terminal.AlarmStatus;
+import com.styx.data.core.terminal.TerminalManager;
 import com.styx.data.service.TerminalDataService;
 import com.styx.data.service.dto.DataRecord;
-import com.styx.data.web.dto.TerminalDataQuery;
-import com.styx.data.web.vo.TerminalAlarms;
-import com.styx.data.web.vo.TerminalRealtime;
-import com.styx.data.web.vo.TerminalSimpleRealtime;
+import com.styx.data.service.dto.HistoryDataQuery;
+import com.styx.data.service.vo.TerminalAlarms;
+import com.styx.data.service.vo.TerminalRealData;
+import com.styx.data.service.vo.TerminalSimpleRealData;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * @author TontoZhou
  * @since 2020/11/16
  */
-@Api(tags = "终端实时数据接口")
+@Api(tags = "终端实时数据")
 @RestController
 @RequestMapping("/terminal/data")
 public class TerminalDataController {
 
     @Autowired
-    private DefaultTerminalManager terminalManager;
+    private TerminalManager terminalManager;
 
     @Autowired
     private TerminalDataService terminalDataService;
 
     @ApiOperation("获取终端简要实时数据")
-    @GetMapping("/realtime/simple")
-    public List<TerminalSimpleRealtime> getTerminalSimpleDataRealtime(@RequestParam(required = false) String terminalIds) {
+    @GetMapping("/get/real/simple")
+    public List<TerminalSimpleRealData> getTerminalSimpleDataRealtime(@RequestParam(required = false) String terminalIds) {
         if (terminalIds != null && terminalIds.length() > 0) {
-            String[] ids = terminalIds.split(",");
-            List<TerminalSimpleRealtime> result = new ArrayList<>(ids.length);
-            for (String id : ids) {
-                Integer terminalId = Integer.valueOf(id);
-                Terminal terminal = terminalManager.getTerminal(terminalId);
-                if (terminal != null) {
-                    result.add(getSimpleRealtime(terminal));
-                }
-            }
-            return result;
+            Set<Integer> terminalIdSet = StringUtil.stringToIntegerSet(terminalIds);
+            return terminalDataService.getSimpleRealData(terminalIdSet);
         } else {
-            // 如果为空则返回全部
-            Collection<Terminal> terminals = terminalManager.getTerminals();
-            if (terminals != null && terminals.size() > 0) {
-                List<TerminalSimpleRealtime> result = new ArrayList<>(terminals.size());
-                for (Terminal terminal : terminals) {
-                    result.add(getSimpleRealtime(terminal));
-                }
-                return result;
-            }
+            return terminalDataService.getSimpleRealData();
         }
-
-        return new ArrayList<>();
-
     }
 
     @ApiOperation("获取终端实时数据")
-    @GetMapping("/realtime")
-    public List<TerminalRealtime> getTerminalDataRealtime(@RequestParam(required = false) String terminalIds) {
-        if (terminalIds != null && terminalIds.length() > 0) {
-            String[] ids = terminalIds.split(",");
-            List<TerminalRealtime> result = new ArrayList<>(ids.length);
-            for (String id : ids) {
-                Integer terminalId = Integer.valueOf(id);
-                Terminal terminal = terminalManager.getTerminal(terminalId);
-                if (terminal != null) {
-                    result.add(getRealtime(terminal));
-                }
-            }
-            return result;
-        } else {
-            // 如果为空则返回全部
-            Collection<Terminal> terminals = terminalManager.getTerminals();
-            if (terminals != null && terminals.size() > 0) {
-                List<TerminalRealtime> result = new ArrayList<>(terminals.size());
-                for (Terminal terminal : terminals) {
-                    result.add(getRealtime(terminal));
-                }
-                return result;
-            }
-        }
-
-        return new ArrayList<>();
+    @GetMapping("/get/real/detail")
+    public TerminalRealData getTerminalDataRealtime(@RequestParam int terminalId) {
+        return terminalDataService.getDetailRealData(terminalId);
     }
 
-    /**
-     * 获取简要的实时数据对象
-     */
-    private TerminalSimpleRealtime getSimpleRealtime(Terminal terminal) {
-        TerminalSimpleRealtime data = new TerminalSimpleRealtime();
-        data.setId(terminal.getId());
-
-        boolean isOnline = terminal.isOnline();
-        data.setOnline(isOnline);
-
-        boolean isMaintaining = terminal.isMaintaining();
-        data.setMaintaining(isMaintaining);
-
-        data.setWorkStatus(terminal.getWorkStatus());
-        data.setAlarmTriggering(!terminal.getAlarmTriggeringMap().isEmpty());
-
-        return data;
-    }
-
-    /**
-     * 获取实时数据对象
-     */
-    private TerminalRealtime getRealtime(Terminal terminal) {
-        TerminalRealtime data = new TerminalRealtime();
-        data.setId(terminal.getId());
-
-        boolean isOnline = terminal.isOnline();
-
-        data.setOnline(isOnline);
-        data.setLastLoginTime(terminal.getLastLoginTime());
-
-        long lastWorkTime = terminal.getLastWorkTime();
-        data.setLastWorkTime(lastWorkTime);
-
-        if (isOnline) {
-            int workCurrentMinutes = (int) ((System.currentTimeMillis() - lastWorkTime) / 60000);
-            data.setWorkCurrentTime(workCurrentMinutes);
-        } else {
-            data.setWorkCurrentTime(0);
-        }
-
-        int workTotalMinutes = (int) (terminal.getWorkTotalTime() / 60000);
-        data.setWorkTotalTime(workTotalMinutes);
-
-        boolean isMaintaining = terminal.isMaintaining();
-        data.setMaintaining(isMaintaining);
-
-        data.setWorkStatus(terminal.getWorkStatus());
-        data.setDataUpdateTime(terminal.getDataUpdateTime());
-        data.setVariableValues((isOnline && !isMaintaining) ? terminal.getVariableValueMap() : null);
-        data.setAlarmTriggering(!terminal.getAlarmTriggeringMap().isEmpty());
-
-        return data;
-    }
 
     @ApiOperation("获取所有终端报警数据")
-    @GetMapping("/alarm")
+    @GetMapping("/get/alarm/all")
     public List<TerminalAlarms> getAllTriggeringAlarms() {
-        List<TerminalAlarms> terminalAlarms = new ArrayList<>();
-        Collection<Terminal> terminals = terminalManager.getTerminals();
-        if (terminals != null) {
-            for (Terminal terminal : terminals) {
-                Map<Integer, Terminal.AlarmStatus> map = terminal.getAlarmTriggeringMap();
-                if (map.size() > 0) {
-                    terminalAlarms.add(new TerminalAlarms(terminal.getId(), map.values()));
-                }
-            }
-        }
-        return terminalAlarms;
+        return terminalDataService.getAlarmStatuses();
     }
 
     @ApiOperation("获取终端报警数据")
-    @GetMapping("/alarm/terminal")
-    public TerminalAlarms getTerminalTriggeringAlarms(@RequestParam int terminalId) {
-        Collection<Terminal> terminals = terminalManager.getTerminals();
-        if (terminals != null) {
-            for (Terminal terminal : terminals) {
-                if (terminal.getId() == terminalId) {
-                    Map<Integer, Terminal.AlarmStatus> map = terminal.getAlarmTriggeringMap();
-                    return new TerminalAlarms(terminal.getId(), map.size() > 0 ? map.values() : null);
-                }
-            }
-        }
-        return null;
+    @GetMapping("/get/alarm")
+    public List<AlarmStatus> getTerminalTriggeringAlarms(@RequestParam int terminalId) {
+        return terminalDataService.getAlarmStatuses(terminalId);
     }
 
     @ApiOperation("获取终端历史数据")
-    @PostMapping("/history")
-    public List<DataRecord> getTerminalHistory(@RequestBody TerminalDataQuery query) {
-        return terminalDataService.findTerminalData(query.getTerminalId(), query.getStartDate(), query.getEndDate(), query.getVariableIds());
+    @PostMapping("/find/history")
+    public List<DataRecord> getTerminalHistory(@RequestBody HistoryDataQuery query) {
+        return terminalDataService.findHistoryData(query);
     }
 
 

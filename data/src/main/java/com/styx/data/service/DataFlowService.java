@@ -2,28 +2,30 @@ package com.styx.data.service;
 
 import com.styx.data.core.terminal.Terminal;
 import com.styx.data.core.terminal.TerminalListener;
-import com.styx.data.core.terminal.DefaultTerminalManager;
 import com.styx.data.mapper.TerminalDataFlowMapper;
 import com.styx.data.mapper.TerminalDataMapper;
 import com.styx.data.model.TerminalDataFlow;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 
 /**
+ * 累计流量数据服务
+ *
  * @author TontoZhou
  * @since 2020/11/18
  */
 @Slf4j
 @Component
-public class DataAnalysisService implements TerminalListener {
-
+public class DataFlowService implements TerminalListener, ApplicationRunner {
 
     @Autowired
     private TerminalDataFlowMapper terminalDataFlowMapper;
@@ -31,25 +33,11 @@ public class DataAnalysisService implements TerminalListener {
     @Autowired
     private TerminalDataMapper terminalDataMapper;
 
-    @Autowired
-    private DefaultTerminalManager terminalManager;
-
-    @Autowired
-    private InternalMonitorService internalMonitorService;
-
-    @Value("${data.analysis.day.upload-max:5000}")
-    private int analysisDayUploadMax;
-
-    @Value("${data.analysis.hour.upload-max:5000}")
-    private int analysisHourUploadMax;
 
     @Value("${data.protocol.variable.id-ljll}")
     private int variable_id_ljll;
 
-    private int uploadPerTime = 500;
-
     private Map<Integer, Float> totalFlowMap = new ConcurrentHashMap<>();
-
 
     @PostConstruct
     public void init() {
@@ -59,6 +47,7 @@ public class DataAnalysisService implements TerminalListener {
                 totalFlowMap.putIfAbsent(item.getTerminalId(), item.getFlowValue());
             }
         }
+
     }
 
 
@@ -105,6 +94,22 @@ public class DataAnalysisService implements TerminalListener {
      */
     public Float getTotalFlowOfTerminalOfTime(int terminalId, int startDay, int endDay) {
         return terminalDataMapper.getBalanceOfTerminalByTime(terminalId, startDay, endDay, variable_id_ljll);
+    }
+
+
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+
+        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+            public Thread newThread(Runnable r) {
+                Thread thread = new Thread(r);
+                thread.setDaemon(true);
+                thread.setName("persistFlow");
+                return thread;
+            }
+        });
+
+        service.scheduleWithFixedDelay(() -> persistTotalFlowData(), 2, 2, TimeUnit.MINUTES);
     }
 
 

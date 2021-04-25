@@ -1,6 +1,6 @@
 package com.styx.data.core.terminal;
 
-import com.styx.data.core.Constants;
+import com.styx.data.core.ProtocolConstants;
 
 import java.util.*;
 
@@ -31,7 +31,7 @@ public class VariableContainer {
             List<Variable> alarmVariableList = new ArrayList<>(initialCapacity / 2);
             for (Variable variable : variableList) {
                 variableMap.put(variable.getId(), variable);
-                if (variable.getType() == Constants.VALUE_TYPE_FAULT) {
+                if (variable.getType() == ProtocolConstants.VALUE_TYPE_FAULT) {
                     alarmVariableMap.put(variable.getId(), variable);
                     alarmVariableList.add(variable);
                 }

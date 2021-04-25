@@ -1,5 +1,6 @@
-package com.styx.data.web.vo;
+package com.styx.data.service.vo;
 
+import com.styx.data.core.terminal.AlarmStatus;
 import com.styx.data.core.terminal.Terminal;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -21,5 +22,5 @@ public class TerminalAlarms {
     @ApiModelProperty("终端ID")
     private int id;
     @ApiModelProperty("报警")
-    private Collection<Terminal.AlarmStatus> alarms;
+    private Collection<AlarmStatus> alarms;
 }

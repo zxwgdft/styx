@@ -1,10 +1,12 @@
-package com.styx.data.web.vo;
+package com.styx.data.service.vo;
 
+import com.styx.data.core.terminal.AlarmStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,28 +16,20 @@ import java.util.Map;
 @Getter
 @Setter
 @ApiModel(description = "终端实时数据")
-public class TerminalRealtime {
+public class TerminalRealData {
 
     @ApiModelProperty("终端ID")
     private int id;
     @ApiModelProperty("是否在线")
     private boolean isOnline;
-    @ApiModelProperty("最近登录时间")
+    @ApiModelProperty("最近一次登录时间")
     private long lastLoginTime;
-    @ApiModelProperty("最近工作时间")
+    @ApiModelProperty("最近一次工作时间")
     private long lastWorkTime;
     @ApiModelProperty("工作累计时间(分钟)")
     private int workTotalTime;
-    @ApiModelProperty("当前工作累计时间(分钟)")
-    private int workCurrentTime;
-    @ApiModelProperty("工作状态")
-    private int workStatus;
-    @ApiModelProperty("是否维护中")
-    private boolean isMaintaining;
-    @ApiModelProperty("最近一次接收数据时间")
-    private long dataUpdateTime;
     @ApiModelProperty("变量数据")
     private Map<Integer, Float> variableValues;
-    @ApiModelProperty("是否报警中")
-    private boolean isAlarmTriggering;
+    @ApiModelProperty("报警情况")
+    private List<AlarmStatus> alarmStatuses;
 }
