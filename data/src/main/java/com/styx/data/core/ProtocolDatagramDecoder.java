@@ -46,8 +46,13 @@ public class ProtocolDatagramDecoder extends LengthFieldBasedFrameDecoder {
         byte toCheck = buf.readByte();
         // 校验
         byte check = 0;
-        for (byte b : head) check ^= b;
-        for (byte b : data) check ^= b;
+        for (byte b : head) {
+            check ^= b;
+        }
+        for (byte b : data) {
+            check ^= b;
+        }
+
         if (check != toCheck) {
             throw new ProtocolException("协议错误，校验异常");
         }

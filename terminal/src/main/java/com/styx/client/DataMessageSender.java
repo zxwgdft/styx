@@ -32,16 +32,19 @@ public class DataMessageSender extends ChannelInboundHandlerAdapter implements R
     private Channel channel;
     private Thread sendDataThread;
 
+    private int frameSize = 23 + 500 + 1;
+
     public DataMessageSender(DataClient client, String terminalUid) {
         this.client = client;
-        datagram = new byte[1024];
+        datagram = new byte[frameSize];
 
-        datagram[0] = (byte) 0xfa;
-        datagram[1] = (byte) 0x0a;
-        datagram[1027] = (byte) 0xfb;
+        int size = frameSize - 2;
+        datagram[0] = (byte) (size >> 8 & 0xff);
+        datagram[1] = (byte) (size & 0xff);
+
 
         byte[] uid = ByteBufUtil.decodeHexDump(terminalUid);
-        System.arraycopy(uid, 0, datagram, 6, 12);
+        System.arraycopy(uid, 0, datagram, 2, 12);
 
         dataProducers = new ArrayList<>();
 
@@ -63,11 +66,11 @@ public class DataMessageSender extends ChannelInboundHandlerAdapter implements R
         boolean random = value == null;
 
         if (variable.getId() == 35) {
-            dataProducers.add(new IncrementalDataProducer(variable.getStartPosition(), 10000, 5));
+            dataProducers.add(new IncrementalDataProducer(variable.getStartPosition() + 23, 10000, 5));
         } else if (variable.getType() == 2) {
             dataProducers.add(
-                    random ? new DataProducer(variable.getStartPosition(), variable.getMax().intValue(), variable.getMin().intValue())
-                            : new DataProducer(variable.getStartPosition(), value)
+                    random ? new DataProducer(variable.getStartPosition() + 23, variable.getMax().intValue(), variable.getMin().intValue())
+                            : new DataProducer(variable.getStartPosition() + 23, value)
             );
         } else if (variable.getType() == 0 || variable.getType() == 3) {
             boolean open;
@@ -76,7 +79,7 @@ public class DataMessageSender extends ChannelInboundHandlerAdapter implements R
             } else {
                 open = value.intValue() >= 1;
             }
-            dataProducers.add(new SwitchDataProducer(variable.getStartPosition(), variable.getSwitchPosition(), open, random));
+            dataProducers.add(new SwitchDataProducer(variable.getStartPosition() + 23, variable.getSwitchPosition(), open, random));
         }
     }
 
@@ -101,11 +104,31 @@ public class DataMessageSender extends ChannelInboundHandlerAdapter implements R
     public void run() {
         while (true) {
             // 设置时间
-            setDateTime(datagram, 18);
+            long time = System.currentTimeMillis();
+            time = time << 8;
+
+            datagram[14] = (byte) (time >> 56 & 0xff);
+            datagram[15] = (byte) (time >> 48 & 0xff);
+            datagram[16] = (byte) (time >> 40 & 0xff);
+            datagram[17] = (byte) (time >> 32 & 0xff);
+            datagram[18] = (byte) (time >> 24 & 0xff);
+            datagram[19] = (byte) (time >> 16 & 0xff);
+            datagram[20] = (byte) (time >> 8 & 0xff);
+            datagram[21] = (byte) (time & 0xff);
+
+            datagram[22] = 0x0a;
+
             // 生成数据
             for (DataProducer producer : dataProducers) {
                 producer.produceData(datagram);
             }
+
+            byte check = 0;
+            for (int i = 0; i < frameSize - 1; i++) {
+                check ^= datagram[i];
+            }
+
+            datagram[frameSize - 1] = check;
 
             if (connected && channel != null) {
                 try {
@@ -120,6 +143,7 @@ public class DataMessageSender extends ChannelInboundHandlerAdapter implements R
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
         }
 
     }

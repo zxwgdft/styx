@@ -217,8 +217,9 @@ public class Terminal {
         if (version > variableVersion) {
             synchronized (lock) {
                 if (version > variableVersion) {
-                    List<Variable> variables = new ArrayList<>(this.variableIds.size());
-                    List<Variable> alarmVariables = new ArrayList<>(this.variables.size() / 2 + 1);
+                    int size = this.variableIds.size();
+                    List<Variable> variables = new ArrayList<>(size);
+                    List<Variable> alarmVariables = new ArrayList<>(size / 2 + 1);
                     for (Integer varId : this.variableIds) {
                         Variable variable = variableContainer.getVariable(varId);
                         if (variable != null) {
