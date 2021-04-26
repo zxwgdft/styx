@@ -9,6 +9,7 @@ import com.styx.data.service.InternalMonitorService;
 import com.styx.data.service.TerminalDataService;
 import com.styx.data.service.dto.VersionConfig;
 import com.styx.data.service.dto.VersionUpdate;
+import io.netty.util.concurrent.EventExecutorGroup;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,9 +19,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -53,6 +51,8 @@ public class DefaultTerminalManager extends AbstractTerminalManager implements A
     @Autowired
     private TerminalDataService terminalDataService;
 
+    @Autowired
+    private EventExecutorGroup eventExecutorGroup;
 
     //-------------------------
     // 持久化数据和终端相关维护
@@ -87,27 +87,10 @@ public class DefaultTerminalManager extends AbstractTerminalManager implements A
         }
         this.nodeName = appName.substring(GlobalConstants.DATA_SERVICE_PREFIX.length());
 
-        ScheduledExecutorService service1 = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
-            public Thread newThread(Runnable r) {
-                Thread thread = new Thread(r);
-                thread.setDaemon(true);
-                thread.setName("checkConfig");
-                return thread;
-            }
-        });
-
-        service1.scheduleWithFixedDelay(() -> loadConfig(), 0, configSyncInterval, TimeUnit.SECONDS);
-
-        ScheduledExecutorService service2 = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
-            public Thread newThread(Runnable r) {
-                Thread thread = new Thread(r);
-                thread.setDaemon(true);
-                thread.setName("checkTerminal");
-                return thread;
-            }
-        });
-
-        service2.scheduleWithFixedDelay(() -> checkTerminal(), 1, 1, TimeUnit.MINUTES);
+        log.info("开启定时执行加载终端配置任务");
+        eventExecutorGroup.scheduleWithFixedDelay(() -> loadConfig(), 0, configSyncInterval, TimeUnit.SECONDS);
+        log.info("开启定时执行检查终端任务");
+        eventExecutorGroup.scheduleWithFixedDelay(() -> checkTerminal(), 1, 1, TimeUnit.MINUTES);
     }
 
 

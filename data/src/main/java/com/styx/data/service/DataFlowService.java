@@ -5,6 +5,7 @@ import com.styx.data.core.terminal.TerminalListener;
 import com.styx.data.mapper.TerminalDataFlowMapper;
 import com.styx.data.mapper.TerminalDataMapper;
 import com.styx.data.model.TerminalDataFlow;
+import io.netty.util.concurrent.EventExecutorGroup;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +16,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 累计流量数据服务
@@ -32,6 +34,9 @@ public class DataFlowService implements TerminalListener, ApplicationRunner {
 
     @Autowired
     private TerminalDataMapper terminalDataMapper;
+
+    @Autowired
+    private EventExecutorGroup eventExecutorGroup;
 
 
     @Value("${data.protocol.variable.id-ljll}")
@@ -99,17 +104,8 @@ public class DataFlowService implements TerminalListener, ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-
-        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
-            public Thread newThread(Runnable r) {
-                Thread thread = new Thread(r);
-                thread.setDaemon(true);
-                thread.setName("persistFlow");
-                return thread;
-            }
-        });
-
-        service.scheduleWithFixedDelay(() -> persistTotalFlowData(), 2, 2, TimeUnit.MINUTES);
+        log.info("开启定时执行持久化累计流量任务");
+        eventExecutorGroup.scheduleWithFixedDelay(() -> persistTotalFlowData(), 2, 2, TimeUnit.MINUTES);
     }
 
 

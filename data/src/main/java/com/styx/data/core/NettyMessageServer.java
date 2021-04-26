@@ -6,7 +6,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
-import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +28,14 @@ public class NettyMessageServer {
     private int backlog;
 
     @Autowired
+    private EventExecutorGroup eventExecutorGroup;
+
+    @Autowired
     private DatagramHandler datagramHandler;
 
     public void start() throws Exception {
         final EventLoopGroup bossGroup = new NioEventLoopGroup();
         final EventLoopGroup workerGroup = new NioEventLoopGroup();
-
-        int processorSize = Runtime.getRuntime().availableProcessors();
-        final EventExecutorGroup eventExecutorGroup = new DefaultEventExecutorGroup(processorSize * 3);
 
         try {
             ServerBootstrap b = new ServerBootstrap();
@@ -67,7 +66,7 @@ public class NettyMessageServer {
             // 绑定端口，开始接收进来的连接
             ChannelFuture f = b.bind(port).sync();
 
-            f.addListener((future) -> log.info("==== 数据采集服务启动成功 ===="));
+            f.addListener((future) -> log.info("====> 数据采集服务启动成功 <===="));
 
 //            Runtime.getRuntime().addShutdownHook(new Thread() {
 //                @Override

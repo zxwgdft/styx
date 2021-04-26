@@ -49,5 +49,7 @@ public class DataApplication implements CommandLineRunner {
         netty.setDaemon(true);
         netty.setName("nettyStart");
         netty.start();
+
+
     }
 }
