@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ProtocolDatagramDecoder extends LengthFieldBasedFrameDecoder {
 
     public ProtocolDatagramDecoder() {
+        // 为防止攻击，可设置更小最大帧长度
         super(0xffff, 0, 2);
     }
 
@@ -25,7 +26,7 @@ public class ProtocolDatagramDecoder extends LengthFieldBasedFrameDecoder {
 
         int length = buf.readableBytes();
         if (length < 24) {
-            throw new ProtocolException("协议错误，数据帧长度不足");
+            throw new ProtocolException("协议错误，数据帧长度不足", null);
         }
 
         // 帧头部分
@@ -54,7 +55,7 @@ public class ProtocolDatagramDecoder extends LengthFieldBasedFrameDecoder {
         }
 
         if (check != toCheck) {
-            throw new ProtocolException("协议错误，校验异常");
+            throw new ProtocolException("协议错误，校验异常", null);
         }
 
         return new Datagram(uid, command, serialNumber, head, data);

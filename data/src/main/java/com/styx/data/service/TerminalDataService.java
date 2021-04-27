@@ -5,7 +5,7 @@ import com.styx.common.utils.TimeUtil;
 import com.styx.data.core.terminal.*;
 import com.styx.data.mapper.TerminalDataDetailMapper;
 import com.styx.data.mapper.TerminalDataMapper;
-import com.styx.data.mapper.TerminalInfoMapper;
+import com.styx.data.mapper.SysMapMapper;
 import com.styx.data.model.TerminalData;
 import com.styx.data.model.TerminalDataDetail;
 import com.styx.data.model.TerminalInfo;
@@ -29,7 +29,7 @@ import java.util.*;
 public class TerminalDataService {
 
     @Autowired
-    private TerminalInfoMapper terminalInfoMapper;
+    private SysMapMapper terminalInfoMapper;
 
     @Autowired
     private TerminalDataMapper terminalDataMapper;

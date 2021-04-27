@@ -1,7 +1,6 @@
 logging:
   level:
-    com.styx: debug
-    io.netty: debug
+    com.styx.core: debug
 
 server:
   port: 19023

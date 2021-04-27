@@ -18,7 +18,7 @@ public class Datagram {
     private byte[] data;
 
     public void setData(byte[] data) {
-        data = data;
+        this.data = data;
     }
 
 }

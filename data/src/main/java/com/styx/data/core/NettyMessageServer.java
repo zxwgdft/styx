@@ -69,7 +69,7 @@ public class NettyMessageServer {
             f.addListener((future) -> log.info("====> 数据采集服务启动成功 <===="));
 
 //            Runtime.getRuntime().addShutdownHook(new Thread() {
-//                @Override
+//                @Over ride
 //                public void run() {
 //                    if (channel != null) {
 //                        channel.close();

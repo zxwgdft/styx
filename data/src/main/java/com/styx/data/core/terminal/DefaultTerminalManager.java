@@ -2,14 +2,16 @@ package com.styx.data.core.terminal;
 
 import com.styx.common.config.GlobalConstants;
 import com.styx.common.exception.SystemException;
+import com.styx.data.mapper.SysMapMapper;
 import com.styx.data.mapper.TerminalAlarmMapper;
-import com.styx.data.mapper.TerminalInfoMapper;
 import com.styx.data.model.TerminalInfo;
 import com.styx.data.service.InternalMonitorService;
 import com.styx.data.service.TerminalDataService;
 import com.styx.data.service.dto.VersionConfig;
 import com.styx.data.service.dto.VersionUpdate;
 import io.netty.util.concurrent.EventExecutorGroup;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,7 +48,7 @@ public class DefaultTerminalManager extends AbstractTerminalManager implements A
     private TerminalAlarmMapper terminalAlarmMapper;
 
     @Autowired
-    private TerminalInfoMapper terminalInfoMapper;
+    private SysMapMapper terminalInfoMapper;
 
     @Autowired
     private TerminalDataService terminalDataService;
@@ -58,24 +60,27 @@ public class DefaultTerminalManager extends AbstractTerminalManager implements A
     // 持久化数据和终端相关维护
     //-------------------------
 
-    private int runTimes = 0;
+
+    public void persistData() {
+        TerminalContainer terminalContainer = getTerminalContainer();
+        if (terminalContainer != null) {
+            terminalDataService.persistData(terminalContainer.getTerminals());
+            log.debug("完成一次终端数据持久化");
+        }
+    }
 
     public void checkTerminal() {
         TerminalContainer terminalContainer = getTerminalContainer();
-
         if (terminalContainer != null) {
             for (Terminal terminal : terminalContainer.getTerminals()) {
                 terminal.checkOnline();
             }
+            log.debug("完成一次所有终端状态");
         }
+    }
 
-        if (++runTimes >= dataPersistInterval) {
-            if (terminalContainer != null) {
-                log.debug("持久化一次终端数据");
-                terminalDataService.persistData(terminalContainer.getTerminals());
-            }
-            runTimes = 0;
-        }
+    public void persistTerminal() {
+        
     }
 
     @Override
@@ -107,5 +112,19 @@ public class DefaultTerminalManager extends AbstractTerminalManager implements A
     @Override
     public List<AlarmStatus> getTerminalAlarmStatus(int terminalId) {
         return terminalAlarmMapper.getAlarmIdOfTerminal(terminalId);
+    }
+
+
+    @Getter
+    @Setter
+    private static class TerminalSnapshot {
+        // 终端ID
+        private int id;
+        // 工作总时间
+        private int wtt;
+        // 最近登录时间
+        private long llt;
+        // 最近工作时间（数据更新时间）
+        private long lwt;
     }
 }
