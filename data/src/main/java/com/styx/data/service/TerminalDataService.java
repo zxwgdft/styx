@@ -5,10 +5,8 @@ import com.styx.common.utils.TimeUtil;
 import com.styx.data.core.terminal.*;
 import com.styx.data.mapper.TerminalDataDetailMapper;
 import com.styx.data.mapper.TerminalDataMapper;
-import com.styx.data.mapper.SysMapMapper;
 import com.styx.data.model.TerminalData;
 import com.styx.data.model.TerminalDataDetail;
-import com.styx.data.model.TerminalInfo;
 import com.styx.data.service.dto.DataRecord;
 import com.styx.data.service.dto.HistoryDataQuery;
 import com.styx.data.service.vo.TerminalAlarms;
@@ -27,9 +25,6 @@ import java.util.*;
 @Slf4j
 @Service
 public class TerminalDataService {
-
-    @Autowired
-    private SysMapMapper terminalInfoMapper;
 
     @Autowired
     private TerminalDataMapper terminalDataMapper;
@@ -58,19 +53,6 @@ public class TerminalDataService {
         for (Terminal terminal : terminals) {
             int tid = terminal.getId();
             try {
-                long _lastLoginTime = terminal.getLastLoginTime();
-                Date lastLoginTime = _lastLoginTime > 0 ? new Date(_lastLoginTime) : null;
-
-                int workTotalMinutes = (int) (terminal.getWorkTotalTime() / 60000);
-                if (terminalInfoMapper.updateInfo(tid, lastLoginTime, workTotalMinutes) == 0) {
-                    TerminalInfo terminalInfo = new TerminalInfo();
-                    terminalInfo.setId(terminal.getId());
-                    terminalInfo.setLastLoginTime(lastLoginTime);
-                    terminalInfo.setWorkTotalTime(workTotalMinutes);
-                    terminalInfo.setUpdateTime(now);
-                    terminalInfoMapper.insert(terminalInfo);
-                }
-
                 boolean isOnline = terminal.isOnline();
 
                 TerminalData terminalData = new TerminalData();

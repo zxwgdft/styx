@@ -31,13 +31,13 @@ public class DataConfiguration {
 
     /**
      * netty提供的线程池，这里主要处理带有sql、rpc等操作的业务，所以等待时间占比较高，
-     * 可以根据占比设置一个较高的线程池数量，这里设置了4倍线程池
+     * 可以根据占比设置一个较高的线程池数量，这里设置了5倍线程池
      * @return
      */
     @Bean
     public EventExecutorGroup getEventExecutorGroup() {
         int processorSize = Runtime.getRuntime().availableProcessors();
-        return new DefaultEventExecutorGroup(processorSize * 4);
+        return new DefaultEventExecutorGroup(processorSize * 5);
     }
 
     //---------------------------------------

@@ -4,7 +4,6 @@ import com.styx.common.utils.StringUtil;
 import com.styx.common.utils.convert.JsonUtil;
 import com.styx.data.core.terminal.Terminal;
 import com.styx.data.core.terminal.TerminalListener;
-import com.styx.data.mapper.SysMapMapper;
 import com.styx.data.mapper.TerminalDataMapper;
 import io.netty.util.concurrent.EventExecutorGroup;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +32,7 @@ public class DataFlowService implements TerminalListener, ApplicationRunner {
     private final static String KEY_FLOW = "snapshot_flow";
 
     @Autowired
-    private SysMapMapper sysMapMapper;
+    private PersistedMapService persistedMapService;
 
     @Autowired
     private TerminalDataMapper terminalDataMapper;
@@ -49,7 +48,7 @@ public class DataFlowService implements TerminalListener, ApplicationRunner {
 
     @PostConstruct
     public void init() throws IOException {
-        String json = sysMapMapper.getText(KEY_FLOW);
+        String json = persistedMapService.getText(KEY_FLOW);
         if (!StringUtil.isEmpty(json)) {
             Map<?, ?> map = JsonUtil.parseJson(json, Map.class);
             for (Map.Entry entry : map.entrySet()) {
@@ -86,8 +85,7 @@ public class DataFlowService implements TerminalListener, ApplicationRunner {
     public void persistTotalFlowData() {
 
         try {
-            String json = JsonUtil.getJson(totalFlowMap);
-            sysMapMapper.putText(KEY_FLOW, json);
+            persistedMapService.putObject(KEY_FLOW, totalFlowMap);
 
             log.debug("持久化累计流量统计");
         } catch (IOException e) {

@@ -2,7 +2,6 @@ package com.styx.data.core.terminal;
 
 import com.googlecode.aviator.AviatorEvaluator;
 import com.styx.common.utils.StringUtil;
-import com.styx.data.model.TerminalInfo;
 import com.styx.data.service.dto.CTerminal;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -100,7 +99,7 @@ public class Terminal {
      * @param alarmTriggeringList 终端报警信息（持久化的历史数据）
      * @param terminalManager     终端管理器
      */
-    public Terminal(CTerminal cTerminal, TerminalInfo terminalInfo, List<AlarmStatus> alarmTriggeringList, TerminalManager terminalManager) {
+    public Terminal(CTerminal cTerminal, TerminalPersistedInfo terminalInfo, List<AlarmStatus> alarmTriggeringList, TerminalManager terminalManager) {
         this.id = cTerminal.getId();
         this.uid = cTerminal.getUid();
         this.variableIds = StringUtil.stringToIntegerSet(cTerminal.getVarIds());
@@ -111,11 +110,8 @@ public class Terminal {
 
         if (terminalInfo != null) {
             this.workTotalTime = terminalInfo.getWorkTotalTime() * 60000L;
-            this.dataUpdateTime = terminalInfo.getUpdateTime().getTime();
-            Date date = terminalInfo.getLastLoginTime();
-            if (date != null) {
-                this.lastLoginTime = date.getTime();
-            }
+            this.dataUpdateTime = terminalInfo.getDataUpdateTime();
+            this.lastLoginTime = terminalInfo.getLastLoginTime();
         }
     }
 

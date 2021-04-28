@@ -1,6 +1,5 @@
 package com.styx.data.core.terminal;
 
-import com.styx.data.model.TerminalInfo;
 import com.styx.data.service.dto.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -114,7 +113,7 @@ public abstract class AbstractTerminalManager implements TerminalManager {
                             terminalList.add(new Terminal(cTerminal, oldTerminal, this));
                         } else {
                             int tid = cTerminal.getId();
-                            TerminalInfo terminalInfo = getTerminalInfo(tid);
+                            TerminalPersistedInfo terminalInfo = getTerminalInfo(tid);
                             List<AlarmStatus> alarmStatuses = getTerminalAlarmStatus(tid);
                             terminalList.add(new Terminal(cTerminal, terminalInfo, alarmStatuses, this));
                         }
@@ -137,7 +136,7 @@ public abstract class AbstractTerminalManager implements TerminalManager {
 
     public abstract VersionConfig getVersionConfig(VersionUpdate versionUpdate);
 
-    public abstract TerminalInfo getTerminalInfo(int terminalId);
+    public abstract TerminalPersistedInfo getTerminalInfo(int terminalId);
 
     public abstract List<AlarmStatus> getTerminalAlarmStatus(int terminalId);
 

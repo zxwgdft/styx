@@ -90,9 +90,9 @@ public class DatagramHandler extends ChannelInboundHandlerAdapter implements App
 
         if (evt instanceof IdleStateEvent) {
             ctx.close();
+        } else {
+            ctx.fireUserEventTriggered(evt);
         }
-
-        ctx.fireUserEventTriggered(evt);
     }
 
     @Override
