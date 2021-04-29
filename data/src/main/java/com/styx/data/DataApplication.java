@@ -32,24 +32,17 @@ public class DataApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        //TODO 可以在这里读取参数覆盖配置文件中port
-
-        Thread netty = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    log.info("启动数据采集服务...");
-                    nettyMessageServer.start();
-                } catch (Exception e) {
-                    log.error("启动数据采集服务异常", e);
-                }
+        Thread netty = new Thread(() -> {
+            try {
+                log.info("启动数据采集服务...");
+                nettyMessageServer.start();
+            } catch (Exception e) {
+                log.error("启动数据采集服务异常", e);
             }
         });
 
         netty.setDaemon(true);
         netty.setName("nettyStart");
         netty.start();
-
-
     }
 }

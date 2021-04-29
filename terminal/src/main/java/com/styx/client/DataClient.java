@@ -39,11 +39,13 @@ public class DataClient implements TimerTask {
     private String host;
     private int port;
     private String uid;
+    private int interval;
 
-    public DataClient(String host, int port, String uid) {
+    public DataClient(String host, int port, String uid, int interval) {
         this.host = host;
         this.port = port;
         this.uid = uid;
+        this.interval = interval;
     }
 
     public void start() {
@@ -54,7 +56,7 @@ public class DataClient implements TimerTask {
         bootstrap.channel(NioSocketChannel.class);
         bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
 
-        dataMessageSender = new DataMessageSender(this, uid);
+        dataMessageSender = new DataMessageSender(this, uid, interval * 1000);
 
         bootstrap.handler(new ChannelInitializer<SocketChannel>() {
             @Override
@@ -140,8 +142,13 @@ public class DataClient implements TimerTask {
             String host = option.host;
             int port = Integer.valueOf(option.port);
 
+            int interval = -1;
+            if (!StringUtil.isNullOrEmpty(option.interval)) {
+                interval = Integer.valueOf(option.interval);
+            }
+
             for (String uid : option.terminals.split(",")) {
-                new DataClient(host, port, uid).start();
+                new DataClient(host, port, uid, interval).start();
             }
 
         } catch (CmdLineException e) {
@@ -164,7 +171,8 @@ public class DataClient implements TimerTask {
         private String terminals;
         @Option(name = "-vp", usage = "需要发送的变量描述文件，如果不填则使用默认")
         private String variablePath;
-
+        @Option(name = "-interval", required = false, usage = "数据上传间隔（秒）默认10秒")
+        private String interval;
         @Option(name = "-help", usage = "帮助")
         private boolean help;
 

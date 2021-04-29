@@ -36,7 +36,11 @@ public class DataMessageSender extends ChannelInboundHandlerAdapter implements R
     private int frameSize = headSize + dataSize + 1;
 
 
-    public DataMessageSender(DataClient client, String terminalUid) {
+    public DataMessageSender(DataClient client, String terminalUid, int interval) {
+        if(interval > 0) {
+            this.interval = interval;
+        }
+
         this.client = client;
         datagram = new byte[frameSize];
 
@@ -57,6 +61,14 @@ public class DataMessageSender extends ChannelInboundHandlerAdapter implements R
         sendDataThread = new Thread(this);
         sendDataThread.setName("send-data");
         sendDataThread.setDaemon(true);
+
+        long randomSleep = new Random().nextInt(interval);
+
+        try {
+            Thread.sleep(randomSleep);
+        } catch (InterruptedException e) {
+        }
+
         sendDataThread.start();
     }
 
@@ -141,7 +153,6 @@ public class DataMessageSender extends ChannelInboundHandlerAdapter implements R
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
             } else {
                 try {
                     Thread.sleep(1000);
