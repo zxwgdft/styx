@@ -12,6 +12,8 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.util.HashMap;
+
 
 @Slf4j
 @SpringBootApplication

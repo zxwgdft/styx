@@ -8,6 +8,7 @@ import com.styx.common.utils.reflect.EntityField;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 
@@ -145,8 +146,8 @@ public class DefaultReadColumn extends ReadColumn {
         entityField.setValue(object, value);
     }
 
-    private final static Map<Class<? extends ReadPropertyConvert<?>>, ReadPropertyConvert<?>> convert_cache = new HashMap<>();
-    private final static Map<Class<? extends PropertyValidate>, PropertyValidate> validate_cache = new HashMap<>();
+    private final static Map<Class<? extends ReadPropertyConvert<?>>, ReadPropertyConvert<?>> convert_cache = new ConcurrentHashMap<>();
+    private final static Map<Class<? extends PropertyValidate>, PropertyValidate> validate_cache = new ConcurrentHashMap<>();
 
     /**
      * 创建列，暂时不处理实例中带有子实例情况，即列中列情况

@@ -7,10 +7,8 @@ import com.styx.common.utils.reflect.EntityField;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
@@ -22,7 +20,7 @@ import java.util.List;
 @Slf4j
 public class QueryWrapperHelper {
 
-    private static HashMap<Class<?>, Builder> buildCache = new HashMap<Class<?>, Builder>();
+    private static Map<Class<?>, Builder> buildCache = new ConcurrentHashMap<>();
 
     /**
      * 根据注解构建查询条件

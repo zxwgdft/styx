@@ -12,7 +12,7 @@ public class RedisDataCacheWrapper<T> implements DataCacheWrapper<T> {
 
     private RedisTemplate<String, String> redisTemplate;
     private DataCache<T> source;
-    private long version = -1;
+    private volatile long version = -1;
     private String cacheKey;
     private T data;
 

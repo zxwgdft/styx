@@ -11,7 +11,7 @@ public class MemoryDataCacheWrapper<T> implements DataCacheWrapper<T> {
     private DataCache<T> source;
     private T data;
     private long version = 0;
-    private boolean loaded = false;
+    private volatile boolean loaded = false;
 
     public MemoryDataCacheWrapper(DataCache<T> dataCache) {
         source = dataCache;

@@ -5,6 +5,7 @@ import com.styx.common.utils.reflect.Entity;
 import com.styx.common.utils.reflect.EntityField;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 
@@ -122,6 +123,6 @@ public class DefaultWriteRow extends WriteRow {
 		return row;
 	}
 
-	private static Map<Class<? extends ValueFormator>, ValueFormator> formators = new HashMap<>();
+	private static Map<Class<? extends ValueFormator>, ValueFormator> formators = new ConcurrentHashMap<>();
 
 }
