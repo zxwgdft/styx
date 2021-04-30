@@ -55,6 +55,7 @@ public class DatagramHandler extends ChannelInboundHandlerAdapter implements App
                         byte[] responseData = action.doAction(terminal, datagram);
                         datagram.setData(responseData);
                         ctx.write(datagram);
+                        ctx.flush();
                     } catch (Exception e) {
                         throw new ProtocolException("执行命令请求异常", datagram, e);
                     }

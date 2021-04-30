@@ -47,10 +47,10 @@ public class NettyMessageServer {
                             ChannelPipeline pipeline = ch.pipeline();
 
                             pipeline.addLast(new ProtocolDatagramDecoder());
-                            // 超时设置
-                            pipeline.addLast(new IdleStateHandler(0, 0, 60, TimeUnit.SECONDS));
                             // 协议出站处理器
                             pipeline.addLast(new ProtocolDatagramEncoder());
+                            // 超时设置
+                            pipeline.addLast(new IdleStateHandler(0, 0, 60, TimeUnit.SECONDS));
                             // 协议处理器，是否开启EventExecutorGroup，
                             // 如果需要开启业务线程，并且需要写操作，建议使用netty自带EventExecutorGroup
                             // 如果不需要写操作，可使用其他线程池作为业务线程池，并自行优化
