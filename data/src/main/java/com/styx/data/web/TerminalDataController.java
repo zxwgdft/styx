@@ -1,8 +1,6 @@
 package com.styx.data.web;
 
-import com.styx.common.utils.StringUtil;
 import com.styx.data.core.terminal.AlarmStatus;
-import com.styx.data.core.terminal.TerminalManager;
 import com.styx.data.service.TerminalDataService;
 import com.styx.data.service.dto.DataRecord;
 import com.styx.data.service.dto.HistoryDataQuery;
@@ -15,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author TontoZhou
@@ -27,20 +24,12 @@ import java.util.Set;
 public class TerminalDataController {
 
     @Autowired
-    private TerminalManager terminalManager;
-
-    @Autowired
     private TerminalDataService terminalDataService;
 
     @ApiOperation("获取终端简要实时数据")
     @GetMapping("/get/real/simple")
-    public List<TerminalSimpleRealData> getTerminalSimpleDataRealtime(@RequestParam(required = false) String terminalIds) {
-        if (terminalIds != null && terminalIds.length() > 0) {
-            Set<Integer> terminalIdSet = StringUtil.stringToIntegerSet(terminalIds);
-            return terminalDataService.getSimpleRealData(terminalIdSet);
-        } else {
-            return terminalDataService.getSimpleRealData();
-        }
+    public List<TerminalSimpleRealData> getTerminalSimpleDataRealtime() {
+        return terminalDataService.getSimpleRealData();
     }
 
     @ApiOperation("获取终端实时数据")

@@ -95,26 +95,6 @@ public class TerminalDataService {
 
 
     /**
-     * 获取指定终端简单的实时数据
-     */
-    public List<TerminalSimpleRealData> getSimpleRealData(Set<Integer> terminalIds) {
-        if (terminalIds != null && terminalIds.size() > 0) {
-            TerminalContainer terminalContainer = terminalManager.getTerminalContainer();
-            if (terminalContainer != null) {
-                List<TerminalSimpleRealData> data = new ArrayList<>(terminalIds.size());
-                for (Integer terminalId : terminalIds) {
-                    Terminal terminal = terminalContainer.getTerminal(terminalId);
-                    if (terminal != null) {
-                        data.add(getSimpleRealData(terminal));
-                    }
-                }
-                return data;
-            }
-        }
-        return Collections.emptyList();
-    }
-
-    /**
      * 获取所有终端简单的实时数据
      */
     public List<TerminalSimpleRealData> getSimpleRealData() {
