@@ -83,7 +83,7 @@ public class VersionConfigService {
     }
 
     private List<CTerminal> readTerminals(String serverNode) {
-        return configTerminalMapper.findTerminalConfigList(serverNode);
+        return configTerminalMapper.findEnabledTerminalConfigList(serverNode);
     }
 
     private List<CAlarm> readAlarms(String serverNode) {

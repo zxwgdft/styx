@@ -4,7 +4,7 @@ import com.styx.common.service.PageResult;
 import com.styx.monitor.model.config.ConfigStation;
 import com.styx.monitor.service.config.StationService;
 import com.styx.monitor.service.config.dto.StationQuery;
-import com.styx.monitor.service.config.vo.SimpleStation;
+import com.styx.monitor.service.config.vo.SimpleStationVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class StationController {
 
     @ApiOperation("站点列表（简单）")
     @PostMapping("/find/all/simple")
-    public List<SimpleStation> findSimpleList(@RequestBody StationQuery query) {
+    public List<SimpleStationVO> findSimpleList(@RequestBody StationQuery query) {
         return stationService.findSimpleList(query);
     }
 

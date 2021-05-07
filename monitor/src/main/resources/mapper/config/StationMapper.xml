@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.styx.monitor.mapper.config.ConfigStationMapper">
 
-    <select id="findSimpleList" resultType="com.styx.monitor.service.config.vo.SimpleStation">
+    <select id="findSimpleList" resultType="com.styx.monitor.service.config.vo.SimpleStationVO">
         SELECT id, `name`, district_code districtCode, pinyin_name pinyinName
         FROM config_station WHERE deleted = 0
         <if test="query.name!=null and query.name!=''">

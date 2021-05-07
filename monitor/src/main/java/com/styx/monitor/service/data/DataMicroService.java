@@ -28,12 +28,8 @@ public class DataMicroService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public TerminalSimpleRealData[] getTerminalSimpleDataRealtime(String node, String terminalIds) {
+    public TerminalSimpleRealData[] getTerminalSimpleDataRealtime(String node) {
         String url = service_prefix + node + "/terminal/data/get/real/simple";
-        if (StringUtil.isNotEmpty(terminalIds)) {
-            url += "?terminalIds=" + terminalIds;
-        }
-
         try {
             return restTemplate.getForEntity(url, TerminalSimpleRealData[].class).getBody();
         } catch (Exception e) {

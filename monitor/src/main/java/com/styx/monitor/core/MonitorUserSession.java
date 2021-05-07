@@ -19,8 +19,8 @@ public class MonitorUserSession implements Serializable {
     private String userId;
     private String userName;
     private int userType;
-    private int[] stations;
-    private int[] districts;
+    private Integer[] stations;
+    private Integer[] districts;
     private String[] roleIds;
 
     private boolean isSystemAdmin = false;

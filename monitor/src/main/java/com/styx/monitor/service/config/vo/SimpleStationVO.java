@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @ApiModel(description = "简单站点信息")
-public class SimpleStation {
+public class SimpleStationVO {
 
     @ApiModelProperty("站点ID")
     private Integer id;

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -43,18 +44,18 @@ public class PermissionUtil {
             } else if (userType == OrgUser.USER_TYPE_PERSONNEL) {
                 param.setHasPermission(false);
             } else if (userType == OrgUser.USER_TYPE_STATION) {
-                int[] stations = userSession.getStations();
+                Integer[] stations = userSession.getStations();
                 if (stations != null && stations.length > 0) {
                     if (stations.length == 1) {
                         param.setStationId(stations[0]);
                     } else {
-                        param.setStationIds(toIntegerList(stations));
+                        param.setStationIds(Arrays.asList(stations));
                     }
                 } else {
                     param.setHasPermission(false);
                 }
             } else if (userType == OrgUser.USER_TYPE_DISTRICT) {
-                int[] districtCodes = userSession.getDistricts();
+                Integer[] districtCodes = userSession.getDistricts();
                 if (districtCodes != null && districtCodes.length > 0) {
                     if (districtCodes.length == 1) {
                         int code = districtCodes[0];
@@ -141,14 +142,6 @@ public class PermissionUtil {
             param.setHasAll(true);
         }
         return param;
-    }
-
-    private static List<Integer> toIntegerList(int[] intArray) {
-        List<Integer> list = new ArrayList<>(intArray.length);
-        for (int i : intArray) {
-            list.add(i);
-        }
-        return list;
     }
 
     public static boolean hasPermission(String permissionCode) {

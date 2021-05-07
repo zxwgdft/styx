@@ -97,11 +97,11 @@ public class MonitorUserRealm extends AuthorizingRealm {
         return userSession;
     }
 
-    private int[] convert(String idStr) {
-        int[] ids = null;
+    private Integer[] convert(String idStr) {
+        Integer[] ids = null;
         if (StringUtil.isNotEmpty(idStr)) {
             String[] ss = idStr.split(",");
-            ids = new int[ss.length];
+            ids = new Integer[ss.length];
             for (int i = 0; i < ss.length; i++) {
                 ids[i] = Integer.valueOf(ss[i]);
             }

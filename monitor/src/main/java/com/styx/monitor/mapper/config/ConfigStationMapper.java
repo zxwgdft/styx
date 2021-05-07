@@ -4,7 +4,7 @@ import com.styx.common.service.mybatis.CommonMapper;
 import com.styx.monitor.core.security.DataPermissionParam;
 import com.styx.monitor.model.config.ConfigStation;
 import com.styx.monitor.service.config.dto.StationQuery;
-import com.styx.monitor.service.config.vo.SimpleStation;
+import com.styx.monitor.service.config.vo.SimpleStationVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 
@@ -21,7 +21,7 @@ public interface ConfigStationMapper extends CommonMapper<ConfigStation> {
     @Update("UPDATE config_station SET order_no = #{orderNo} WHERE id = #{id}")
     int updateStationOrderNo(@Param("id") int stationId, @Param("orderNo") int orderNo);
 
-    List<SimpleStation> findSimpleList(@Param("query") StationQuery query, @Param("permission") DataPermissionParam permission);
+    List<SimpleStationVO> findSimpleList(@Param("query") StationQuery query, @Param("permission") DataPermissionParam permission);
 
     List<ConfigStation> findList(@Param("query") StationQuery query, @Param("permission") DataPermissionParam permission);
 

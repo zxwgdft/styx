@@ -58,10 +58,6 @@ public class ShiroWebSessionManager extends DefaultWebSessionManager {
 
         Serializable sessionId = getSessionId(sessionKey);
         if (sessionId == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Unable to resolve session ID from SessionKey [{}].  Returning null to indicate a session could not be found.", sessionKey);
-            }
-
             return null;
         }
 

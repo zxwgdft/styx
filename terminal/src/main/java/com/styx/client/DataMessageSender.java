@@ -112,7 +112,6 @@ public class DataMessageSender extends ChannelInboundHandlerAdapter implements R
         client.reconnect(delay);
     }
 
-
     public void run() {
         while (true) {
             // 设置时间

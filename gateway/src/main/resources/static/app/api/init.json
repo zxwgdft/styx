@@ -10,6 +10,20 @@
   },
   "menuInfo": [
     {
+      "title": "数据监控",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "child": [
+        {
+          "title": "终端监控",
+          "href": "monitor/terminal-index.html",
+          "icon": "fa fa-dot-circle-o",
+          "target": "_self"
+        }
+      ]
+    },
+    {
       "title": "配置管理",
       "icon": "fa fa-address-book",
       "href": "",

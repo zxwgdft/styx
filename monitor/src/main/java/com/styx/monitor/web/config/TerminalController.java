@@ -3,6 +3,7 @@ package com.styx.monitor.web.config;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.styx.monitor.model.config.ConfigTerminal;
 import com.styx.monitor.service.config.TerminalService;
+import com.styx.monitor.service.config.vo.StationTerminalVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,5 +31,8 @@ public class TerminalController {
     public List<ConfigTerminal> findByStation(@RequestParam Integer id) {
         return terminalService.findList(new LambdaQueryWrapper<ConfigTerminal>().eq(ConfigTerminal::getStationId, id));
     }
+
+
+
 
 }
