@@ -24,7 +24,7 @@
     <select id="getStationTerminalDetail" resultType="com.styx.monitor.service.config.vo.TerminalDetailVO">
         SELECT b.id, b.name, b.`type`, a.id stationId, a.name stationName, b.variable_ids variableIds, b.alarm_ids alarmIds
         FROM config_station a INNER JOIN config_terminal b ON b.station_id = a.id
-        WHERE a.server_node = #{serverNode} AND b.enabled = 1 AND a.enabled = 1
+        WHERE b.id = #{terminalId} AND b.enabled = 1 AND a.enabled = 1
     </select>
 
 </mapper>

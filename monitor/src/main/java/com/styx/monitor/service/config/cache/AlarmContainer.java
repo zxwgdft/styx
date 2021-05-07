@@ -1,7 +1,5 @@
 package com.styx.monitor.service.config.cache;
 
-import com.styx.monitor.model.config.ConfigAlarm;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,25 +10,25 @@ import java.util.Map;
  */
 public class AlarmContainer {
 
-    private Map<Integer, ConfigAlarm> alarmMap;
+    private Map<Integer, SimpleAlarm> alarmMap;
 
-    public AlarmContainer(List<ConfigAlarm> alarms) {
+    public AlarmContainer(List<SimpleAlarm> alarms) {
         if (alarms == null) {
             alarmMap = new HashMap<>();
         } else {
             alarmMap = new HashMap<>((int) (alarms.size() / 0.75 + 1));
-            for (ConfigAlarm alarm : alarms) {
+            for (SimpleAlarm alarm : alarms) {
                 alarmMap.put(alarm.getId(), alarm);
             }
         }
     }
 
-    public ConfigAlarm getAlarm(int alarmId) {
+    public SimpleAlarm getAlarm(int alarmId) {
         return alarmMap.get(alarmId);
     }
 
     public String getAlarmName(int alarmId) {
-        ConfigAlarm alarm = alarmMap.get(alarmId);
+        SimpleAlarm alarm = alarmMap.get(alarmId);
         return alarm == null ? null : alarm.getName();
     }
 }

@@ -19,7 +19,6 @@ import java.util.HashMap;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
-@EnableScheduling
 @MapperScan("com.styx.data.mapper")
 public class DataApplication implements CommandLineRunner {
 

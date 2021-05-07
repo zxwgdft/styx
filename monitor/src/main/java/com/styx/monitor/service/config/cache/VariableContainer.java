@@ -1,8 +1,5 @@
 package com.styx.monitor.service.config.cache;
 
-import com.styx.monitor.model.config.ConfigVariable;
-import com.styx.monitor.model.config.ConfigVariable;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,25 +10,25 @@ import java.util.Map;
  */
 public class VariableContainer {
 
-    private Map<Integer, ConfigVariable> variableMap;
+    private Map<Integer, SimpleVariable> variableMap;
 
-    public VariableContainer(List<ConfigVariable> variables) {
+    public VariableContainer(List<SimpleVariable> variables) {
         if (variables == null) {
             variableMap = new HashMap<>();
         } else {
             variableMap = new HashMap<>((int) (variables.size() / 0.75 + 1));
-            for (ConfigVariable variable : variables) {
+            for (SimpleVariable variable : variables) {
                 variableMap.put(variable.getId(), variable);
             }
         }
     }
 
-    public ConfigVariable getVariable(int variableId) {
+    public SimpleVariable getVariable(int variableId) {
         return variableMap.get(variableId);
     }
 
     public String getVariableName(int variableId) {
-        ConfigVariable variable = variableMap.get(variableId);
+        SimpleVariable variable = variableMap.get(variableId);
         return variable == null ? null : variable.getName();
     }
 }

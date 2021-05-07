@@ -2,7 +2,9 @@ package com.styx.monitor.service.config;
 
 import com.styx.common.cache.DataCacheManager;
 import com.styx.monitor.core.MonitorServiceSupport;
+import com.styx.monitor.mapper.config.ConfigVariableMapper;
 import com.styx.monitor.model.config.ConfigVariable;
+import com.styx.monitor.service.config.cache.SimpleVariable;
 import com.styx.monitor.service.config.cache.VariableContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,16 +17,19 @@ import java.util.List;
 public class VariableService extends MonitorServiceSupport<ConfigVariable> {
 
     @Autowired
+    private ConfigVariableMapper variableMapper;
+
+    @Autowired
     private DataCacheManager cacheManager;
 
-    public List<ConfigVariable> getEnabledVariables(String variableIds) {
+    public List<SimpleVariable> getEnabledVariables(String variableIds) {
         if (variableIds != null && variableIds.length() > 0) {
             String[] ids = variableIds.split(",");
             VariableContainer variableContainer = cacheManager.getData(VariableContainer.class);
             if (variableContainer != null) {
-                List<ConfigVariable> variables = new ArrayList<>(ids.length);
+                List<SimpleVariable> variables = new ArrayList<>(ids.length);
                 for (String id : ids) {
-                    ConfigVariable variable = variableContainer.getVariable(Integer.valueOf(id));
+                    SimpleVariable variable = variableContainer.getVariable(Integer.valueOf(id));
                     if (variable != null && variable.getEnabled()) {
                         variables.add(variable);
                     }
@@ -36,4 +41,7 @@ public class VariableService extends MonitorServiceSupport<ConfigVariable> {
     }
 
 
+    public List<SimpleVariable> findEnabledSimpleVariable() {
+        return variableMapper.findEnabledSimpleVariable();
+    }
 }

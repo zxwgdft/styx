@@ -30,8 +30,8 @@ public class TerminalDataController {
         return terminalService.getEnabledStationTerminalByNode(node);
     }
 
-    @ApiOperation("终端相信信息")
-    @PostMapping("/get/terminal/detail")
+    @ApiOperation("终端详细信息")
+    @GetMapping("/get/terminal/detail")
     public TerminalDetailVO getTerminalDetail(@RequestParam int terminalId) {
         return terminalService.getTerminalDetail(terminalId);
     }

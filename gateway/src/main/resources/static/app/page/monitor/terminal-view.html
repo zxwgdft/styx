@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Monitor System</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+</head>
+
+
+<style>
+    .backlog-body {
+        display: block;
+        padding: 10px 15px;
+        background-color: #f8f8f8;
+        color: #999;
+        border-radius: 2px;
+        transition: all .3s;
+        -webkit-transition: all .3s;
+    }
+
+    .backlog-body h3 {
+        padding-bottom: 10px;
+        font-size: 12px;
+    }
+
+    .title {
+        float: left;
+        display: block;
+        padding: 9px 15px;
+        font-weight: 400;
+        line-height: 20px;
+        text-align: right;
+    }
+
+
+</style>
+
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <ul id="header" class="layui-row layui-col-space10 layui-this">
+
+        </ul>
+
+        <ul id="body" class="layui-row layui-col-space10 layui-this">
+
+        </ul>
+
+    </div>
+
+
+</div>
+<script src="../../lib/layui/layui-2.6.3.min.js" charset="utf-8"></script>
+<script src="../../js/common.js" charset="utf-8"></script>
+<script>
+    var terminalId, terminalDetail, variables;
+
+    layui.use(['layer'], function () {
+        var $ = layui.jquery;
+        initCommon(layui);
+        terminalId = $.getUrlVariable("id");
+        $.getAjax("/monitor/data/get/terminal/detail?terminalId=" + terminalId, function (res) {
+            terminalDetail = res;
+            $("#header").append('<li class="layui-col-md3"><label class="title">终端名称：' + terminalDetail.name + '</label></li>');
+            $("#header").append('<li class="layui-col-md3"><label class="title">站点名称：' + terminalDetail.stationName + '</label></li>');
+            variables = terminalDetail.variables || [];
+            loadData();
+        });
+    });
+
+    function loadData() {
+        layui.jquery.getAjax("/monitor/data/get/real/detail?terminalId=" + terminalId, function (data) {
+            var container = $("#body");
+            container.append('<li class="layui-col-md3"><label class="title">终端工作状态：' + (data.isOnline ? '在线' : '离线') + '</label></li>');
+            container.append('<li class="layui-col-md3"><label class="title">最近登录时间：' + data.lastLoginTime + '</label></li>');
+            container.append('<li class="layui-col-md3"><label class="title">数据更新时间：' + data.lastWorkTime + '</label></li>');
+            container.append('<li class="layui-col-md3"><label class="title">累计工作时间：' + data.workTotalTime + '</label></li>');
+
+            var valueMap = data.variableValues;
+            variables.forEach(function (variable) {
+                var val = valueMap[variable.id];
+                var content = '';
+                if (val || val === 0) {
+                    content = '-';
+                } else {
+                    content = val + variable.unit;
+                }
+
+                container.append('<li class="layui-col-md3"><label class="title">' + variable.name + '：' + content + '</label></li>');
+            });
+
+        });
+    }
+
+
+</script>
+
+</body>
+</html>

@@ -1,7 +1,7 @@
 package com.styx.monitor.service.config.vo;
 
-import com.styx.monitor.model.config.ConfigAlarm;
-import com.styx.monitor.model.config.ConfigVariable;
+import com.styx.monitor.service.config.cache.SimpleAlarm;
+import com.styx.monitor.service.config.cache.SimpleVariable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -36,8 +36,8 @@ public class TerminalDetailVO {
     private String alarmIds;
 
     @ApiModelProperty("变量列表")
-    private List<ConfigVariable> variables;
+    private List<SimpleVariable> variables;
     @ApiModelProperty("报警列表")
-    private List<ConfigAlarm> alarms;
+    private List<SimpleAlarm> alarms;
 
 }

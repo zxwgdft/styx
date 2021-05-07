@@ -24,7 +24,7 @@ public class VariableDataCache implements DataCache<VariableContainer> {
 
     @Override
     public VariableContainer loadData(long version) {
-        List<ConfigVariable> variables = variableService.findList();
+        List<SimpleVariable> variables = variableService.findEnabledSimpleVariable();
         return new VariableContainer(variables);
     }
 }

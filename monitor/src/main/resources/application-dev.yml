@@ -1,6 +1,6 @@
-logging:
-  level:
-    com.styx: debug
+#logging:
+#  level:
+#    com.styx: debug
 
 server:
   port: 19021

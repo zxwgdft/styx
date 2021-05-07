@@ -24,7 +24,7 @@ public class AlarmDataCache implements DataCache<AlarmContainer> {
 
     @Override
     public AlarmContainer loadData(long version) {
-        List<ConfigAlarm> alarms = alarmService.findList();
+        List<SimpleAlarm> alarms = alarmService.findEnableSimpleAlarm();
         return new AlarmContainer(alarms);
     }
 }
