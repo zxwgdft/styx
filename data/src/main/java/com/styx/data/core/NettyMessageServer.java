@@ -66,7 +66,7 @@ public class NettyMessageServer {
             // 绑定端口，开始接收进来的连接
             ChannelFuture f = b.bind(port).sync();
 
-            f.addListener((future) -> log.info("====> 数据采集服务启动成功 <===="));
+            f.addListener((future) -> log.info("数据采集服务启动成功，端口号:{}", port));
 
 //            Runtime.getRuntime().addShutdownHook(new Thread() {
 //                @Over ride

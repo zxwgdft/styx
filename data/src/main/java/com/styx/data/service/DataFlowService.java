@@ -52,9 +52,9 @@ public class DataFlowService implements TerminalListener, ApplicationRunner {
         if (!StringUtil.isEmpty(json)) {
             Map<?, ?> map = JsonUtil.parseJson(json, Map.class);
             for (Map.Entry entry : map.entrySet()) {
-                Number key = (Number) entry.getKey();
+                String key = (String) entry.getKey();
                 Number value = (Number) entry.getValue();
-                totalFlowMap.put(key.intValue(), value.floatValue());
+                totalFlowMap.put(Integer.valueOf(key), value.floatValue());
             }
         }
     }

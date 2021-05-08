@@ -130,7 +130,7 @@ public abstract class AbstractTerminalManager implements TerminalManager {
             int old = this.index;
             this.index = nextIndex;
         } catch (Exception e) {
-            log.error("尝试加载配置失败:" + e.getMessage());
+            log.error("尝试加载配置失败！", e);
         }
     }
 
