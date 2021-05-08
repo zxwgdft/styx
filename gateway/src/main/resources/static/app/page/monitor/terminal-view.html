@@ -12,21 +12,6 @@
 
 
 <style>
-    .backlog-body {
-        display: block;
-        padding: 10px 15px;
-        background-color: #f8f8f8;
-        color: #999;
-        border-radius: 2px;
-        transition: all .3s;
-        -webkit-transition: all .3s;
-    }
-
-    .backlog-body h3 {
-        padding-bottom: 10px;
-        font-size: 12px;
-    }
-
     .title {
         float: left;
         display: block;
@@ -36,28 +21,56 @@
         text-align: right;
     }
 
-
+    .value {
+        float: left;
+        display: block;
+        padding-top: 9px;
+        padding-left: 0px;
+        font-weight: 400;
+        line-height: 20px;
+        color: #888;
+        text-align: right;
+    }
 </style>
 
 <body>
 <div class="layuimini-container">
-    <div class="layuimini-main">
-        <ul id="header" class="layui-row layui-col-space10 layui-this">
+    <fieldset class="layui-elem-field">
+        <legend>基本信息</legend>
+        <ul id="part1" class="layui-row layui-col-space10 layui-this">
 
         </ul>
 
-        <ul id="body" class="layui-row layui-col-space10 layui-this">
+        <ul id="part2" class="layui-row layui-col-space10 layui-this">
 
         </ul>
+    </fieldset>
 
-    </div>
+    <fieldset class="layui-elem-field">
+        <legend>数值数据</legend>
+        <ul id="part3" class="layui-row layui-col-space10 layui-this">
 
+        </ul>
+    </fieldset>
+
+    <fieldset class="layui-elem-field">
+        <legend>开关数据</legend>
+        <ul id="part4" class="layui-row layui-col-space10 layui-this">
+
+        </ul>
+    </fieldset>
+    <fieldset class="layui-elem-field">
+        <legend>异常数据</legend>
+        <ul id="part5" class="layui-row layui-col-space10 layui-this">
+
+        </ul>
+    </fieldset>
 
 </div>
 <script src="../../lib/layui/layui-2.6.3.min.js" charset="utf-8"></script>
 <script src="../../js/common.js" charset="utf-8"></script>
 <script>
-    var terminalId, terminalDetail, variables;
+    var terminalId, terminalDetail, variables1, variables2, variables3;
 
     layui.use(['layer'], function () {
         var $ = layui.jquery;
@@ -65,34 +78,91 @@
         terminalId = $.getUrlVariable("id");
         $.getAjax("/monitor/data/get/terminal/detail?terminalId=" + terminalId, function (res) {
             terminalDetail = res;
-            $("#header").append('<li class="layui-col-md3"><label class="title">终端名称：' + terminalDetail.name + '</label></li>');
-            $("#header").append('<li class="layui-col-md3"><label class="title">站点名称：' + terminalDetail.stationName + '</label></li>');
-            variables = terminalDetail.variables || [];
+            var container = $("#part1");
+            container.append('<li class="layui-col-md3"><span class="title">终端名称：</span><span class="value">' + terminalDetail.name + '</span></li>');
+            container.append('<li class="layui-col-md3"><span class="title">站点名称：</span><span class="value">' + terminalDetail.stationName + '</span></li>');
+
+            variables1 = [];
+            variables2 = [];
+            variables3 = [];
+
+            terminalDetail.variables && terminalDetail.variables.forEach(function (v) {
+                var t = v.type;
+                if (t === 0) {
+                    variables2.push(v);
+                } else if (t === 3) {
+                    variables3.push(v);
+                } else {
+                    variables1.push(v);
+                }
+            })
+
             loadData();
         });
     });
 
     function loadData() {
-        layui.jquery.getAjax("/monitor/data/get/real/detail?terminalId=" + terminalId, function (data) {
-            var container = $("#body");
-            container.append('<li class="layui-col-md3"><label class="title">终端工作状态：' + (data.isOnline ? '在线' : '离线') + '</label></li>');
-            container.append('<li class="layui-col-md3"><label class="title">最近登录时间：' + data.lastLoginTime + '</label></li>');
-            container.append('<li class="layui-col-md3"><label class="title">数据更新时间：' + data.lastWorkTime + '</label></li>');
-            container.append('<li class="layui-col-md3"><label class="title">累计工作时间：' + data.workTotalTime + '</label></li>');
+        var $ = layui.jquery;
+        $.getAjax("/monitor/data/get/real/detail?terminalId=" + terminalId, function (data) {
+
+
+            var html = "";
+            html += '<li class="layui-col-md3"><span class="title">终端工作状态：</span><span class="value">' + (data.online ? '在线' : '离线') + '</span></li>';
+            html += '<li class="layui-col-md3"><span class="title">最近登录时间：</span><span class="value">' + layui.util.toDateString(data.lastLoginTime) + '</span></li>';
+            html += '<li class="layui-col-md3"><span class="title">数据更新时间：</span><span class="value">' + layui.util.toDateString(data.lastWorkTime) + '</span></li>';
+            var t = Math.floor(data.workTotalTime / 3600000) + "小时";
+            t += Math.floor(data.workTotalTime % 3600000 / 60000) + "分钟";
+            html += '<li class="layui-col-md3"><span class="title">累计工作时间：</span><span class="value">' + t + '</span></li>';
+            $("#part2").html(html);
+
 
             var valueMap = data.variableValues;
-            variables.forEach(function (variable) {
+
+            html = "";
+            variables1.forEach(function (variable) {
                 var val = valueMap[variable.id];
                 var content = '';
                 if (val || val === 0) {
-                    content = '-';
-                } else {
                     content = val + variable.unit;
+                } else {
+                    content = '-';
                 }
+                html += '<li class="layui-col-md3"><span class="title">' + variable.name + '：</span><span class="value">' + content + '</span></li>';
+            });
+            $("#part3").html(html);
 
-                container.append('<li class="layui-col-md3"><label class="title">' + variable.name + '：' + content + '</label></li>');
+
+            html = "";
+            variables2.forEach(function (variable) {
+                var val = valueMap[variable.id];
+                var content = '';
+                if (val || val === 0) {
+                    content = val === 1 ? '开' : '关';
+                } else {
+                    content = '-';
+                }
+                html += '<li class="layui-col-md3"><span class="title">' + variable.name + '：</span><span class="value">' + content + '</span></li>';
+            });
+            $("#part4").html(html);
+
+
+            html = "";
+            variables3.forEach(function (variable) {
+                var val = valueMap[variable.id];
+                var content = '';
+                if (val == 1) {
+                    html += '<li class="layui-col-md3"><span class="layui-bg-red">' + variable.name + '</span></li>';
+                }
             });
 
+            if (html == "") {
+                html = '<h3 style="text-align: center;padding-bottom: 20px; padding-top:5px">无异常数据</h3>';
+            }
+
+            $("#part5").html(html);
+
+
+            setTimeout(loadData, 5000);
         });
     }
 
