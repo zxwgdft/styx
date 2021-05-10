@@ -5,6 +5,7 @@ import com.styx.monitor.service.config.vo.StationTerminalVO;
 import com.styx.monitor.service.config.vo.TerminalDetailVO;
 import com.styx.monitor.service.data.TerminalDataService;
 import com.styx.monitor.service.data.vo.TerminalRealData;
+import com.styx.monitor.service.data.vo.TerminalSimpleRealData;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,15 @@ public class TerminalDataController {
     private TerminalService terminalService;
 
     @ApiOperation("终端列表（某节点）")
-    @PostMapping("/find/terminal/node")
+    @PostMapping("/get/terminals/node")
     public List<StationTerminalVO> findStationTerminalByNode(@RequestParam String node) {
         return terminalService.getEnabledStationTerminalByNode(node);
+    }
+
+    @ApiOperation("终端简单实时数据列表（某节点）")
+    @PostMapping("/get/terminals/node/real/simple")
+    public TerminalSimpleRealData[] getTerminalSimpleDataRealtimeByNode(@RequestParam String node) {
+        return terminalDataService.getTerminalSimpleDataRealtime(node);
     }
 
     @ApiOperation("终端详细信息")
@@ -37,7 +44,7 @@ public class TerminalDataController {
     }
 
     @ApiOperation(value = "获取终端详细实时数据")
-    @GetMapping("/get/real/detail")
+    @GetMapping("/get/terminal/real/detail")
     public TerminalRealData getTerminalDataRealtime(@RequestParam int terminalId) {
         return terminalDataService.getTerminalDataRealtime(terminalId);
     }

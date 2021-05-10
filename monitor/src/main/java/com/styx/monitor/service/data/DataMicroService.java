@@ -1,7 +1,6 @@
 package com.styx.monitor.service.data;
 
 import com.styx.common.exception.BusinessException;
-import com.styx.common.utils.StringUtil;
 import com.styx.monitor.service.data.dto.TerminalDataQuery;
 import com.styx.monitor.service.data.vo.AlarmStatus;
 import com.styx.monitor.service.data.vo.TerminalAlarms;
@@ -16,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 /**
+ * 数据节点微服务调用，该服务不应该直接被controller层调用
+ *
  * @author TontoZhou
  * @since 2021/4/30
  */

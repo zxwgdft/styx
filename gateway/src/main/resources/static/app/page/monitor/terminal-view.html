@@ -35,6 +35,15 @@
 
 <body>
 <div class="layuimini-container">
+    <div class="layui-row">
+            <span class="layui-breadcrumb">
+              <a href="terminal-index.html">终端列表</a>
+              <a><cite>实时数据</cite></a>
+            </span>
+
+        <a class="layui-btn layui-btn-sm layui-btn-danger" href="terminal-index.html" style="float: right">返回</a>
+    </div>
+
     <fieldset class="layui-elem-field">
         <legend>基本信息</legend>
         <ul id="part1" class="layui-row layui-col-space10 layui-this">
@@ -103,7 +112,7 @@
 
     function loadData() {
         var $ = layui.jquery;
-        $.getAjax("/monitor/data/get/real/detail?terminalId=" + terminalId, function (data) {
+        $.getAjax("/monitor/data/get/terminal/real/detail?terminalId=" + terminalId, function (data) {
 
 
             var html = "";

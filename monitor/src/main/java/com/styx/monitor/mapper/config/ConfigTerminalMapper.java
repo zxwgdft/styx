@@ -6,6 +6,7 @@ import com.styx.monitor.service.config.dto.CTerminal;
 import com.styx.monitor.service.config.dto.StationTerminal;
 import com.styx.monitor.service.config.vo.StationTerminalVO;
 import com.styx.monitor.service.config.vo.TerminalDetailVO;
+import com.styx.monitor.service.data.vo.TerminalFlow;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -16,7 +17,9 @@ public interface ConfigTerminalMapper extends CommonMapper<ConfigTerminal> {
 
     StationTerminal getEnabledStationTerminal(@Param("terminalId") int terminalId);
 
-    List<StationTerminalVO> findEnabledStationTerminalList(@Param("serverNode") String serverNode);
+    List<StationTerminalVO> findEnabledStationTerminalListByNode(@Param("serverNode") String serverNode);
 
     TerminalDetailVO getStationTerminalDetail(@Param("terminalId") int terminalId);
+
+    List<TerminalFlow> findTerminalListForFlow(@Param("ids") String ids);
 }

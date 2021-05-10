@@ -30,6 +30,8 @@
 <script src="../../lib/layui/layui-2.6.3.min.js" charset="utf-8"></script>
 <script src="../../js/common.js" charset="utf-8"></script>
 <script>
+    var currentNode;
+
     layui.use(['form', 'table'], function () {
         var $ = layui.jquery,
             form = layui.form;
@@ -39,55 +41,67 @@
         initConstant(layui);
 
         $.postAjax("/monitor/config/node/find/all", function (res) {
-            var curNode;
             res && res.forEach(function (item) {
-                if (curNode) {
+                if (currentNode) {
                     $("#nodeInputRadio").append('<input type="radio" name="type" value="' + item.code + '" title="' + item.name + '">');
                 } else {
                     $("#nodeInputRadio").append('<input type="radio" name="type" value="' + item.code + '" title="' + item.name + '" checked>');
-                    curNode = item.code;
+                    currentNode = item.code;
                 }
             });
             form.render();
 
             form.on('radio', function (data) {
-                loadTerminal(data.value);
+                currentNode = data.value;
+                nodeChanged = true;
+                loadTerminal();
             });
 
-            loadTerminal(curNode);
+            loadTerminal();
         });
     });
 
-    var created = false;
+    var tableOptions, nodeChanged = true;
+    var cols = [[
+        {
+            field: 'stationName', title: '站点名称'
+        },
+        {
+            field: 'name', title: '终端名称'
+        },
+        {
+            field: 'type', title: '终端类型', templet: function (d) {
+                return layui.jquery.getConstantName("terminal-type", d.type)
+            }
+        },
+        {
+            title: '运行状态', templet: function (d) {
+                return d.online ? (d.alarming ?
+                    '<b><span style="color:green;">在线</span><span style="color:red;">[报警中]</span></b>' :
+                    '<b><span style="color:green;">在线</span></b>')
+                    : '<b><span style="color:grey;">离线</span></b>';
+            }
+        },
+        {title: '操作', width: 150, toolbar: '#dataTableBar', align: "center"}
+    ]];
 
-    function loadTerminal(node) {
+    function loadTerminal() {
         var $ = layui.jquery,
             table = layui.table;
 
-        if (!created) {
-            $.renderTable({
+        if (!tableOptions) {
+            if (!currentNode) return;
+            tableOptions = $.renderTable({
                 elem: '#dataTable',
-                url: '/monitor/data/find/terminal/node?node=' + node,
-                cols: [[
-                    {
-                        field: 'stationName', title: '站点名称'
-                    },
-                    {
-                        field: 'name', title: '终端名称'
-                    },
-                    {
-                        field: 'type', title: '终端类型', templet: function (d) {
-                            return $.getConstantName("terminal-type", d.type)
-                        }
-                    },
-                    {
-                        title: '终端状态', templet: function (d) {
-                            return d.online ? '<span class="label layui-bg-green">在线</span>' :
-                                '<span class="label layui-bg-gray">离线</span>';
-                        }
-                    },
-                    {title: '操作', width: 150, toolbar: '#dataTableBar', align: "center"}
-                ]],
+                url: '/monitor/data/get/terminals/node?node=' + currentNode,
+                cols: cols,
+                done: function () {
+                    if (nodeChanged) {
+                        timeId && clearTimeout(timeId);
+                        nodeChanged = false;
+                        loadTerminalStatus();
+                    }
+                },
                 page: false
             });
 
@@ -96,16 +110,49 @@
                     location.href = 'terminal-view.html?id=' + obj.data.id;
                 }
             });
-
-            created = true;
         } else {
-            table.reload("dataTable", {
-                url: '/monitor/data/find/terminal/node?node=' + node,
-            }, true);
+            tableOptions.url = '/monitor/data/get/terminals/node?node=' + currentNode;
+            table.reload("dataTable", tableOptions, false);
         }
 
     }
 
+    var timeId;
+
+    function loadTerminalStatus() {
+        var $ = layui.jquery,
+            table = layui.table;
+
+        currentNode && $.postAjax("/monitor/data/get/terminals/node/real/simple?node=" + currentNode, function (data) {
+            if (nodeChanged === true) return;
+            var tableData = table.getData("dataTable");
+            if (tableData && data) {
+                var map = {};
+                data.forEach(function (item) {
+                    map[item.id] = item;
+                });
+
+                tableData.forEach(function (item) {
+                    var status = map[item.id];
+                    if (status) {
+                        item.online = status.online;
+                        item.alarming = status.alarmTriggering;
+                    }
+
+                });
+
+                table.render({
+                    elem: '#dataTable',
+                    cols: cols,
+                    data: tableData,
+                    limit: tableData.length,
+                    page: false
+                });
+            }
+        });
+
+        timeId = setTimeout(loadTerminalStatus, 10000);
+    }
 
 </script>
 

@@ -23,7 +23,7 @@ public class TerminalService extends MonitorServiceSupport<ConfigTerminal> {
     private ConfigTerminalMapper terminalMapper;
 
     public List<StationTerminalVO> getEnabledStationTerminalByNode(String node) {
-        return terminalMapper.findEnabledStationTerminalList(node);
+        return terminalMapper.findEnabledStationTerminalListByNode(node);
     }
 
     public TerminalDetailVO getTerminalDetail(int terminalId) {

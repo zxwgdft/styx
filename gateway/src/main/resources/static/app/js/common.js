@@ -639,6 +639,7 @@ function initTable(layui) {
             }
 
             table.render(options);
+            return options;
         }
     });
 

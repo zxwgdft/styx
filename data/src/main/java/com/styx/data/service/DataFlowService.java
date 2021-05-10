@@ -11,11 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.data.redis.core.DefaultTypedTuple;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -40,11 +46,17 @@ public class DataFlowService implements TerminalListener, ApplicationRunner {
     @Autowired
     private EventExecutorGroup eventExecutorGroup;
 
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @Value("${data.protocol.variable.id-ljll}")
     private int variable_id_ljll;
 
+    @Value("${data.config.flow-rank-key:flowRank}")
+    private String flowRankKey;
+
     private Map<Integer, Float> totalFlowMap = new ConcurrentHashMap<>();
+
 
     @PostConstruct
     public void init() throws IOException {
@@ -71,6 +83,7 @@ public class DataFlowService implements TerminalListener, ApplicationRunner {
         }
     }
 
+
     /**
      * 获取所有终端累计流量
      */
@@ -83,9 +96,18 @@ public class DataFlowService implements TerminalListener, ApplicationRunner {
      * 持久化流量数据
      */
     public void persistTotalFlowData() {
-
         try {
             persistedMapService.putObject(KEY_FLOW, totalFlowMap);
+
+            if (totalFlowMap.size() > 0) {
+                // 放入redis进行排行计算
+                Set<ZSetOperations.TypedTuple<String>> values = new HashSet<>((int) (totalFlowMap.size() / .75) + 1);
+                for (Iterator<Map.Entry<Integer, Float>> iterator = totalFlowMap.entrySet().iterator(); iterator.hasNext(); ) {
+                    Map.Entry<Integer, Float> entry = iterator.next();
+                    values.add(new DefaultTypedTuple<>(entry.getKey().toString(), entry.getValue().doubleValue()));
+                }
+                redisTemplate.opsForZSet().add(flowRankKey, values);
+            }
 
             log.debug("持久化累计流量统计");
         } catch (IOException e) {

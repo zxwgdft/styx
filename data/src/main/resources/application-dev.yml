@@ -52,6 +52,7 @@ data:
   config:
     # 终端定时更新配置间隔（秒）
     sync-interval: 5
+    flow-rank-key: flowRank
   protocol:
     variable:
       # 累计流量
