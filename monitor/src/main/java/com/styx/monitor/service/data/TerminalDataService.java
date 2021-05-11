@@ -2,6 +2,7 @@ package com.styx.monitor.service.data;
 
 import com.styx.common.exception.BusinessException;
 import com.styx.monitor.mapper.config.ConfigTerminalMapper;
+import com.styx.monitor.mapper.data.TerminalDataMapper;
 import com.styx.monitor.service.config.dto.StationTerminal;
 import com.styx.monitor.service.data.vo.TerminalFlow;
 import com.styx.monitor.service.data.vo.TerminalRealData;
@@ -28,6 +29,9 @@ public class TerminalDataService {
 
     @Autowired
     private ConfigTerminalMapper terminalMapper;
+
+    @Autowired
+    private TerminalDataMapper terminalDataMapper;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -67,7 +71,7 @@ public class TerminalDataService {
      * @param size 排行榜长度
      */
     public List<TerminalFlow> getFlowRank(int size) {
-        return getFlowRank(size);
+        return getFlowRank(size, 1);
     }
 
     private List<TerminalFlow> getFlowRank(int size, int count) {
@@ -76,7 +80,7 @@ public class TerminalDataService {
         if (size <= 0) size = 10;
         else if (size > 100) size = 100;
 
-        Set<ZSetOperations.TypedTuple<String>> rankSet = redisTemplate.opsForZSet().rangeWithScores(flowRankKey, 0, size - 1);
+        Set<ZSetOperations.TypedTuple<String>> rankSet = redisTemplate.opsForZSet().reverseRangeWithScores(flowRankKey, 0, size - 1);
         if (rankSet == null || rankSet.size() == 0) return Collections.emptyList();
 
         StringBuilder ids = new StringBuilder();
@@ -85,26 +89,48 @@ public class TerminalDataService {
         }
         ids.deleteCharAt(ids.length() - 1);
 
-        List<TerminalFlow> terminalFlows = terminalMapper.findTerminalListForFlow(ids.toString());
-        if (terminalFlows == null || terminalFlows.size() == 0) return Collections.emptyList();
+        int rankSize = rankSet.size();
+        List<TerminalFlow> terminalFlows = terminalDataMapper.findTerminalListForFlow(ids.toString());
+        if (terminalFlows != null && terminalFlows.size() > 0) {
+            Map<Integer, TerminalFlow> terminalFlowMap = new HashMap<>((int) (terminalFlows.size() / .75) + 1);
+            for (TerminalFlow item : terminalFlows) terminalFlowMap.put(item.getId(), item);
+            if (terminalFlows.size() == rankSize) {
+                // 没有过期的终端数据
+                List<TerminalFlow> sorted = new ArrayList<>(rankSize);
+                for (ZSetOperations.TypedTuple<String> item : rankSet) {
+                    int id = Integer.valueOf(item.getValue());
+                    TerminalFlow terminalFlow = terminalFlowMap.get(id);
+                    terminalFlow.setFlow(item.getScore());
+                    sorted.add(terminalFlow);
+                }
+                return sorted;
+            } else {
+                // 删除不存在的终端后重新查询
+                String[] arr = new String[rankSize];
+                int i = 0;
+                for (ZSetOperations.TypedTuple<String> item : rankSet) {
+                    String id = item.getValue();
+                    if (terminalFlowMap.get(Integer.valueOf(id)) == null) {
+                        arr[i++] = id;
+                    }
+                }
 
-        Map<Integer, TerminalFlow> terminalFlowMap = new HashMap<>((int) (terminalFlows.size() / .75) + 1);
-        for (TerminalFlow item : terminalFlows) terminalFlowMap.put(item.getId(), item);
-
-
-        if (terminalFlows.size() == rankSet.size()) {
-            // 没有过期的终端数据
-            for (ZSetOperations.TypedTuple<String> item : rankSet) {
-                int id = Integer.valueOf(item.getValue());
-                TerminalFlow terminalFlow = terminalFlowMap.get(id);
-                terminalFlow.setFlow(item.getScore());
+                String[] remArr = new String[i];
+                System.arraycopy(arr, 0, remArr, 0, i);
+                redisTemplate.opsForZSet().remove(flowRankKey, remArr);
+                return getFlowRank(size, count + 1);
             }
-            return terminalFlows;
         } else {
-
-
-            return getFlowRank(size);
+            // 删除不存在的终端后重新查询
+            String[] remArr = new String[rankSize];
+            int i = 0;
+            for (ZSetOperations.TypedTuple<String> item : rankSet) {
+                remArr[i++] = item.getValue();
+            }
+            redisTemplate.opsForZSet().remove(flowRankKey, remArr);
+            return getFlowRank(size, count + 1);
         }
     }
+
 
 }

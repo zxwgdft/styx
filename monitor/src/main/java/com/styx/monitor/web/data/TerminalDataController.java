@@ -4,6 +4,7 @@ import com.styx.monitor.service.config.TerminalService;
 import com.styx.monitor.service.config.vo.StationTerminalVO;
 import com.styx.monitor.service.config.vo.TerminalDetailVO;
 import com.styx.monitor.service.data.TerminalDataService;
+import com.styx.monitor.service.data.vo.TerminalFlow;
 import com.styx.monitor.service.data.vo.TerminalRealData;
 import com.styx.monitor.service.data.vo.TerminalSimpleRealData;
 import io.swagger.annotations.Api;
@@ -49,5 +50,9 @@ public class TerminalDataController {
         return terminalDataService.getTerminalDataRealtime(terminalId);
     }
 
-
+    @ApiOperation(value = "获取累计流量排行")
+    @GetMapping("/get/flow/rank")
+    public List<TerminalFlow> getFlowRank(@RequestParam int size) {
+        return terminalDataService.getFlowRank(size);
+    }
 }

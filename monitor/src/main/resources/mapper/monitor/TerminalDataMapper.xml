@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.styx.monitor.mapper.data.TerminalDataMapper">
+
+
+    <select id="findTerminalListForFlow" resultType="com.styx.monitor.service.data.vo.TerminalFlow">
+        SELECT b.id, b.name, b.`type`, a.id stationId, a.name stationName
+        FROM config_station a INNER JOIN config_terminal b ON b.station_id = a.id
+        WHERE b.enabled = 1 AND a.enabled = 1 and b.id in (${ids})
+    </select>
+
+
+</mapper>

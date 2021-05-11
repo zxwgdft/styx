@@ -21,5 +21,4 @@ public interface ConfigTerminalMapper extends CommonMapper<ConfigTerminal> {
 
     TerminalDetailVO getStationTerminalDetail(@Param("terminalId") int terminalId);
 
-    List<TerminalFlow> findTerminalListForFlow(@Param("ids") String ids);
 }

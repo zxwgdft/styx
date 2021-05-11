@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Monitor System</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div id="container" style="height: 700px;width: 100%">
+
+    </div>
+</div>
+</div>
+<script src="../../lib/layui/layui-2.6.3.min.js" charset="utf-8"></script>
+<script src="../../lib/echarts/echarts.min.js" charset="utf-8"></script>
+<script src="../../js/common.js" charset="utf-8"></script>
+<script>
+
+
+    layui.use(['layer'], function () {
+        var $ = layui.jquery;
+        initCommon(layui);
+        $.getAjax("/monitor/data/get/flow/rank?size=10", function (res) {
+            if (res) {
+                renderByECharts(res);
+            } else {
+                $.errorMessage("没有累计流量数据");
+            }
+        });
+    });
+
+    var colors = ["green", "orange", "#0066CC", "#0099FF"];
+
+    function renderByECharts(res) {
+        var yData = [], xData = [], data = res;
+
+        for (var i = 0; i < data.length; i++) {
+            var item = data[i];
+            yData.push(item.stationName + "(" + item.name + ")");
+            xData.push(Math.floor(item.flow));
+        }
+
+        var myChart = echarts.init(document.getElementById("container"));
+
+        var option = {
+            grid: {
+                left: '300'
+            },
+            title: {
+                text: '累计流量排行'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            xAxis: {},
+            yAxis: {
+                type: 'category',
+                data: yData,
+                inverse: true,
+                axisLabel: {
+                    show: true,
+                    textStyle: {
+                        fontSize: 14
+                    },
+                    formatter: function (value, index) {
+                        var ind = index + 1, item = data[index];
+                        if (ind == 1) {
+                            return "{one|" + ind + "}" + item.stationName + "";
+                        } else if (ind == 2) {
+                            return "{two|" + ind + "}" + item.stationName + "";
+                        } else if (ind == 3) {
+                            return "{three|" + ind + "}" + item.stationName + "";
+                        }
+                        return "{four|" + ind + "}" + item.stationName + "";
+                    },
+                    rich: {
+                        one: {
+                            backgroundColor: colors[0],
+                            color: "white",
+                            width: 20,
+                            height: 20,
+                            lineHeight: 20,
+                            align: "center",
+                            borderRadius: 8,
+                            fontSize: 12
+                        },
+                        two: {
+                            backgroundColor: colors[1],
+                            color: "white",
+                            width: 20,
+                            height: 20,
+                            lineHeight: 20,
+                            align: "center",
+                            borderRadius: 8,
+                            fontSize: 12
+                        },
+                        three: {
+                            backgroundColor: colors[2],
+                            color: "white",
+                            width: 20,
+                            height: 20,
+                            lineHeight: 20,
+                            align: "center",
+                            borderRadius: 8,
+                            fontSize: 12
+                        },
+                        four: {
+                            backgroundColor: colors[3],
+                            color: "white",
+                            width: 20,
+                            height: 20,
+                            lineHeight: 20,
+                            align: "center",
+                            borderRadius: 8,
+                            fontSize: 12
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: '累计流量',
+                type: 'bar',
+                data: xData,
+                label: {
+                    show: true,
+                    position: 'right',
+                    valueAnimation: true
+                },
+                itemStyle: {
+                    normal: {
+                        color: function (params) {
+                            return params.dataIndex >= colors.length ?
+                                colors[colors.length - 1] : colors[params.dataIndex];
+                        }
+                    }
+                }
+            }]
+        };
+
+        myChart.setOption(option);
+    }
+
+
+    // var colors = ["red", "green", "orange"], defaultColor = "blue";
+    // function renderByProgress(res) {
+    //     var $ = layui.jquery;
+    //     var div = $('<div class="layui-col-md4 layui-col-md-offset4"></div>'), no = 1, max = -1, k = 0;
+    //     res && res.forEach(function (item) {
+    //         var percent;
+    //         if (max == -1) {
+    //             max = item.flow;
+    //             percent = 100;
+    //         } else {
+    //             percent = Math.floor(item.flow * 100 / max);
+    //         }
+    //
+    //         var color = k >= colors.length ? defaultColor : colors[k++];
+    //         var html = '<h3 style="margin:5px">' + (no++ + '.') + item.stationName + '(' + item.name + ')' + '</h3>\n' +
+    //             '            <div class="layui-progress layui-progress-big">\n' +
+    //             '                <div class="layui-progress-bar layui-bg-' + color + '" lay-percent="' + percent + '%" style="width: ' + percent + '%;">' +
+    //             '                   <span class="layui-progress-text">' + Math.floor(item.flow) + 'm³</span>\n' +
+    //             '                </div>\n' +
+    //             '            </div>';
+    //
+    //         div.append(html);
+    //     });
+    //
+    //     $("#container").append(div);
+    // }
+</script>
+
+</body>
+</html>

@@ -20,6 +20,12 @@
           "href": "monitor/terminal-index.html",
           "icon": "fa fa-dot-circle-o",
           "target": "_self"
+        },
+        {
+          "title": "流量排行",
+          "href": "monitor/terminal-flow-rank.html",
+          "icon": "fa fa-dot-circle-o",
+          "target": "_self"
         }
       ]
     },

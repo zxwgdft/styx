@@ -27,11 +27,6 @@
         WHERE b.id = #{terminalId} AND b.enabled = 1 AND a.enabled = 1
     </select>
 
-    <select id="findTerminalListForFlow" resultType="com.styx.monitor.service.config.vo.StationTerminalVO">
-        SELECT b.id, b.name, b.`type`, a.id stationId, a.name stationName
-        FROM config_station a INNER JOIN config_terminal b ON b.station_id = a.id
-        WHERE b.enabled = 1 AND a.enabled = 1 and b.id in (${ids})
-    </select>
 
 
 </mapper>
