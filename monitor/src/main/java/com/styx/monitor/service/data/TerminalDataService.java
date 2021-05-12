@@ -1,5 +1,6 @@
 package com.styx.monitor.service.data;
 
+import com.styx.common.config.RedisConstants;
 import com.styx.common.exception.BusinessException;
 import com.styx.monitor.mapper.config.ConfigTerminalMapper;
 import com.styx.monitor.mapper.data.TerminalDataMapper;
@@ -9,7 +10,6 @@ import com.styx.monitor.service.data.vo.TerminalRealData;
 import com.styx.monitor.service.data.vo.TerminalSimpleRealData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
@@ -35,13 +35,6 @@ public class TerminalDataService {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
-
-
-    @Value("${monitor.terminal.data.history.max-time-span:31}")
-    private int terminalHistoryDataMaxTimeSpan;
-
-    @Value("${data.config.flow-rank-key:flowRank}")
-    private String flowRankKey;
 
     /**
      * 获取某终端详细的实时数据（包括运行状态、变量数据、报警数据）
@@ -80,7 +73,7 @@ public class TerminalDataService {
         if (size <= 0) size = 10;
         else if (size > 100) size = 100;
 
-        Set<ZSetOperations.TypedTuple<String>> rankSet = redisTemplate.opsForZSet().reverseRangeWithScores(flowRankKey, 0, size - 1);
+        Set<ZSetOperations.TypedTuple<String>> rankSet = redisTemplate.opsForZSet().reverseRangeWithScores(RedisConstants.KEY_ZSET_FLOW, 0, size - 1);
         if (rankSet == null || rankSet.size() == 0) return Collections.emptyList();
 
         StringBuilder ids = new StringBuilder();
@@ -117,7 +110,7 @@ public class TerminalDataService {
 
                 String[] remArr = new String[i];
                 System.arraycopy(arr, 0, remArr, 0, i);
-                redisTemplate.opsForZSet().remove(flowRankKey, remArr);
+                redisTemplate.opsForZSet().remove(RedisConstants.KEY_ZSET_FLOW, remArr);
                 return getFlowRank(size, count + 1);
             }
         } else {
@@ -127,7 +120,7 @@ public class TerminalDataService {
             for (ZSetOperations.TypedTuple<String> item : rankSet) {
                 remArr[i++] = item.getValue();
             }
-            redisTemplate.opsForZSet().remove(flowRankKey, remArr);
+            redisTemplate.opsForZSet().remove(RedisConstants.KEY_ZSET_FLOW, remArr);
             return getFlowRank(size, count + 1);
         }
     }

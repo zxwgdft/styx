@@ -165,7 +165,11 @@ public abstract class AbstractTerminalManager implements TerminalManager {
     public void dispatchTerminalDataChangeEvent(Terminal terminal) {
         if (terminalListeners != null) {
             for (TerminalListener listener : terminalListeners) {
-                listener.dataChangedHandle(terminal);
+                try {
+                    listener.dataChangedHandle(terminal);
+                } catch (Exception e) {
+                    log.error("终端监听数据变更事件异常", e);
+                }
             }
         }
     }
@@ -173,7 +177,11 @@ public abstract class AbstractTerminalManager implements TerminalManager {
     public void dispatchTerminalAlarmTriggerEvent(Terminal terminal, List<AlarmStatus> alarmStatuses) {
         if (terminalListeners != null) {
             for (TerminalListener listener : terminalListeners) {
-                listener.alarmTriggerHandle(terminal, alarmStatuses);
+                try {
+                    listener.alarmTriggerHandle(terminal, alarmStatuses);
+                } catch (Exception e) {
+                    log.error("终端监听报警触发事件异常", e);
+                }
             }
         }
     }
@@ -181,7 +189,11 @@ public abstract class AbstractTerminalManager implements TerminalManager {
     public void dispatchTerminalClosedTriggerEvent(Terminal terminal, List<AlarmStatus> alarmStatuses) {
         if (terminalListeners != null) {
             for (TerminalListener listener : terminalListeners) {
-                listener.alarmClosedHandle(terminal, alarmStatuses);
+                try {
+                    listener.alarmClosedHandle(terminal, alarmStatuses);
+                } catch (Exception e) {
+                    log.error("终端监听报警关闭事件异常", e);
+                }
             }
         }
     }
@@ -189,7 +201,11 @@ public abstract class AbstractTerminalManager implements TerminalManager {
     public void dispatchTerminalOnlineEvent(Terminal terminal) {
         if (terminalListeners != null) {
             for (TerminalListener listener : terminalListeners) {
-                listener.terminalOnline(terminal);
+                try {
+                    listener.terminalOnline(terminal);
+                } catch (Exception e) {
+                    log.error("终端监听上线事件异常", e);
+                }
             }
         }
     }
@@ -197,7 +213,11 @@ public abstract class AbstractTerminalManager implements TerminalManager {
     public void dispatchTerminalOfflineEvent(Terminal terminal) {
         if (terminalListeners != null) {
             for (TerminalListener listener : terminalListeners) {
-                listener.terminalOffline(terminal);
+                try {
+                    listener.terminalOffline(terminal);
+                } catch (Exception e) {
+                    log.error("终端监听离线事件异常", e);
+                }
             }
         }
     }

@@ -5,6 +5,7 @@ import com.styx.common.utils.convert.JsonUtil;
 import com.styx.data.core.terminal.Terminal;
 import com.styx.data.core.terminal.TerminalListener;
 import com.styx.data.mapper.TerminalDataMapper;
+import com.styx.common.config.RedisConstants;
 import io.netty.util.concurrent.EventExecutorGroup;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +52,6 @@ public class DataFlowService implements TerminalListener, ApplicationRunner {
 
     @Value("${data.protocol.variable.id-ljll}")
     private int variable_id_ljll;
-
-    @Value("${data.config.flow-rank-key:flowRank}")
-    private String flowRankKey;
 
     private Map<Integer, Float> totalFlowMap = new ConcurrentHashMap<>();
 
@@ -106,7 +104,7 @@ public class DataFlowService implements TerminalListener, ApplicationRunner {
                     Map.Entry<Integer, Float> entry = iterator.next();
                     values.add(new DefaultTypedTuple<>(entry.getKey().toString(), entry.getValue().doubleValue()));
                 }
-                redisTemplate.opsForZSet().add(flowRankKey, values);
+                redisTemplate.opsForZSet().add(RedisConstants.KEY_ZSET_FLOW, values);
             }
 
             log.debug("持久化累计流量统计");

@@ -8,25 +8,25 @@ import java.util.List;
  */
 public interface TerminalListener {
 
-    default void terminalOnline(Terminal terminal) {
+    default void terminalOnline(Terminal terminal) throws Exception {
         // do nothing
     }
 
-    default void terminalOffline(Terminal terminal) {
+    default void terminalOffline(Terminal terminal) throws Exception {
         // do nothing
     }
 
-    default void dataChangedHandle(Terminal terminal) {
+    default void dataChangedHandle(Terminal terminal) throws Exception {
         // do nothing
     }
 
     // 报警触发处理
-    default void alarmTriggerHandle(Terminal terminal, List<AlarmStatus> alarmStatuses) {
+    default void alarmTriggerHandle(Terminal terminal, List<AlarmStatus> alarmStatuses) throws Exception {
 
     }
 
     // 报警管理处理
-    default void alarmClosedHandle(Terminal terminal, List<AlarmStatus> alarmStatuses) {
+    default void alarmClosedHandle(Terminal terminal, List<AlarmStatus> alarmStatuses) throws Exception {
 
     }
 

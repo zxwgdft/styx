@@ -14,7 +14,7 @@ spring:
       max-request-size: 50MB
   cloud:
     nacos:
-      server-addr: localhost:8848
+      server-addr: 172.16.16.125:8848
   datasource:
     name: msms
     url: jdbc:mysql://172.16.16.125:3306/styx_data_suzhou?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
@@ -35,6 +35,11 @@ spring:
     password: ''
     port: 6379
     timeout: 1000
+
+rocketmq:
+  name-server: 172.16.16.125:9876
+  producer:
+    group: styx
 
 
 ribbon:

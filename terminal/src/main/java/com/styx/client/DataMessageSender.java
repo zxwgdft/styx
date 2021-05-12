@@ -8,7 +8,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -37,7 +36,7 @@ public class DataMessageSender extends ChannelInboundHandlerAdapter implements R
 
 
     public DataMessageSender(DataClient client, String terminalUid, int interval) {
-        if(interval > 0) {
+        if (interval > 0) {
             this.interval = interval;
         }
 
@@ -73,12 +72,13 @@ public class DataMessageSender extends ChannelInboundHandlerAdapter implements R
     }
 
     private void addDataProducer(Variable variable) {
-
         Float value = variable.getValue();
         boolean random = value == null;
 
         if (variable.getId() == 35) {
-            dataProducers.add(new IncrementalDataProducer(variable.getStartPosition() + headSize, 10000, 5));
+            // 累计流量，递增
+            dataProducers.add(new IncrementalDataProducer(variable.getStartPosition() + headSize, 1000,
+                    random ? new Random().nextInt(10) + 5 : value.intValue()));
         } else if (variable.getType() == 2) {
             dataProducers.add(
                     random ? new DataProducer(variable.getStartPosition() + headSize, variable.getMax().intValue(), variable.getMin().intValue())
@@ -159,34 +159,6 @@ public class DataMessageSender extends ChannelInboundHandlerAdapter implements R
                     e.printStackTrace();
                 }
             }
-
-
         }
-
     }
-
-    /**
-     * 按照BCD码形式转换当前时间到字节
-     */
-    public static void setDateTime(byte[] data, int startIndex) {
-        LocalDateTime dt = LocalDateTime.now();
-        int year = dt.getYear();
-        data[startIndex++] = intToByte(year / 100);
-        data[startIndex++] = intToByte(year % 100);
-        data[startIndex++] = intToByte(dt.getMonthValue());
-        data[startIndex++] = intToByte(dt.getDayOfMonth());
-        data[startIndex++] = intToByte(dt.getHour());
-        data[startIndex++] = intToByte(dt.getMinute());
-        data[startIndex] = intToByte(dt.getSecond());
-    }
-
-    // 20 -> 0x20
-    private static byte intToByte(int n) {
-        if (n < 10) {
-            return (byte) n;
-        }
-        return (byte) (n / 10 * 16 + n % 10);
-    }
-
-
 }

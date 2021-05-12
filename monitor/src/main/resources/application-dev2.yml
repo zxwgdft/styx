@@ -3,7 +3,7 @@
 #    com.styx: debug
 
 server:
-  port: 19021
+  port: 19022
 
 spring:
   application:

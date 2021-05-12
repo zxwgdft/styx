@@ -12,7 +12,7 @@
     "id": 31,
     "name": "总余氯值",
     "type": 2,
-    "min": 2.00,
+    "min": 1.00,
     "max": 20.00,
     "startPosition": 239,
     "switchPosition": 0

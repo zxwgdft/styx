@@ -70,7 +70,7 @@
     </fieldset>
     <fieldset class="layui-elem-field">
         <legend>异常数据</legend>
-        <ul id="part5" class="layui-row layui-col-space10 layui-this">
+        <ul id="part5" class="layui-row layui-col-space10 layui-this" style="padding:20px">
 
         </ul>
     </fieldset>
@@ -160,7 +160,7 @@
                 var val = valueMap[variable.id];
                 var content = '';
                 if (val == 1) {
-                    html += '<li class="layui-col-md3"><span class="layui-bg-red">' + variable.name + '</span></li>';
+                    html += '<li class="layui-col-md2 layui-bg-red" style="text-align: center;margin-left: 10px;margin-right: 10px">' + variable.name + '</li>';
                 }
             });
 

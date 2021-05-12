@@ -10,7 +10,7 @@ spring:
       max-request-size: 50MB
   cloud:
     nacos:
-      server-addr: 172.16.16.120:8848
+      server-addr: 172.16.16.125:8848
     gateway:
       locator:
         enabled: true

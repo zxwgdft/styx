@@ -387,8 +387,13 @@ public class Terminal {
         this.alarmTriggeringMap2 = triggerAlarms2;
 
 
-        terminalManager.dispatchTerminalAlarmTriggerEvent(this, newAlarms);
-        terminalManager.dispatchTerminalClosedTriggerEvent(this, closedAlarms);
+        if (newAlarms.size() > 0) {
+            terminalManager.dispatchTerminalAlarmTriggerEvent(this, newAlarms);
+        }
+
+        if (closedAlarms.size() > 0) {
+            terminalManager.dispatchTerminalClosedTriggerEvent(this, closedAlarms);
+        }
     }
 
     /**

@@ -171,7 +171,7 @@ public class DataClient implements TimerTask {
         private String terminals;
         @Option(name = "-vp", usage = "需要发送的变量描述文件，如果不填则使用默认")
         private String variablePath;
-        @Option(name = "-interval", required = false, usage = "数据上传间隔（秒）默认10秒")
+        @Option(name = "-interval", usage = "数据上传间隔（秒）默认10秒")
         private String interval;
         @Option(name = "-help", usage = "帮助")
         private boolean help;
