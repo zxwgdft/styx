@@ -1,23 +1,24 @@
 logging:
   level:
-    com.styx.core: debug
+    com:
+      styx: DEBUG
 
 server:
-  port: 19023
+  port: 19051
 
 spring:
   application:
-    name: styx-data-default
+    name: styx-support
+  cloud:
+    nacos:
+      server-addr: 172.16.16.125:8848
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 50MB
-  cloud:
-    nacos:
-      server-addr: 172.16.16.125:8848
   datasource:
     name: styx
-    url: jdbc:mysql://172.16.16.125:3306/styx_data?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+    url: jdbc:mysql://172.16.16.125:3306/styx_support?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
     username: netin
     password: 123456
     type: com.zaxxer.hikari.HikariDataSource
@@ -36,32 +37,23 @@ spring:
     port: 6379
     timeout: 1000
 
-
 rocketmq:
   name-server: 172.16.16.125:9876
   producer:
     group: styx
 
-
 ribbon:
-  ReadTimeout: 10000
+  ReadTimeout: 5000
   ConnectTimeout: 5000
 
 
-netty:
-  server:
-    port: 19035
-    backlog: 1024
-
-
-data:
-  config:
-    # 终端定时更新配置间隔（秒）
-    sync-interval: 5
-    flow-rank-key: flowRank
-  protocol:
-    variable:
-      # 累计流量
-      id-ljll: 35
-
+attachment:
+  # 附件上传目录
+  upload-folder: E:/upload/
+  # 附件访问基础地址
+  visit-base-url: /static/file/
+  # 上传附件最大大小（单位M）
+  max-file-size: 10
+  # 附件删除后保留时间（单位天）
+  delete-expire-day: 10
 

@@ -11,6 +11,7 @@ public interface MQConstants {
 
     // rocketMQ consumer group
     String CONSUMER_GROUP_MONITOR = "styx-monitor";
+    String CONSUMER_GROUP_SUPPORT = "styx-support";
 
     // 终端事件
     int TERMINAL_EVENT_ONLINE = 1001;

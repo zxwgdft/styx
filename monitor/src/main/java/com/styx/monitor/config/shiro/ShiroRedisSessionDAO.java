@@ -1,6 +1,7 @@
 package com.styx.monitor.config.shiro;
 
 import com.styx.common.config.GlobalConstants;
+import com.styx.common.config.RedisConstants;
 import com.styx.common.utils.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.session.InvalidSessionException;
@@ -61,7 +62,7 @@ public class ShiroRedisSessionDAO implements SessionDAO {
     // ------------------------------------------
 
     private String getRedisKey(Serializable sessionId) {
-        return GlobalConstants.WEB_SESSION_PREFIX + sessionId.toString();
+        return RedisConstants.WEB_SESSION_PREFIX + sessionId.toString();
     }
 
     /**

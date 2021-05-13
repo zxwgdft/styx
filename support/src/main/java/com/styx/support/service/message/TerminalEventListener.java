@@ -1,4 +1,4 @@
-package com.styx.monitor.service.message;
+package com.styx.support.service.message;
 
 import com.styx.common.config.MQConstants;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-@RocketMQMessageListener(topic = MQConstants.TOPIC_TERMINAL_EVENT, consumerGroup = MQConstants.CONSUMER_GROUP_MONITOR)
+@RocketMQMessageListener(topic = MQConstants.TOPIC_TERMINAL_EVENT, consumerGroup = MQConstants.CONSUMER_GROUP_SUPPORT)
 public class TerminalEventListener implements RocketMQListener<TerminalEvent> {
 
     @Override

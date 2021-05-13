@@ -16,7 +16,7 @@ spring:
     nacos:
       server-addr: 172.16.16.125:8848
   datasource:
-    name: msms
+    name: styx
     url: jdbc:mysql://172.16.16.125:3306/styx_monitor?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
     username: netin
     password: 123456

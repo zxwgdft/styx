@@ -1,9 +1,11 @@
-package com.styx.monitor.config;
+package com.styx.support.config;
 
 import com.styx.common.spring.NotProduceCondition;
 import com.styx.common.spring.web.DateFormatter;
+import com.styx.support.core.SupportSecurityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.format.FormatterRegistry;
@@ -15,10 +17,16 @@ import java.util.Date;
 
 @Slf4j
 @Configuration
-public class MonitorWebConfigurer implements WebMvcConfigurer {
+public class SupportWebConfigurer implements WebMvcConfigurer {
+
+    @Value("${attachment.upload-folder}")
+    private String filePath;
 
     @Autowired
     private Environment environment;
+
+    @Autowired
+    private SupportSecurityManager webSecurityManager;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -35,10 +43,8 @@ public class MonitorWebConfigurer implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(webSecurityManager)
-//                .addPathPatterns("/organization/**")
-//                .excludePathPatterns("/organization/authenticate/**");
+        // 只拦截上传文件操作
+        registry.addInterceptor(webSecurityManager)
+                .addPathPatterns("/file/upload/**");
     }
-
-
 }
