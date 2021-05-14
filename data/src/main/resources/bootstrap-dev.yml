@@ -10,7 +10,6 @@ spring:
         group: DEFAULT_GROUP
         prefix: styx-data
         file-extension: yaml
-      # 以下部分可以通过配置中心远程配置
       discovery:
         server-addr: 172.16.16.125:8848
         namespace: styx

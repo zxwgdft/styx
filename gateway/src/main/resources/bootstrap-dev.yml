@@ -2,7 +2,7 @@ spring:
   profiles:
     active: dev
   application:
-    name: styx-monitor
+    name: styx-gateway
   cloud:
     nacos:
       ## 设置配置中心（nacos）
@@ -10,7 +10,7 @@ spring:
         server-addr: 172.16.16.125:8848
         namespace: styx
         group: DEFAULT_GROUP
-        prefix: styx-monitor
+        prefix: styx-gateway
         file-extension: yaml
       discovery:
         server-addr: 172.16.16.125:8848
