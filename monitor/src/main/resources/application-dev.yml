@@ -1,20 +1,11 @@
-#logging:
-#  level:
-#    com.styx: debug
+logging:
+  level:
+    com.styx.monitor.core: debug
 
 server:
   port: 19021
 
 spring:
-  application:
-    name: styx-monitor
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 50MB
-  cloud:
-    nacos:
-      server-addr: 172.16.16.125:8848
   datasource:
     name: styx
     url: jdbc:mysql://172.16.16.125:3306/styx_monitor?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
@@ -36,18 +27,16 @@ spring:
     port: 6379
     timeout: 1000
 
+# rocket mq 设置
 rocketmq:
   name-server: 172.16.16.125:9876
   producer:
     group: styx
 
-ribbon:
-  ReadTimeout: 5000
-  ConnectTimeout: 5000
-
+# 业务相关配置
 monitor:
   shiro:
-    login-url: /monitor/login
     session-time: 60
   # 默认密码
   default-password: 1
+

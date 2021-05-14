@@ -11,7 +11,11 @@ spring:
     name: styx-support
   cloud:
     nacos:
-      server-addr: 172.16.16.125:8848
+      discovery:
+        server-addr: 172.16.16.125:8848
+        namespace: styx
+        username: nacos
+        password: nacos
   servlet:
     multipart:
       max-file-size: 10MB

@@ -1,5 +1,5 @@
 server:
-  port: 19020
+  port: 19010
 
 spring:
   application:
@@ -10,7 +10,11 @@ spring:
       max-request-size: 50MB
   cloud:
     nacos:
-      server-addr: 172.16.16.125:8848
+      discovery:
+        server-addr: 172.16.16.125:8848
+        namespace: styx
+        username: nacos
+        password: nacos
     gateway:
       locator:
         enabled: true

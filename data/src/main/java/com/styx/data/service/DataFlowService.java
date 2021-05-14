@@ -1,11 +1,11 @@
 package com.styx.data.service;
 
+import com.styx.common.config.RedisConstants;
 import com.styx.common.utils.StringUtil;
 import com.styx.common.utils.convert.JsonUtil;
 import com.styx.data.core.terminal.Terminal;
 import com.styx.data.core.terminal.TerminalListener;
 import com.styx.data.mapper.TerminalDataMapper;
-import com.styx.common.config.RedisConstants;
 import io.netty.util.concurrent.EventExecutorGroup;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

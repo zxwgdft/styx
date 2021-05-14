@@ -159,8 +159,8 @@ public class DefaultTerminalManager extends AbstractTerminalManager implements A
         log.info("开启定时执行持久化终端数据任务");
         eventExecutorGroup.scheduleWithFixedDelay(() -> persistData(), 1, dataPersistInterval, TimeUnit.MINUTES);
 
-    }
 
+    }
 
     @Override
     public VersionConfig getVersionConfig(VersionUpdate versionUpdate) {

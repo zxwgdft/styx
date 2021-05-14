@@ -1,20 +1,13 @@
 logging:
   level:
-    com.styx.core: debug
+    com.styx.data.core: debug
 
 server:
-  port: 19023
+  port: 19025
 
 spring:
   application:
     name: styx-data-default
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 50MB
-  cloud:
-    nacos:
-      server-addr: 172.16.16.125:8848
   datasource:
     name: styx
     url: jdbc:mysql://172.16.16.125:3306/styx_data?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
@@ -36,29 +29,22 @@ spring:
     port: 6379
     timeout: 1000
 
-
+# rocket mq 设置
 rocketmq:
   name-server: 172.16.16.125:9876
   producer:
     group: styx
-
-
-ribbon:
-  ReadTimeout: 10000
-  ConnectTimeout: 5000
-
 
 netty:
   server:
     port: 19035
     backlog: 1024
 
-
+# 系统业务相关配置
 data:
   config:
     # 终端定时更新配置间隔（秒）
     sync-interval: 5
-    flow-rank-key: flowRank
   protocol:
     variable:
       # 累计流量
