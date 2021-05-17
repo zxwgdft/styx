@@ -10,11 +10,13 @@ import com.styx.data.service.TerminalDataService;
 import com.styx.data.service.dto.VersionConfig;
 import com.styx.data.service.dto.VersionUpdate;
 import io.netty.util.concurrent.EventExecutorGroup;
+import io.netty.util.concurrent.ScheduledFuture;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -32,19 +35,12 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Component
-public class DefaultTerminalManager extends AbstractTerminalManager implements ApplicationRunner {
+public class DefaultTerminalManager extends AbstractTerminalManager implements ApplicationRunner, ApplicationListener<EnvironmentChangeEvent> {
 
     private final static String KEY_TERMINAL = "snapshot_terminal";
 
     @Autowired
     private Environment environment;
-
-    @Value("${data.config.sync-interval:5}")
-    private int configSyncInterval;
-
-    @Value("${data.config.data-persist-interval:10}")
-    private int dataPersistInterval;
-
 
     @Autowired
     private InternalMonitorService monitorService;
@@ -85,7 +81,7 @@ public class DefaultTerminalManager extends AbstractTerminalManager implements A
     //-------------------------
 
 
-    public void persistData() {
+    public void persistTerminalData() {
         TerminalContainer terminalContainer = getTerminalContainer();
         if (terminalContainer != null) {
             terminalDataService.persistData(terminalContainer.getTerminals());
@@ -129,6 +125,7 @@ public class DefaultTerminalManager extends AbstractTerminalManager implements A
         }
     }
 
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // 读取节点名称
@@ -149,18 +146,66 @@ public class DefaultTerminalManager extends AbstractTerminalManager implements A
             log.info("加载{}个终端监听器", listeners.size());
         }
 
+        startScheduleTask(null);
+    }
 
-        log.info("开启定时执行加载终端配置任务");
-        eventExecutorGroup.scheduleWithFixedDelay(() -> loadConfig(), 0, configSyncInterval, TimeUnit.SECONDS);
-        log.info("开启定时执行检查终端任务");
-        eventExecutorGroup.scheduleWithFixedDelay(() -> checkTerminal(), 1, 1, TimeUnit.MINUTES);
-        log.info("开启定时执行持久化终端状态任务");
-        eventExecutorGroup.scheduleWithFixedDelay(() -> persistTerminalStatus(), 1, 2, TimeUnit.MINUTES);
-        log.info("开启定时执行持久化终端数据任务");
-        eventExecutorGroup.scheduleWithFixedDelay(() -> persistData(), 1, dataPersistInterval, TimeUnit.MINUTES);
+    @Override
+    public void onApplicationEvent(EnvironmentChangeEvent event) {
+        startScheduleTask(event.getKeys());
+    }
 
+
+    private ScheduledFuture loadConfigScheduledFuture;
+    private ScheduledFuture checkScheduledFuture;
+    private ScheduledFuture persistStatusScheduledFuture;
+    private ScheduledFuture persistDataScheduledFuture;
+
+    private final static String key_load_config = "styx.data.terminal-config-sync-interval";
+    private final static String key_check_terminal = "styx.data.terminal-check-interval";
+    private final static String key_persist_status = "styx.data.terminal-status-persist-interval";
+    private final static String key_persist_data = "styx.data.terminal-data-persist-interval";
+
+    private synchronized void startScheduleTask(Set<String> changedKeys) {
+        // 可变配置任务，监听配置变更事件，变更后重新开启定时任务
+
+        if (changedKeys == null || changedKeys.contains(key_load_config)) {
+            int interval = environment.getProperty(key_load_config, Integer.class, 5);
+            log.info("开启定时执行加载终端配置任务（每隔{}秒执行）", interval);
+            if (loadConfigScheduledFuture != null && !loadConfigScheduledFuture.isCancelled()) {
+                loadConfigScheduledFuture.cancel(false);
+            }
+            loadConfigScheduledFuture = eventExecutorGroup.scheduleWithFixedDelay(() -> loadConfig(), 0, interval, TimeUnit.SECONDS);
+        }
+
+        if (changedKeys == null || changedKeys.contains(key_check_terminal)) {
+            int interval = environment.getProperty(key_check_terminal, Integer.class, 60);
+            log.info("开启定时执行检查终端任务（每隔{}秒执行）", interval);
+            if (checkScheduledFuture != null && !checkScheduledFuture.isCancelled()) {
+                checkScheduledFuture.cancel(false);
+            }
+            checkScheduledFuture = eventExecutorGroup.scheduleWithFixedDelay(() -> checkTerminal(), 60, interval, TimeUnit.SECONDS);
+        }
+
+        if (changedKeys == null || changedKeys.contains(key_persist_status)) {
+            int interval = environment.getProperty(key_persist_status, Integer.class, 2);
+            log.info("开启定时执行持久化终端状态任务（每隔{}分执行）", interval);
+            if (persistStatusScheduledFuture != null && !persistStatusScheduledFuture.isCancelled()) {
+                persistStatusScheduledFuture.cancel(false);
+            }
+            persistStatusScheduledFuture = eventExecutorGroup.scheduleWithFixedDelay(() -> persistTerminalStatus(), 1, interval, TimeUnit.MINUTES);
+        }
+
+        if (changedKeys == null || changedKeys.contains(key_persist_data)) {
+            int interval = environment.getProperty(key_persist_data, Integer.class, 10);
+            log.info("开启定时执行持久化终端数据任务（每隔{}分执行）", interval);
+            if (persistDataScheduledFuture != null && !persistDataScheduledFuture.isCancelled()) {
+                persistDataScheduledFuture.cancel(false);
+            }
+            persistDataScheduledFuture = eventExecutorGroup.scheduleWithFixedDelay(() -> persistTerminalData(), 1, interval, TimeUnit.MINUTES);
+        }
 
     }
+
 
     @Override
     public VersionConfig getVersionConfig(VersionUpdate versionUpdate) {
@@ -176,5 +221,6 @@ public class DefaultTerminalManager extends AbstractTerminalManager implements A
     public List<AlarmStatus> getTerminalAlarmStatus(int terminalId) {
         return terminalAlarmMapper.getAlarmIdOfTerminal(terminalId);
     }
+
 
 }

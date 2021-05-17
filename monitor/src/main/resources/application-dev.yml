@@ -34,9 +34,10 @@ rocketmq:
     group: styx
 
 # 业务相关配置
-monitor:
-  shiro:
-    session-time: 60
+styx:
+  monitor:
+    shiro:
+      session-time: 60
   # 默认密码
   default-password: 1
 

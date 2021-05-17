@@ -5,7 +5,6 @@ import com.styx.common.spring.SpringBeanHelper;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,13 +31,14 @@ public class DataConfiguration {
 
     /**
      * netty提供的线程池，这里主要处理带有sql、rpc等操作的业务，所以等待时间占比较高，
-     * 可以根据占比设置一个较高的线程池数量，这里设置了5倍线程池
+     * 可以根据占比设置一个较高的线程池数量，这里设置了6倍线程池
+     *
      * @return
      */
     @Bean
     public EventExecutorGroup getEventExecutorGroup() {
         int processorSize = Runtime.getRuntime().availableProcessors();
-        return new DefaultEventExecutorGroup(processorSize * 5);
+        return new DefaultEventExecutorGroup(processorSize * 6 + 5);
     }
 
     //---------------------------------------

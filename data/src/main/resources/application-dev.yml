@@ -41,13 +41,19 @@ netty:
     backlog: 1024
 
 # 系统业务相关配置
-data:
-  config:
+
+styx:
+  data:
     # 终端定时更新配置间隔（秒）
-    sync-interval: 5
-  protocol:
-    variable:
-      # 累计流量
-      id-ljll: 35
+    terminal-config-sync-interval: 5
+    # 数据持久化间隔（分钟）
+    terminal-data-persist-interval: 10
+    # 终端状态持久化间隔（分钟）
+    terminal-status-persist-interval: 2
+    # 终端检查间隔（秒）
+    terminal-check-interval: 60
+    protocol:
+      # 累计流量ID
+      vid-ljll: 35
 
 

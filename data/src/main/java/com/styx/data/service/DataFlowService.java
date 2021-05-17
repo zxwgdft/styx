@@ -50,7 +50,7 @@ public class DataFlowService implements TerminalListener, ApplicationRunner {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
-    @Value("${data.protocol.variable.id-ljll}")
+    @Value("${styx.data.protocol.vid-ljll}")
     private int variable_id_ljll;
 
     private Map<Integer, Float> totalFlowMap = new ConcurrentHashMap<>();

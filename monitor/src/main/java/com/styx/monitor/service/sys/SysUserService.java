@@ -26,9 +26,7 @@ public class SysUserService extends MonitorServiceSupport<SysUser> {
     @Autowired
     private SysUserMapper sysUserMapper;
 
-
     private Pattern accountPattern = Pattern.compile("^\\w{6,30}$");
-    private Pattern passwordPattern = Pattern.compile("^\\w{6,20}$");
 
     // 获取默认密码（随机或固定）
     private String getDefaultPassword() {
