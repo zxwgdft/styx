@@ -26,7 +26,7 @@ import java.util.*;
  * @since 2021/3/11
  */
 @Slf4j
-public class ServiceSupport<Model> {
+public class ServiceSupport<Model, Mapper extends CommonMapper<Model>> {
 
     /**
      * 选择项缓存
@@ -68,14 +68,14 @@ public class ServiceSupport<Model> {
     /**
      * 基于mybatis plus的commonMapper
      */
-    protected CommonMapper<Model> commonMapper;
+    protected Mapper sqlMapper;
 
-    public CommonMapper<Model> getCommonMapper() {
-        return commonMapper;
+    public Mapper getSqlMapper() {
+        return sqlMapper;
     }
 
-    public void setCommonMapper(CommonMapper<Model> commonMapper) {
-        this.commonMapper = commonMapper;
+    public void setSqlMapper(Mapper sqlMapper) {
+        this.sqlMapper = sqlMapper;
     }
 
 
@@ -84,34 +84,34 @@ public class ServiceSupport<Model> {
     // -------------------------
 
     public Model get(Serializable id) {
-        return commonMapper.selectById(id);
+        return sqlMapper.selectById(id);
     }
 
     public Model getWhole(Serializable id) {
-        return commonMapper.selectWholeById(id);
+        return sqlMapper.selectWholeById(id);
     }
 
     public void save(Model model) {
-        commonMapper.insert(model);
+        sqlMapper.insert(model);
     }
 
     /**
      * 更新整个对象（包括null值）
      */
     public boolean updateWhole(Model model) {
-        return commonMapper.updateWholeById(model) > 0;
+        return sqlMapper.updateWholeById(model) > 0;
     }
 
     /**
      * 更新对象中非null字段
      */
     public boolean updateSelection(Model model) {
-        return commonMapper.updateWholeById(model) > 0;
+        return sqlMapper.updateWholeById(model) > 0;
     }
 
     public boolean deleteById(Serializable id) {
         // 逻辑删除实现
-        return commonMapper.deleteById(id) > 0;
+        return sqlMapper.deleteById(id) > 0;
     }
 
 
@@ -203,16 +203,16 @@ public class ServiceSupport<Model> {
 
         if (modelType != clazz) {
             queryWrapper = buildSelection(queryWrapper, clazz);
-            List<Model> result = commonMapper.selectList(queryWrapper);
+            List<Model> result = sqlMapper.selectList(queryWrapper);
             if (result != null && result.size() > 0) {
-                // mybatis plus commonMapper 没有提供改变返回对象的方法，这里
+                // mybatis plus sqlMapper 没有提供改变返回对象的方法，这里
                 // 使用bean copy方法，增加了一些性能损耗。
                 return SimpleBeanCopyUtil.simpleCopyList(result, clazz);
             } else {
                 return Collections.EMPTY_LIST;
             }
         } else {
-            return commonMapper.selectList(queryWrapper);
+            return sqlMapper.selectList(queryWrapper);
         }
     }
 
@@ -233,7 +233,7 @@ public class ServiceSupport<Model> {
      */
     public int searchCount(Wrapper queryWrapper) {
         queryWrapper = buildCommon(queryWrapper);
-        return commonMapper.selectCount(queryWrapper);
+        return sqlMapper.selectCount(queryWrapper);
     }
 
     /**

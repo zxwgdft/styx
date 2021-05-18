@@ -3,6 +3,7 @@ package com.styx.monitor.core;
 import com.styx.common.api.BaseModel;
 import com.styx.common.api.DeletedBaseModel;
 import com.styx.common.service.ServiceSupport;
+import com.styx.common.service.mybatis.CommonMapper;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -11,7 +12,7 @@ import java.util.Date;
  * @author TontoZhou
  * @since 2021/4/9
  */
-public class MonitorServiceSupport<Model> extends ServiceSupport<Model> {
+public class MonitorServiceSupport<Model, Mapper extends CommonMapper<Model>> extends ServiceSupport<Model, Mapper> {
 
     public void save(Model model) {
         if (isBaseModel) {
@@ -23,7 +24,7 @@ public class MonitorServiceSupport<Model> extends ServiceSupport<Model> {
             baseModel.setCreateBy(userId);
             baseModel.setUpdateBy(userId);
         }
-        commonMapper.insert(model);
+        sqlMapper.insert(model);
     }
 
     public boolean updateWhole(Model model) {
@@ -32,7 +33,7 @@ public class MonitorServiceSupport<Model> extends ServiceSupport<Model> {
             baseModel.setUpdateTime(new Date());
             baseModel.setUpdateBy(MonitorUserSession.getCurrentUserSession().getUserId());
         }
-        return commonMapper.updateWholeById(model) > 0;
+        return sqlMapper.updateWholeById(model) > 0;
     }
 
     public boolean updateSelection(Model model) {
@@ -41,7 +42,7 @@ public class MonitorServiceSupport<Model> extends ServiceSupport<Model> {
             baseModel.setUpdateTime(new Date());
             baseModel.setUpdateBy(MonitorUserSession.getCurrentUserSession().getUserId());
         }
-        return commonMapper.updateById(model) > 0;
+        return sqlMapper.updateById(model) > 0;
     }
 
     public boolean deleteById(Serializable id) {
@@ -51,9 +52,9 @@ public class MonitorServiceSupport<Model> extends ServiceSupport<Model> {
             baseModel.setDeleted(true);
             baseModel.setUpdateTime(new Date());
             baseModel.setUpdateBy(MonitorUserSession.getCurrentUserSession().getUserId());
-            return commonMapper.logicDeleteById(baseModel, id) > 0;
+            return sqlMapper.logicDeleteById(baseModel, id) > 0;
         } else {
-            return commonMapper.deleteById(id) > 0;
+            return sqlMapper.deleteById(id) > 0;
         }
     }
 

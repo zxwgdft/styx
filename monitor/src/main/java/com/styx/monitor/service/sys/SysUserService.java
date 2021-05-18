@@ -15,16 +15,13 @@ import java.util.Date;
 import java.util.regex.Pattern;
 
 @Service
-public class SysUserService extends MonitorServiceSupport<SysUser> {
+public class SysUserService extends MonitorServiceSupport<SysUser, SysUserMapper> {
 
     @Value("${styx.default-password:1}")
     private String defaultPassword;
 
     @Value("${styx.default-password-random:false}")
     private boolean randomPassword;
-
-    @Autowired
-    private SysUserMapper sysUserMapper;
 
     private Pattern accountPattern = Pattern.compile("^\\w{6,30}$");
 
@@ -80,7 +77,7 @@ public class SysUserService extends MonitorServiceSupport<SysUser> {
      * 更新个人用户账号
      */
     public void updateUserAccount(String userId, String newAccount) {
-        sysUserMapper.updateAccount(userId, newAccount);
+        getSqlMapper().updateAccount(userId, newAccount);
     }
 
 

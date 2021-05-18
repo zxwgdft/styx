@@ -29,7 +29,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class UploadAttachmentService extends ServiceSupport<SysAttachment> {
+public class UploadAttachmentService extends ServiceSupport<SysAttachment, SysAttachmentMapper> {
 
     // 单位M
     @Value("${attachment.max-file-size}")
@@ -41,9 +41,6 @@ public class UploadAttachmentService extends ServiceSupport<SysAttachment> {
 
     private int maxFileNameSize = 100;
     private int maxFileByteSize;
-
-    @Autowired
-    private SysAttachmentMapper attachmentMapper;
 
     @Autowired
     private FileStoreService fileStoreService;
@@ -276,7 +273,7 @@ public class UploadAttachmentService extends ServiceSupport<SysAttachment> {
      */
     private int operateAttachments(List<String> ids, boolean isDelete, String operateBy) {
         if (ids != null && ids.size() > 0) {
-            return attachmentMapper.updateDeletedById(ids, isDelete, operateBy);
+            return getSqlMapper().updateDeletedById(ids, isDelete, operateBy);
         }
         return 0;
     }
@@ -297,7 +294,7 @@ public class UploadAttachmentService extends ServiceSupport<SysAttachment> {
             if (deleteFile(id, att.getRelativePath()) &&
                     deleteFile(id, att.getThumbnailRelativePath())) {
                 // 调取mapper删除方法，防止逻辑删除
-                getCommonMapper().deleteById(id);
+                getSqlMapper().deleteById(id);
                 count++;
             }
         }

@@ -61,7 +61,7 @@ public class ServiceSupportManager implements ApplicationRunner {
                 log.warn("实体类[" + genericType.getName() + "]没有对应的[" + CommonMapper.class.getName() + "]的实现类");
                 continue;
             } else {
-                support.setCommonMapper(mapper);
+                support.setSqlMapper(mapper);
                 log.debug("===>为[" + support.getClass().getName() + "]注入CommonMapper");
             }
 

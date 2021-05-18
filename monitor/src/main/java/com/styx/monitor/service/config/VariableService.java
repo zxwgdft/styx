@@ -14,10 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
-public class VariableService extends MonitorServiceSupport<ConfigVariable> {
-
-    @Autowired
-    private ConfigVariableMapper variableMapper;
+public class VariableService extends MonitorServiceSupport<ConfigVariable, ConfigVariableMapper> {
 
     @Autowired
     private DataCacheManager cacheManager;
@@ -42,6 +39,6 @@ public class VariableService extends MonitorServiceSupport<ConfigVariable> {
 
 
     public List<SimpleVariable> findEnabledSimpleVariable() {
-        return variableMapper.findEnabledSimpleVariable();
+        return getSqlMapper().findEnabledSimpleVariable();
     }
 }

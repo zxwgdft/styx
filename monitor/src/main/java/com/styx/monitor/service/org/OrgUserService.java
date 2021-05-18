@@ -8,6 +8,7 @@ import com.styx.common.utils.convert.SimpleBeanCopyUtil;
 import com.styx.monitor.core.MonitorServiceSupport;
 import com.styx.monitor.core.distrcit.District;
 import com.styx.monitor.core.distrcit.DistrictUtil;
+import com.styx.monitor.mapper.org.OrgUserMapper;
 import com.styx.monitor.model.org.OrgUser;
 import com.styx.monitor.model.sys.SysUser;
 import com.styx.monitor.service.org.dto.OrgUserDTO;
@@ -22,7 +23,7 @@ import java.util.Set;
 
 
 @Service
-public class OrgUserService extends MonitorServiceSupport<OrgUser> {
+public class OrgUserService extends MonitorServiceSupport<OrgUser, OrgUserMapper> {
 
     @Autowired
     private SysUserService sysUserService;
