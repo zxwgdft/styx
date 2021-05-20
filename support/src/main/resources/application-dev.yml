@@ -41,11 +41,6 @@ spring:
     port: 6379
     timeout: 1000
 
-rocketmq:
-  name-server: 172.16.16.125:9876
-  producer:
-    group: styx
-
 ribbon:
   ReadTimeout: 5000
   ConnectTimeout: 5000
