@@ -33,6 +33,11 @@ rocketmq:
   producer:
     group: styx
 
+zookeeper:
+  namespace: styx
+  connect-string: 172.16.16.126:2181
+
+
 # 业务相关配置
 styx:
   monitor:

@@ -40,6 +40,12 @@ netty:
     port: 19035
     backlog: 1024
 
+zookeeper:
+  namespace: styx
+  connect-string: 172.16.16.126:2181
+
+
+
 # 系统业务相关配置
 
 styx:

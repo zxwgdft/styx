@@ -5,6 +5,9 @@ import com.styx.common.spring.SpringBeanHelper;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.retry.RetryForever;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,6 +43,7 @@ public class DataConfiguration {
         int processorSize = Runtime.getRuntime().availableProcessors();
         return new DefaultEventExecutorGroup(processorSize * 6 + 5);
     }
+
 
     //---------------------------------------
     //

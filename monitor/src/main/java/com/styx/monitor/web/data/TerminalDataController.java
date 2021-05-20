@@ -4,6 +4,7 @@ import com.styx.monitor.service.config.TerminalService;
 import com.styx.monitor.service.config.vo.StationTerminalVO;
 import com.styx.monitor.service.config.vo.TerminalDetailVO;
 import com.styx.monitor.service.data.TerminalDataService;
+import com.styx.monitor.service.data.vo.NodeReaData;
 import com.styx.monitor.service.data.vo.TerminalFlow;
 import com.styx.monitor.service.data.vo.TerminalRealData;
 import com.styx.monitor.service.data.vo.TerminalSimpleRealData;
@@ -55,4 +56,12 @@ public class TerminalDataController {
     public List<TerminalFlow> getFlowRank(@RequestParam int size) {
         return terminalDataService.getFlowRank(size);
     }
+
+
+    @ApiOperation(value = "获取数据节点详细实时数据")
+    @GetMapping("/get/nodes/real/detail")
+    public List<NodeReaData> getNodeRealtime() {
+        return terminalDataService.getNodeRealtime();
+    }
+
 }

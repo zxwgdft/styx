@@ -10,9 +10,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.scheduling.annotation.EnableScheduling;
-
-import java.util.HashMap;
 
 
 @Slf4j
@@ -46,4 +43,5 @@ public class DataApplication implements CommandLineRunner {
         netty.setName("nettyStart");
         netty.start();
     }
+
 }

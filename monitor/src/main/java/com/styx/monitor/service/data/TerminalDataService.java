@@ -1,14 +1,19 @@
 package com.styx.monitor.service.data;
 
+import com.styx.common.config.GlobalConstants;
 import com.styx.common.config.RedisConstants;
+import com.styx.common.config.ZKConstants;
 import com.styx.common.exception.BusinessException;
+import com.styx.monitor.mapper.config.ConfigNodeMapper;
 import com.styx.monitor.mapper.config.ConfigTerminalMapper;
 import com.styx.monitor.mapper.data.TerminalDataMapper;
 import com.styx.monitor.service.config.dto.StationTerminal;
+import com.styx.monitor.service.data.vo.NodeReaData;
 import com.styx.monitor.service.data.vo.TerminalFlow;
 import com.styx.monitor.service.data.vo.TerminalRealData;
 import com.styx.monitor.service.data.vo.TerminalSimpleRealData;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.curator.framework.CuratorFramework;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -31,10 +36,16 @@ public class TerminalDataService {
     private ConfigTerminalMapper terminalMapper;
 
     @Autowired
+    private ConfigNodeMapper nodeMapper;
+
+    @Autowired
     private TerminalDataMapper terminalDataMapper;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private CuratorFramework curatorFramework;
 
     /**
      * 获取某终端详细的实时数据（包括运行状态、变量数据、报警数据）
@@ -126,4 +137,27 @@ public class TerminalDataService {
     }
 
 
+    /**
+     * 获取节点实时数据
+     */
+    public List<NodeReaData> getNodeRealtime() {
+        List<NodeReaData> list = nodeMapper.findRealList();
+        try {
+            List<String> zkNodes = curatorFramework.getChildren().forPath(ZKConstants.PATH_DATA_SERVER);
+            if (zkNodes != null && zkNodes.size() > 0) {
+                Set<String> zkNodeSet = new HashSet<>();
+                zkNodes.stream().forEach((item) -> {
+                            zkNodeSet.add(item.substring(GlobalConstants.DATA_SERVICE_PREFIX.length()));
+                        }
+                );
+
+                list.stream().forEach((item) -> {
+                    if (zkNodeSet.contains(item.getCode())) item.setOnline(true);
+                });
+            }
+        } catch (Exception e) {
+            throw new BusinessException("获取数据节点状态异常", e);
+        }
+        return list;
+    }
 }
