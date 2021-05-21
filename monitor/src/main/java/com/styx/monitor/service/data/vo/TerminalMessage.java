@@ -1,4 +1,4 @@
-package com.styx.monitor.service.message.vo;
+package com.styx.monitor.service.data.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
