@@ -25,6 +25,28 @@ public class StringUtil {
         return !isEmpty(str);
     }
 
+
+    /**
+     * 字符串是否相等（相对直接String.equals更有效率）
+     *
+     * @param s1
+     * @param s2
+     * @return
+     */
+    public static boolean equals(String s1, String s2) {
+        if (s1 == s2) {
+            return true;
+        } else if (s1 != null && s2 != null) {
+            if (s1.length() != s2.length()) {
+                return false;
+            } else {
+                return s1.equals(s2);
+            }
+        } else {
+            return false;
+        }
+    }
+
     /**
      * 强力trim，可去除全角下的空格
      *

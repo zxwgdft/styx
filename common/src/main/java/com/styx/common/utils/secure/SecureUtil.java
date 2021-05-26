@@ -1,6 +1,7 @@
 package com.styx.common.utils.secure;
 
 
+import com.styx.common.utils.StringUtil;
 import org.apache.commons.codec.binary.Hex;
 
 import java.nio.charset.StandardCharsets;
@@ -21,17 +22,18 @@ public class SecureUtil {
         return Hex.encodeHexString(bytes);
     }
 
+    public static String hashByMD5(String content) {
+        return hashByMD5(content, null);
+    }
+
     public static String hashByMD5(String content, String salt) {
-        // 进行一次加盐操作
         try {
             MessageDigest digest = MessageDigest.getInstance("MD5");
-            byte[] saltBytes = salt.getBytes(StandardCharsets.UTF_8);
-            byte[] contentBytes = content.getBytes(StandardCharsets.UTF_8);
+            if (StringUtil.isNotEmpty(salt)) {
+                digest.update(salt.getBytes(StandardCharsets.UTF_8));
+            }
 
-            digest.reset();
-            digest.update(saltBytes);
-
-            byte[] hashed = digest.digest(contentBytes);
+            byte[] hashed = digest.digest(content.getBytes(StandardCharsets.UTF_8));
             return Hex.encodeHexString(hashed);
         } catch (Exception e) {
             throw new RuntimeException("hash by md5 error", e);
