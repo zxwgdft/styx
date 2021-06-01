@@ -174,7 +174,7 @@ public class DefaultTerminalManager extends AbstractTerminalManager implements A
             if (loadConfigScheduledFuture != null && !loadConfigScheduledFuture.isCancelled()) {
                 loadConfigScheduledFuture.cancel(false);
             }
-            loadConfigScheduledFuture = eventExecutorGroup.scheduleWithFixedDelay(() -> loadConfig(), 0, interval, TimeUnit.SECONDS);
+            loadConfigScheduledFuture = eventExecutorGroup.scheduleWithFixedDelay(() -> loadConfig(), interval, interval, TimeUnit.SECONDS);
         }
 
         if (changedKeys == null || changedKeys.contains(key_check_terminal)) {
@@ -183,7 +183,7 @@ public class DefaultTerminalManager extends AbstractTerminalManager implements A
             if (checkScheduledFuture != null && !checkScheduledFuture.isCancelled()) {
                 checkScheduledFuture.cancel(false);
             }
-            checkScheduledFuture = eventExecutorGroup.scheduleWithFixedDelay(() -> checkTerminal(), 60, interval, TimeUnit.SECONDS);
+            checkScheduledFuture = eventExecutorGroup.scheduleWithFixedDelay(() -> checkTerminal(), interval, interval, TimeUnit.SECONDS);
         }
 
         if (changedKeys == null || changedKeys.contains(key_persist_status)) {
@@ -192,7 +192,7 @@ public class DefaultTerminalManager extends AbstractTerminalManager implements A
             if (persistStatusScheduledFuture != null && !persistStatusScheduledFuture.isCancelled()) {
                 persistStatusScheduledFuture.cancel(false);
             }
-            persistStatusScheduledFuture = eventExecutorGroup.scheduleWithFixedDelay(() -> persistTerminalStatus(), 1, interval, TimeUnit.MINUTES);
+            persistStatusScheduledFuture = eventExecutorGroup.scheduleWithFixedDelay(() -> persistTerminalStatus(), interval, interval, TimeUnit.MINUTES);
         }
 
         if (changedKeys == null || changedKeys.contains(key_persist_data)) {
@@ -201,7 +201,7 @@ public class DefaultTerminalManager extends AbstractTerminalManager implements A
             if (persistDataScheduledFuture != null && !persistDataScheduledFuture.isCancelled()) {
                 persistDataScheduledFuture.cancel(false);
             }
-            persistDataScheduledFuture = eventExecutorGroup.scheduleWithFixedDelay(() -> persistTerminalData(), 1, interval, TimeUnit.MINUTES);
+            persistDataScheduledFuture = eventExecutorGroup.scheduleWithFixedDelay(() -> persistTerminalData(), interval, interval, TimeUnit.MINUTES);
         }
 
     }

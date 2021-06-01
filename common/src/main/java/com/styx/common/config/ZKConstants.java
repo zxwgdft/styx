@@ -6,8 +6,8 @@ package com.styx.common.config;
  */
 public interface ZKConstants {
 
-    String PATH_DATA_SERVER = "/data-server";
+    String PATH_DATA_SERVER = "/DATA-SERVER";
 
-    String PATH_DATA_MERGE = "/data-merge";
+    String PATH_DATA_MERGE = "/DATA-MERGE";
 
 }

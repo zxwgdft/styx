@@ -7,6 +7,7 @@ import com.styx.data.service.dto.HistoryDataQuery;
 import com.styx.data.service.vo.TerminalAlarms;
 import com.styx.data.service.vo.TerminalRealData;
 import com.styx.data.service.vo.TerminalSimpleRealData;
+import com.styx.data.service.vo.TerminalsSurvey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,4 +59,9 @@ public class TerminalDataController {
     }
 
 
+    @ApiOperation("获取实时概况数据")
+    @GetMapping("/get/real/survey")
+    public TerminalsSurvey getRealSurvey() {
+        return terminalDataService.getRealSurvey();
+    }
 }

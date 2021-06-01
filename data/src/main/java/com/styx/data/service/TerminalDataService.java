@@ -12,6 +12,7 @@ import com.styx.data.service.dto.HistoryDataQuery;
 import com.styx.data.service.vo.TerminalAlarms;
 import com.styx.data.service.vo.TerminalRealData;
 import com.styx.data.service.vo.TerminalSimpleRealData;
+import com.styx.data.service.vo.TerminalsSurvey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -199,6 +200,10 @@ public class TerminalDataService {
                 return terminal.getAlarmTriggeringList();
             }
         }
+        return null;
+    }
+
+    public TerminalsSurvey getRealSurvey() {
         return null;
     }
 }
