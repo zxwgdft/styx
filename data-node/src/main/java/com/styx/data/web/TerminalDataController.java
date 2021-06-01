@@ -39,7 +39,6 @@ public class TerminalDataController {
         return terminalDataService.getDetailRealData(terminalId);
     }
 
-
     @ApiOperation("获取所有终端报警数据")
     @GetMapping("/get/alarm/all")
     public List<TerminalAlarms> getAllTriggeringAlarms() {
@@ -58,10 +57,4 @@ public class TerminalDataController {
         return terminalDataService.findHistoryData(query);
     }
 
-
-    @ApiOperation("获取实时概况数据")
-    @GetMapping("/get/real/survey")
-    public TerminalsSurvey getRealSurvey() {
-        return terminalDataService.getRealSurvey();
-    }
 }

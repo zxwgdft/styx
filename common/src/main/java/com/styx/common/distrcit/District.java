@@ -1,4 +1,4 @@
-package com.styx.monitor.core.distrcit;
+package com.styx.common.distrcit;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;

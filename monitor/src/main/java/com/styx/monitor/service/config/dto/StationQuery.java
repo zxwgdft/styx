@@ -1,6 +1,6 @@
 package com.styx.monitor.service.config.dto;
 
-import com.styx.monitor.core.distrcit.DistrictQuery;
+import com.styx.common.distrcit.DistrictQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;

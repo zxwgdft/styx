@@ -15,7 +15,7 @@ import java.util.Date;
 
 @Slf4j
 @Configuration
-public class DataWebConfigurer implements WebMvcConfigurer {
+public class WebConfigurer implements WebMvcConfigurer {
 
 
     @Autowired

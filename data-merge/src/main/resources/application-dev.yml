@@ -1,0 +1,34 @@
+logging:
+  level:
+    com.styx.monitor.core: debug
+
+server:
+  port: 19030
+
+spring:
+  datasource:
+    name: styx
+    url: jdbc:mysql://172.16.16.125:3306/styx_monitor?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+    username: netin
+    password: 123456
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 15
+      maximum-pool-size: 15
+  redis:
+    host: 172.16.16.125
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: 5000
+        min-idle: 0
+    password: ''
+    port: 6379
+    timeout: 1000
+
+zookeeper:
+  namespace: styx
+  connect-string: 172.16.16.126:2181
+
+

@@ -1,4 +1,4 @@
-package com.styx.monitor.core.distrcit;
+package com.styx.common.distrcit;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,6 +30,7 @@ public class DistrictUtil {
             registerDistrict(rootDistrict);
             initDistrictParent(rootDistrict);
             initDistrictLevel(rootDistrict, 1);
+            log.info("读取省、市、区基础数据完成");
         } catch (IOException e) {
             log.error("读取省、市、区基础数据异常", e);
         }

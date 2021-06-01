@@ -20,7 +20,7 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 @Slf4j
 @Configuration
 @EnableConfigurationProperties(RedisProperties.class)
-public class DataRedisConfiguration extends CachingConfigurerSupport {
+public class RedisConfiguration extends CachingConfigurerSupport {
 
     @Bean
     public CacheManager cacheManager(LettuceConnectionFactory lettuceConnectionFactory) {

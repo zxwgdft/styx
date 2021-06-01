@@ -19,17 +19,7 @@ import org.springframework.web.client.RestTemplate;
  */
 @Slf4j
 @Configuration
-public class DataConfiguration {
-
-
-    /**
-     * 负载均衡加持的RestTemplate
-     */
-    @Bean
-    @LoadBalanced
-    public RestTemplate getRestTemplate() {
-        return new RestTemplate();
-    }
+public class DataNodeConfiguration {
 
 
     /**

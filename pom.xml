@@ -12,8 +12,9 @@
         <module>gateway</module>
         <module>support</module>
         <module>terminal</module>
-        <module>data</module>
+        <module>data-node</module>
         <module>monitor</module>
+        <module>data-merge</module>
     </modules>
     <packaging>pom</packaging>
 
