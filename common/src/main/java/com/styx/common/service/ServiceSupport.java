@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author TontoZhou
@@ -31,7 +32,7 @@ public class ServiceSupport<Model, Mapper extends CommonMapper<Model>> {
     /**
      * 选择项缓存
      */
-    private static Map<Class, String[]> selectionCacheMap = new HashMap<>();
+    private static Map<Class, String[]> selectionCacheMap = new ConcurrentHashMap<>();
 
     protected Class<Model> modelType; // 业务对应类
     protected boolean isBaseModel;
@@ -240,9 +241,8 @@ public class ServiceSupport<Model, Mapper extends CommonMapper<Model>> {
      * 查找分页结果集合
      */
     public PageResult<Model> findPage(PageParam pageParam) {
-        return searchPage(modelType, pageParam, null);
+        return searchPage(modelType, pageParam, pageParam != null ? QueryWrapperHelper.buildQuery(pageParam) : null);
     }
-
 
     /**
      * 查找分页结果集合

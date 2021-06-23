@@ -3,7 +3,7 @@
 <mapper namespace="com.styx.support.mapper.SysAttachmentMapper">
 
     <update id="updateDeletedById">
-        UPDATE sys_attachment SET deleted = #{isDelete}, operate_time = #{operateBy} WHERE id IN
+        UPDATE sys_attachment SET deleted = #{isDelete}, operate_time = NOW(), operate_by = #{operateBy} WHERE id IN
         <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
     </update>
 

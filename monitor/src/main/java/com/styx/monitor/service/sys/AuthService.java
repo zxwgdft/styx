@@ -39,6 +39,7 @@ public class AuthService {
     }
 
     private void parseAuthException(RuntimeException e) {
+        // 提示太准确会有安全隐患
         String message = exceptionMessageMap.get(e.getClass());
         if (message != null) {
             throw new BusinessException(message);
