@@ -27,7 +27,7 @@ public class PinyinUtil {
      * @param str
      * @return
      */
-    public static String toHanyuPinyinFirstArray(String str) {
+    public static String toPinyinInitial(String str) {
 
         if (str == null || str.length() == 0) {
             return null;
@@ -55,8 +55,8 @@ public class PinyinUtil {
      * @param str
      * @return
      */
-    public static String toHanyuPinyin(String str) {
-        return toHanyuPinyin(str, true);
+    public static String toPinyin(String str) {
+        return toPinyin(str, true);
     }
 
     /**
@@ -66,7 +66,7 @@ public class PinyinUtil {
      * @param firstUpper
      * @return
      */
-    public static String toHanyuPinyin(String str, boolean firstUpper) {
+    public static String toPinyin(String str, boolean firstUpper) {
         if (str == null || str.length() == 0) {
             return null;
         }

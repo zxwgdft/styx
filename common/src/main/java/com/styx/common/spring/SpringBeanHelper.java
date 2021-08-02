@@ -1,6 +1,8 @@
 package com.styx.common.spring;
 
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -122,9 +124,8 @@ public class SpringBeanHelper implements ApplicationContextAware {
     }
 
     private static <T> T getMapFirstValue(Map<String, T> map) {
-        for (T t : map.values()) {
+        for (T t : map.values())
             return t;
-        }
         return null;
     }
 }
