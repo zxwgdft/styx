@@ -10,7 +10,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-@ApiModel(description = "系统内置code")
+@ApiModel(description = "feign code")
 public class FeignCode implements IResultCode {
     private int code;
     private String message;

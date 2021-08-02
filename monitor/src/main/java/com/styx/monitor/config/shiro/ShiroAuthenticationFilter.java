@@ -30,7 +30,7 @@ public class ShiroAuthenticationFilter extends AccessControlFilter {
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Cache-Control", "no-cache");
         response.setStatus(HttpCode.UNAUTHORIZED.getCode());
-        JsonUtil.writeJson(response.getWriter(), R.fail(HttpCode.UNAUTHORIZED, "未登录或会话超时"));
+        JsonUtil.writeJson(response.getWriter(), R.fail(HttpCode.UNAUTHORIZED.getCode(), "未登录或会话超时"));
         return false;
     }
 

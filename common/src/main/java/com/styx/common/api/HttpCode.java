@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-@ApiModel(description = "系统内置code")
+@ApiModel(description = "http code")
 public enum HttpCode implements IResultCode {
 
     // 常用code
