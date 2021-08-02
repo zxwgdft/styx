@@ -1,14 +1,19 @@
 package com.styx.common.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.styx.common.exception.BusinessException;
 import com.styx.common.service.annotation.QueryCondition;
+import com.styx.common.utils.TimeUtil;
 import com.styx.common.utils.reflect.Entity;
 import com.styx.common.utils.reflect.EntityField;
+import com.styx.common.utils.reflect.NameUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 /**
  * <p>
@@ -35,15 +40,31 @@ public class QueryWrapperHelper {
     /**
      * 根据注解构建查询条件（当前criteria，而不是新增，如需要应该在调用前手动调用and()、or()）
      *
-     * @param QueryWrapper
+     * @param queryWrapper
      * @param queryParam   查询条件参数
      * @return
      */
-    public static QueryWrapper buildQuery(QueryWrapper QueryWrapper, Object queryParam) {
+    public static QueryWrapper buildQuery(QueryWrapper queryWrapper, Object queryParam) {
         if (queryParam == null) {
-            return QueryWrapper;
+            return queryWrapper;
         }
-        return getBuilder(queryParam.getClass()).build(QueryWrapper, queryParam);
+        Class<?> clazz = queryParam.getClass();
+        if (clazz.isArray()) {
+            int length = Array.getLength(queryParam);
+            for (int i = 0; i < length; i++) {
+                Object param = Array.get(queryParam, i);
+                getBuilder(param.getClass()).build(queryWrapper, param);
+            }
+        } else if (Collection.class.isAssignableFrom(clazz)) {
+            Collection coll = (Collection) queryParam;
+            for (Object param : coll) {
+                getBuilder(param.getClass()).build(queryWrapper, param);
+            }
+        } else {
+            getBuilder(queryParam.getClass()).build(queryWrapper, queryParam);
+        }
+
+        return queryWrapper;
     }
 
     /**
@@ -110,6 +131,7 @@ public class QueryWrapperHelper {
         }
     }
 
+    private static Pattern columnNamePattern = Pattern.compile("^\\w+$");
 
     /**
      * 查询对象构建器
@@ -136,11 +158,14 @@ public class QueryWrapperHelper {
                     String name = condition.name();
 
                     // 默认使用方法对应的field名作为column
-                    if ("".equals(name)) {
+                    if (name.length() == 0) {
                         name = entityField.getName();
                     }
 
-                    BuildUnit unit = new BuildUnit(name, condition.type(), entityField.getGetMethod(), condition.nullable());
+                    // 驼峰转下划线
+                    name = NameUtil.hump2underline(name);
+
+                    BuildUnit unit = new BuildUnit(name, entityField.getGetMethod(), condition);
                     buildUnits.add(unit);
                 }
             }
@@ -151,6 +176,11 @@ public class QueryWrapperHelper {
                 SortParam sortParam = (SortParam) queryParam;
                 String sort = sortParam.getSort();
                 if (sort != null && sort.length() > 0) {
+                    sort = NameUtil.hump2underline(sort);
+                    if (!columnNamePattern.matcher(sort).matches()) {
+                        throw new BusinessException("非法的排序字段：" + sort);
+                    }
+
                     String order = sortParam.getOrder();
                     if ("asc".equalsIgnoreCase(order)) {
                         queryWrapper.orderByAsc(sort);
@@ -165,6 +195,10 @@ public class QueryWrapperHelper {
                 String property = bu.name;
                 try {
                     Object value = bu.getMethod.invoke(queryParam);
+                    if (bu.nextDay && value instanceof Date) {
+                        Date date = (Date) value;
+                        value = TimeUtil.getDateBefore(date.getTime(), -1);
+                    }
                     buildCriteria(queryWrapper, property, type, value, bu.nullable);
                 } catch (Exception e) {
                     log.error("build QueryWrapper error!", e);
@@ -189,14 +223,17 @@ public class QueryWrapperHelper {
         private String name;
         private Method getMethod;
         private boolean nullable;
+        private boolean nextDay;
 
-        private BuildUnit(String name, QueryType type, Method getMethod, boolean nullable) {
-            this.nullable = nullable;
+        private BuildUnit(String name, Method getMethod, QueryCondition condition) {
             this.name = name;
-            this.type = type;
+            this.type = condition.type();
             this.getMethod = getMethod;
+            this.nullable = condition.nullable();
+            this.nextDay = condition.nextDay();
         }
     }
+
 
 
 }

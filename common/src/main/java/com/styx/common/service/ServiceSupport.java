@@ -95,22 +95,15 @@ public class ServiceSupport<Model, Mapper extends CommonMapper<Model>> {
         sqlMapper.insert(model);
     }
 
-    /**
-     * 更新整个对象（包括null值）
-     */
     public boolean updateWhole(Model model) {
         return sqlMapper.updateWholeById(model) > 0;
     }
 
-    /**
-     * 更新对象中非null字段
-     */
     public boolean updateSelection(Model model) {
-        return sqlMapper.updateWholeById(model) > 0;
+        return sqlMapper.updateById(model) > 0;
     }
 
     public boolean deleteById(Serializable id) {
-        // 逻辑删除实现
         return sqlMapper.deleteById(id) > 0;
     }
 
@@ -240,7 +233,7 @@ public class ServiceSupport<Model, Mapper extends CommonMapper<Model>> {
      * 查找分页结果集合
      */
     public PageResult<Model> findPage(PageParam pageParam) {
-        return searchPage(modelType, pageParam, null);
+        return searchPage(modelType, pageParam, pageParam != null ? QueryWrapperHelper.buildQuery(pageParam) : null);
     }
 
 
@@ -277,9 +270,6 @@ public class ServiceSupport<Model, Mapper extends CommonMapper<Model>> {
     public <T> PageResult<T> searchPage(Class<T> clazz, PageParam pageParam, Wrapper queryWrapper) {
         Page<T> page = PageHelper.offsetPage(pageParam.getOffset(), pageParam.getLimit());
         List<T> result = searchAll(clazz, queryWrapper);
-        if (result == null || result.size() == 0) {
-            return PageResult.getEmptyPageResult(pageParam.getLimit());
-        }
         return new PageResult<>(page, result);
     }
 

@@ -49,4 +49,5 @@ public class SystemException extends RuntimeException {
     public int getErrorCode() {
         return errorCode;
     }
+
 }
