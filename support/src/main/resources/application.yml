@@ -6,7 +6,7 @@ spring:
     time-zone: GMT+8
 
 mapper:
-  mappers: com.paladin.framework.mybatis.CustomMapper
+  mappers: com.styx.common.mybatis.CustomMapper
   enumAsSimpleType: true
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml

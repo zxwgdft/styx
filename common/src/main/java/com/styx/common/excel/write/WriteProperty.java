@@ -2,22 +2,26 @@ package com.styx.common.excel.write;
 
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.RetentionPolicy;
 
+/**
+ * 注解方式描述写excel的基本信息
+ */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface WriteProperty {
+@interface WriteProperty {
 
     /**
      * EXCEL列序号
-     *
-     * @return
      */
     int cellIndex();
 
+    /**
+     * 枚举类型描述
+     */
     String enumType() default "";
 
     /**
@@ -59,5 +63,16 @@ public @interface WriteProperty {
      * 对齐方式
      */
     HorizontalAlignment alignment() default HorizontalAlignment.CENTER;
+
+    /**
+     * 布尔值true对应值
+     */
+    String booleanTrue() default "是";
+
+    /**
+     * 布尔值false对应值
+     */
+    String booleanFalse() default "否";
+
 
 }

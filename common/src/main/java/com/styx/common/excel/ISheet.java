@@ -4,10 +4,4 @@ public interface ISheet {
     IRow getRow(int rowIndex);
 
     int getLastRowNum();
-
-    interface InstanceCreator<T> {
-
-        T createInstance();
-
-    }
 }

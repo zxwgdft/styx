@@ -4,6 +4,7 @@ import com.styx.common.excel.ICell;
 import com.styx.common.excel.IRow;
 import com.styx.common.excel.ISheet;
 import com.styx.common.excel.PropertyValidate;
+import com.styx.common.utils.reflect.InstanceCreator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,13 +17,15 @@ public class ExcelReader<T> {
      */
     private Map<Class<?>, ReadPropertyConvert<?>> classConvertCacheMap = new HashMap<>();
     private Map<Class<?>, PropertyValidate> classValidateCacheMap = new HashMap<>();
+    ;
 
     /*
      * 根据名称找到对应的{@link ReadPropertyConvert}和{@link PropertyValidate}方法
      */
     private Map<String, ReadPropertyConvert<?>> nameConvertCacheMap = new HashMap<>();
+    ;
     private Map<String, PropertyValidate> nameValidateCacheMap = new HashMap<>();
-
+    ;
 
     /**
      * 增加指定类型转换器
@@ -76,14 +79,14 @@ public class ExcelReader<T> {
     protected boolean continueIfDataError = false;
 
     // 实例创建器
-    protected ISheet.InstanceCreator<T> instanceCreator;
+    protected InstanceCreator<T> instanceCreator;
 
     public ExcelReader(Class<T> target, List<ReadColumn> columns, ISheet sheet) {
         this(target, columns, sheet, 0);
     }
 
     public ExcelReader(Class<T> target, List<ReadColumn> columns, ISheet sheet, int startRow) {
-        this(new ISheet.InstanceCreator<T>() {
+        this(new InstanceCreator<T>() {
             @SuppressWarnings("unchecked")
             @Override
             public T createInstance() {
@@ -101,7 +104,7 @@ public class ExcelReader<T> {
         }, columns, sheet, startRow);
     }
 
-    public ExcelReader(ISheet.InstanceCreator<T> instanceCreator, List<ReadColumn> columns, ISheet sheet, int startRow) {
+    public ExcelReader(InstanceCreator<T> instanceCreator, List<ReadColumn> columns, ISheet sheet, int startRow) {
         this.instanceCreator = instanceCreator;
         this.columns = columns;
         this.currentRowIndex = startRow;

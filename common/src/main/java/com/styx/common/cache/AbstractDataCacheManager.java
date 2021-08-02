@@ -136,5 +136,15 @@ public abstract class AbstractDataCacheManager implements ApplicationRunner, Dat
         }
     }
 
+    @Override
+    public <T> DataCacheWrapper<T> getDataCacheWrapper(Class<T> clazz) {
+        return dataClass2CacheMap.get(clazz);
+    }
+
+    @Override
+    public DataCacheWrapper getDataCacheWrapper(String cacheId) {
+        return id2CacheMap.get(cacheId);
+    }
+
 
 }

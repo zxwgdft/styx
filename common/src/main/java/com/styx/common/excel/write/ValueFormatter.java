@@ -5,7 +5,7 @@ package com.styx.common.excel.write;
  *
  * @author TontZhou
  */
-public interface ValueFormator {
+public interface ValueFormatter {
     /**
      * 格式化方法
      *
