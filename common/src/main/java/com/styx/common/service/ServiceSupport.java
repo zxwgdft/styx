@@ -14,6 +14,7 @@ import com.styx.common.service.mybatis.CommonMapper;
 import com.styx.common.utils.convert.SimpleBeanCopyUtil;
 import com.styx.common.utils.reflect.Entity;
 import com.styx.common.utils.reflect.EntityField;
+import com.styx.common.utils.reflect.NameUtil;
 import com.styx.common.utils.reflect.ReflectUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -59,7 +60,7 @@ public class ServiceSupport<Model, Mapper extends CommonMapper<Model>> {
             // 获取主键相关方法
             // 因为mybatis plus 只支持一个主键，所以这里也只做一个主键的处理（多主键情况我们直接使用mybatis）
             //
-            EntityField entityField = Entity.getEntity(modelType).getEntityField(tableInfo.getKeyColumn());
+            EntityField entityField = Entity.getEntity(modelType).getEntityField(NameUtil.underline2hump(tableInfo.getKeyColumn()));
             pkGetMethod = entityField.getGetMethod();
             pkSetMethod = entityField.getSetMethod();
         }
